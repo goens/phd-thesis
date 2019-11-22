@@ -1,0 +1,81 @@
+\documentclass[12pt,a4paper,BCOR15mm,twoside,DIV12]{article}
+%\usepackage[paper=a4paper,left=20mm,right=20mm,top=25mm,bottom=25mm]{geometry}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{graphicx, float,epsfig}
+\usepackage[nottoc,numbib]{tocbibind}
+
+\def\P{\mathcal{P}}
+\def\R{\mathbb{R}} 
+\def\E{\mathcal{E}} 
+\def\N{\mathbb{N}} 
+\def\Z{\mathbb{Z}} 
+\def\Q{\mathbb{Q}} 
+\def\F{\mathbb{F}}
+\def\C{\mathbb{C}}
+\def\U{\mathcal{U}}
+\def\GL{\text{GL}}
+\def\supp{\text{Supp}}
+\def\id{\text{id}}
+\def\n{\underline{n}}
+\def\Gram{\text{Gram}}
+\def\diag{\text{diag}}
+\def\End{\text{End}}
+\def\Hom{\text{Hom}}
+\def\fa{\text{ for all }}
+\def\Tr{\text{Tr}}
+\def\Id{\text{Id}}
+\def\Sym{\text{Sym}}
+\def\H{\mathcal{H}}
+\def\wt{\text{wt}}
+\def\Perf{\text{Perf}}
+
+
+\renewcommand{\labelenumi}{\alph{enumi})}
+%\renewcommand{\P}{\textfrak{P}}
+\newcommand{\cupdot}{\mathop{\mathaccent\cdot\cup}}
+\newenvironment{bew}{\begin{proof}[Proof]}{\end{proof}}
+\theoremstyle{definition}
+\newtheorem{Satz}{Satz}[section]
+\newtheorem{theorem}[Satz]{Theorem}
+\newtheorem{ex}[Satz]{Example}
+\newtheorem{cor}[Satz]{Corollary}
+\newtheorem{algorithm}[Satz]{Algorithm}
+\newtheorem{prop}[Satz]{Proposition}
+\newtheorem{rem}[Satz]{Remark}
+\newtheorem{defn}[Satz]{Definition}
+\newtheorem{lem}[Satz]{Lemma}
+
+\title{Computing with partial permutations}
+\author{Andr\'{e}s Goens}
+
+\begin{document}
+\maketitle
+This document deals with algorithms for computing with partial permutations. It is a simplification of some algorithms provided in \cite{computing_finite_semigroups} to the language of partial permutations.
+\section{Preliminaries}
+We begin with some relevant definitions.
+
+
+\begin{defn}\label{basics}
+A set $S$ with an operation $\circ : S \times S \rightarrow S$ is called a \emph{semigroup} if $\rightarrow$ is \emph{associative}, i.e. if $(a \circ b) \circ c = a \circ (b \circ c)$ for all $a,b,c \in S$.
+We usually $ab$ as a short form for $a \circ b$.
+The semigroup $S$ is said to be an \emph{inverse} semigroup if additionally, for every $s \in S$ there exisist a $t \in S$ such that $sts = s$ and $tst = t$. We sometimes will write $t = s^{-1}$ and say $t$ is the (pseudo)inverse of $s$.
+Conversely, if the semigroup $S$ has an element $e \in S$ such that $se = es = s$ for all $s \in S$, we call $S$ a monoid and say $e$ is its \emph{neutral element}.
+Finally, if $S$ is a semigroup, we call an element $i \in S$ such that $ii = i$ an \emph{idempotent}. Note that by definition the neutral element of a monoid is an idempotent.
+\end{defn}
+
+
+\begin{defn}\label{partial-permutations}
+Let $V, W$ be finite-dimensional Hilbert spaces, and $A \in \text{End}(V), B \in \End(W)$ Hermitian. We define the partial trace of $A \otimes B$ over $W$ as $\Tr_W(A \otimes B) := \Tr(B) A$, and extend the definition linearly. Since the trace is linear, this is well defined.
+\end{defn}
+
+\begin{thebibliography}{9}
+  \bibitem{computing_finite_semigroups} East, James, et al. \emph{Computing finite semigroups.} Journal of Symbolic Computation 92 (2019): 110-155.
+    \end{thebibliography}
+\end{document}
