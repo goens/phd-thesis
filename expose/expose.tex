@@ -10,12 +10,13 @@
 \begin{document}
 \date{}
 \begin{abstract}
-The trend is clear: Computing systems of the future will consist of heterogeneous multicores. While this allows for maximal computational efficiency, these systems are extremely difficult to program.
+The trend is clear: Computing systems of the future will consist of heterogeneous multicores.
+While this allows for maximal computational efficiency, these systems are extremely difficult to program.
 A family of methods that is commonly used to program heterogeneous multicore systems is called \emph{software synthesis}.
-It consists of using an abstract representation of the application, which allows to analyze and determine an optimal execution, leveraging heterogeneous resources.
-The software synthesis problem has many different subproblems, pertaining the representation of applications and architectures, the recording the behavior of an execution and deciding how to best execute a particular application in an architecture.
-Each of these subproblems exhibits much structure, which can be captured in precise mathematical terms. In this thesis we aim to identify, describe and leverage this mathematical structure in different subproblems of the software synthesis process.
-This would allow to improve the programmability of heterogeneous multicores, bridging the productivity gap for developers.
+It consists of using an abstract representation of the application in order to analyze it and determine an optimal execution, leveraging heterogeneous resources.
+The software synthesis problem has many different subproblems, pertaining the representation of applications and architectures, recording the behavior of an execution and deciding how to best execute a particular application in an architecture.
+Each of these subproblems exhibits much structure, which can be captured in precise mathematical terms. In this thesis we aim to identify, describe and leverage this mathematical structure in the different subproblems of the software synthesis process.
+This allows to improve the programmability of heterogeneous multicores, bridging the productivity gap for developers.
 
 \end{abstract}
 
@@ -24,9 +25,10 @@ This would allow to improve the programmability of heterogeneous multicores, bri
 
 \section*{Introduction}
 %End of moore's law:
-Since the invention of the semiconductor, the capacity and performance of computing systems has enjoyed a nearly exponential growth over time. Historically, it has doubled roughly every $1 1/2$ years, an observation which is commonly associated with Moore \cite{schaller1997moore}.
-While this trend continues roughly until today, in terms of the number of semiconductors in a computer, the capacity and speed of computing systems has been unable to keep up. It is likely that we are reaching more fundamental barriers, where the laws of physics prevent our
-current methods to produce event faster systems. 
+Since the invention of the semiconductor, the capacity and performance of computing systems has enjoyed a nearly exponential growth over time.
+Historically, it has doubled roughly every $1~1/2$ years, an observation which is commonly associated with Moore \cite{schaller1997moore}.
+In terms of the number of semiconductors in a computer this trend continues roughly until today. However, the capacity and speed of computing systems has been unable to keep up.
+It is likely that we are reaching more fundamental barriers, where the laws of physics prevent our current methods to produce event faster systems. 
 
 %Trend: heterogeneous multicores
 Fortunately, we still seem far from reaching the limits of our own ingenuity. In terms of hardware, the trend is clear: The computing systems of the future will consist of heterogeneous multicores. Multicores allow to leverage the technological advances in semiconductors to 
@@ -38,46 +40,53 @@ While this specialization can have a tremendous impact in the computation speed 
 With novel systems come novel problems. While heterogeneous multicores are, in principle, an ideal solution to the complex requirements of today's applications, they come with an equally exceptional challenge.
 Programming heterogeneous multicores is difficult. It involves partitioning the required computation into appropriate steps. These steps, in turn, might execute differently well in the various hardware resources on the system,
 which might itself depend on the concrete data being processed.
-On the other hand, systems incur in significant time and energy costs by transfering data between resources.
-To efficiently execute a calculation thus involves orchestrating which steps to execute when and where, a highly non-trivial problem which completely dissapears in the traditional, single-core case.
+On the other hand, systems incur in significant time and energy costs by transfering data between computing resources.
+To efficiently execute a calculation, thus, involves orchestrating which steps to execute when and where.
+This is a highly non-trivial problem which completely dissapears in the traditional, single-core case.
 
 %a solution: software synthesis
 Several approaches have been put forward to deal with these issues.
 In particular, a family of promising methods that is commonly used to program heterogeneous multicore systems is called \emph{software synthesis}\cite{bhattacharyya2012software,sgroi1999synthesis}.
-It consists of using an abstract, functional representation to describe the application, commonly in the form of a graph. Using this representation,
-decisions for mapping the different parts of the application to resources in the architecture, as well as scheduling the execution are taken. These decisions commonly involve static strategies,
-but can also include dynamic decisions at run-time. Finally, code is generated using these decisions, such that it might leverage the heterogeneous resources in the architecture.
+It consists of using an abstract representation to describe the application, commonly in the form of a graph.
+Using this representation, decisions for mapping the different parts of the application to resources in the architecture, as well as scheduling the execution are taken.
+These decisions commonly involve static strategies, but can also include dynamic decisions at run-time.
+Finally, code is generated using these decisions, such that it might leverage the heterogeneous resources in the architecture.
 
 %many sub-problems in software synthesis: code partitioning/representation of algorithms, tracing/trace analysis, mapping/scheduling, code generation
 This software synthesis process, thus, involves several different sub-problems that have to be solved.
 The question of how to partition an application and represent it abstractly, particularly, in form of a graph that represents logical dependencies in the application, is a highly non-trivial one.
 Assuming such a graph representation, the behavior of the application has to be analyzed.
-A general analysis would require, among others, solving the halting problem.
+A general analysis would require, among others, solving the halting problem, which is provably unsolvable.
 Thus, many common approaches make do with a trace-based approach, where the analysis is restricted to a particular execution, or a set of executions.
 Finally, the decision problems of mapping and scheduling involve the knowledge gained from the sub-problems above to consider an exponentially growing number of possibilities and selecting a near-optimal one.
 
 %Problems have mathematical structure! Graph structure of code, traces: monoid, redundancy,  mapping/scheduling (e.g. symmetries, distances)
-By virtue of their inherent properties, these problems exhibit a large amount of structure, which can be described and exploited with precise mathematical structures.
+By virtue of their inherent properties, these problems exhibit a large amount of structure, which can be described and exploited in precise mathematical terms.
 The simplest example is the abstract representation of applications.
 Using the mathematical structure of directed graphs, properties of the application can be deduced from graph-theoretic principles and graph algorithms can be leveraged for efficiently analyzing these abstract representations of applications.
 Similarly, the sets of execution traces of an application can be considered as part of a monoid, usually called the trace monoid. They also have information-theoretic properties that correspond to the relationship between the application and its trace.
-The space of mappings, on the other hand, while it grows exponentially, also exhibits much structure. Symmetries in the architecture and application induce symmetries in the mapping space, which can effectively reduce the amount of possibilities to be explored.
+The space of mappings, on the other hand, while it grows exponentially, also exhibits much structure.
+For example, symmetries in the architecture and application induce symmetries in the mapping space, which can effectively reduce the amount of possibilities to be explored.
 
 %thesis: identify and leverage this mathematical structure to improve software synthesis!
-In order to feasibly solve the problems arising in software synthesis and program the heterogeneous manycores with their ever-growing complexity, we must identify and exploit these mathematical structures. The goal of this thesis is to identify and precisely describe 
-the mathematical structure in the different subproblems in software synthesis. Then, using the identified structure, we will propose improvements to the state-of-the-art solution methods in order to leverage the mathematical structure inherent in the problems.
-
+In order to feasibly solve the problems arising in software synthesis and program the heterogeneous manycores with their ever-growing complexity, we must identify and exploit these mathematical structures.
+The goal of this thesis is to identify and precisely describe the mathematical structure in the different subproblems in software synthesis.
+Then, using the identified structure, we will propose improvements to the state-of-the-art solution methods in order to leverage the mathematical structure inherent in the problems.
+In this exposé we briefly introduce the software synthesis problem with its rich structure (Section~\ref{sec:software_synthesis}), present a selection of previous work analysing and leveraging this structure (Section~\ref{sec:current}), as well as some concrete research directions to improve this (Section~\ref{sec:future}.
+%Particular for berkely
+In particular, we present a proposal for a research stay at Prof. Edward Lee's group in the context of this work and argue why it would be extremely beneficial for the success of the thesis (Section~\ref{sec:visit}).
 
 \section{The Software Synthesis Problem}
+\label{sec:software_synthesis}
 
 %General software synthesis too broad: concentrate
 The term software synthesis covers several different concrete problems, with different abstract representations of applications or architectures.
-While the aim of this thesis is to keep the approaches as general as possible, to cover as many variants as possible, concrete instances still have to be considered.
+The aim of this thesis is to keep the approaches as general as possible. However, to cover as many variants as possible, concrete instances still have to be considered.
 In the following, we will describe the software synthesis problem for executing Kahn Process Networks~\cite{kahn74} in heterogeneous architectures, as described in~\cite{castrillon14_springer}.
-While this is not the most general instance of software synthesis, it provides enough generality to understand most concepts, while serving as a concrete instance to implement and test the improvements on real examples.
-Throughout the thesis we will use this instance as the basis for the software synthesis problem, and will explicitly discuss, when generality is possible, how this is the case and how to leverage it.
+While this is not the most general instance of software synthesis, it provides enough generality to understand most concepts, while serving as a concrete realization that allows to implement and test the improvements on real examples.
+%Throughout the thesis we will use this instance as the basis for the software synthesis problem, and will explicitly discuss, when more generality is possible, how this is the case and how to leverage it.
 
-\subsection{Kahn Process Networks}
+\subsection{Software Synthesis for Kahn Process Networks}
 
 The problem of mapping KPN applications to heterogeneous hardware involves abstractions at different levels, as depicted in Figure~\ref{fig:problem}.
 At the \textbf{application} level, programs are described using the KPN model. In this model, applications are partitioned into
@@ -97,7 +106,7 @@ with processes as nodes and channels as edges.
 
 The structure offered by KPNs has several advantages. One of these comes at the \textbf{execution} level. 
 From its semantics, KPN applications are deterministic~\cite{kahn74}. 
-That is, the process network will always produce the same results given the same input.
+This means that the process network will always produce the same results given the same input.
 In particular, the results are independent of the execution order of the processes and individual timings,
 provided no artificial deadlocks are introduced when restricting the sizes of the FIFO buffers.
 This fact can be utilized to create program traces of a KPN application that are independent of the execution,
@@ -109,25 +118,29 @@ The latter is an abstraction for any way data can be shared between processes re
 These range from simply shared memories, and local scratchpads for single PEs, to specialized resources like hardware-FIFOs.
 Actual hardware architectures, and the libraries used (or operating system, if applicable), are much more complex than this.
 However, there is no simple abstraction that allows to capture all these details in a straightforward manner, 
-which is why different frameworks use different such abstractions.
+which is why different frameworks use different such abstractions~\cite{goens_mcsoc16}.
 
-Using these models, \textbf{decisions} are made for deploying the applications onto the hardware. At this level,
-one also uses abstractions. As is canonical from the application description, processes are mapped to PEs, 
-and the communication channels between them to hardware resources. It is also common to distinguish between the mapping of
-processes to PEs and the scheduling at runtime.
-In this thesis, we limit ourselves to scheduling within a single PE when several processes have been mapped to it.
+Using these models, \textbf{decisions} are made for deploying the applications onto the hardware.
+These decisions involve abstractions.
+As is canonical from the application description, processes are mapped to PEs, 
+and the communication channels between them to hardware resources like memories.
+It is also common to distinguish between the mapping of processes to PEs and the scheduling at runtime.
+In this discussion, we limit scheduling to a single PE when several processes have been mapped to it.
 There are additional decisions that have to be taken in this context, like \emph{buffer sizing}, where the sizes of the
-FIFO buffers have to be chosen. 
+FIFO buffers have to be chosen or selecting different voltage and frequency domains in case these can be set within the chip. 
 
 The problem of mapping KPN applications to heterogenous hardware, as studied in this thesis, is that of
-finding a mapping of processes to PEs and of channels to communication resources. 
-This mapping should be optimal or at least near-optimal in some sense for a particular execution, which is captured in the form of a trace.
-Optimality can be defined in different ways, like execution time, energy consumption or resource usage (while respecting a particular real-time bound).
+finding a mapping of processes to PEs and of channels to communication resources, and may or may not include the additional decisions mentioned above.
+A particular objective or set of objectives is specified.
+The list of possible objectives is varied, spanning, for example, the total execution time, energy consumption or resource usage (while respecting a particular real-time bound).
+With regards to these objectives, the mapping should be optimal or at least near-optimal for a particular execution, which is captured in the form of a trace.
 
 A concrete implementation aimed at solving this precise problem is realized in the commercial software suite SLX, which is based on the MAPS framework~\cite{maps08,castrillon14_springer}
-The application is written as a KPN in an extension to the C programming language, CPN~\cite{sheng2014_cpn}. Similarly, an architecture description is given as an xml file.
-The tool uses novel methods for performance estimation to extrapolate the performance of the execution in the target architecture~\cite{TRETS_eusse14}, generate a mapping with heuristics~\cite{castrillon2012,castrillon_industrial_informatics} and produce executable code.
-This thesis will use SLX tools to evaluate approaches and improvements, whenever applicable.
+Applications are written as KPNs in an extension to the C programming language, CPN~\cite{sheng2014_cpn}. Similarly, architecture descriptions are given as XML files.
+The tool uses novel methods for performance estimation to extrapolate the performance of the execution in the target architecture~\cite{TRETS_eusse14}.
+It then generates a mapping with heuristics~\cite{castrillon2012,castrillon_industrial_informatics} and uses it to produce executable code for the target.
+Other similar approaches have been also put forward, like the Sesame framework~\ref{sesame}, or DOL~\cite{thiele2007mapping}.
+%This thesis will use SLX tools to evaluate approaches and improvements, whenever applicable.
 
 Figure~\ref{fig:synthesisflow} shows an abstract representation of the software synthesis flow, as described above and implemented in SLX.
 \begin{figure}[h]
@@ -139,18 +152,24 @@ Figure~\ref{fig:synthesisflow} shows an abstract representation of the software 
 
 
 \section{Current Status}
+\label{sec:status}
 
-In the following section we will describe our previous work leveraging mathematical structure in software synthesis. For space reasons, this exposé cannot go in-depth in the mathematical structures and the methods devised to leverage them.
-Instead, the aim of this section is to give an overview and present results, to show how, in principle, mathematical structure can be leveraged to improve solutions to the software synthesis problem.
+In the following section we will describe our previous work leveraging mathematical structure in software synthesis.
+For space reasons, this exposé cannot go in-depth in the mathematical structures and the methods devised to leverage them.
+Similarly, for space reasons as well, not all our previous work can be explained in the same depth.
+Instead, the aim of this section is to give an overview and present a selection of results.
+They show how, in principle, mathematical structure can be leveraged to improve solutions to the software synthesis problem.
 
 \subsection{Symmetry in mappings}\label{sec:symmetries}
 
-The mapping of applications described by an abstract, graph-based representation to heterogeneous architectures exhibits many symmetries, in practice~\cite{goens_iess15,goens_taco17}. Consider the example shown in Figure~\ref{fig:symmetries_idea}.
-To illustrate the principle, the figure depicts a simple homogeneous many-core with a network-on-chip interconnect. Due to the homogeneous structures of the platform, it is intuitive to see that the two leftmost mappings of tasks to processing nodes should lead to basically the same execution behavior, 
-if we neglect effects like process variation or aging.
+In practice, the mapping of applications described by an abstract, graph-based representation to heterogeneous architectures exhibits many symmetries~\cite{goens_iess15,goens_taco17}.
+Consider the example shown in Figure~\ref{fig:symmintro}. To illustrate the principle, the figure depicts a simple homogeneous many-core with a network-on-chip interconnect.
+Due to the homogeneous structures of the platform, it is intuitive to see that the two leftmost mappings of tasks to processing nodes should lead to basically the same execution behavior, if we neglect effects like process variation or aging.
 Conversely, we can expect the third, rightmost mapping to have a different execution behavior, since the communication paths are different than in the first two. 
 In the presence of heterogeneous resources, such an analysis becomes less obvious.
 Even more so with complex network topologies, in architectures with hierarchical structure, when optimizing for different objectives, or when all these are combined.
+To effectively describe and leverage these symmetries thus, we need a structured approach that leverages this structure.
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.45\textwidth]{figures/SymmetriesIntro.pdf}
@@ -162,16 +181,20 @@ Even more so with complex network topologies, in architectures with hierarchical
 \subsubsection{Mathematical Structures}
 
 In order to describe mappings of KPNs to heterogeneous architectures mathematically, we need a mathematical description of the architecture and of the KPN. 
-A KPN has a very precise mathematical definition, for its semantics, as can be found in the original paper by Gilles Kahn~\cite{kahn74}. However, for this exposé the semantics are not essential. Thus, it suffices to consider them as a directed
-graph $K = (V_K,E_K)$ with a vertex set $V_K$ of processes, and an edge set $E_K$ of channels. Processes can execute concurrently and communicate solely through the channels, which can be though of as FIFO buffers.
+A KPN has a very precise mathematical definition of its semantics, as can be found in the original paper by Gilles Kahn~\cite{kahn74}.
+However, for this exposé the semantics are not essential, although we address it in other work (currently under submission).
+Thus, it suffices to consider a KPN application as a directed graph $K = (V_K,E_K)$ with a vertex set $V_K$ of processes, and an edge set $E_K$ of channels.
+%Processes can execute concurrently and communicate solely through the channels, which can be thought of as FIFO buffers.
 
-For describing architectures, our approach uses a structure called the \emph{architecture graph} to capture the architecture topology~\cite{castrillon2012}. This multigraph $A = (V_A, E_A)$ has a node $v \in V_A$ for every processing element (PE) in the architecture.
+For describing architectures, our approach uses a structure called the \emph{architecture graph} to capture the architecture topology~\cite{castrillon2012}.
+This labeled multigraph $A = (V_A, E_A)$ has a node $v \in V_A$ for every processing element (PE) in the architecture.
 A function $l$ labels all the PEs in $V_A$ with their PE type in heterogeneous architectures.
 
 For every communication resource $r$ that can be used between two PEs $v_1, v_2 \in V_A$, the architecture graph has an edge $(v_1,v_2,r) \in E_A$, where $r$ is a label for that communication resource.
 As an example, consider the Exynos architecture, as illustrated in Figure~\ref{fig:exynos}.
-It has eight ARM PEs, following the big.LITTLE\texttrademark~principle, with four ARM Cortex A7 PEs (the ``little'' ones) and four ARM Cortex A15 PEs (the ``big'' ones). 
-For it, the architecture graph of the Exynos architecture is depicted in Figure~\ref{fig:arch_graph}. The labels for the different communication resources and PE types can be seen in the colors of the edges and nodes in the graph.
+It has eight ARM PEs, following the big.LITTLE\texttrademark~principle, with four ARM Cortex A7 PEs (the ``little'' ones) and four ARM Cortex A15 PEs (the ``big'' ones)~\cite{biglittlewhitepaper}. 
+The architecture graph of the Exynos architecture is depicted in Figure~\ref{fig:arch_graph}.
+The labels for the different communication resources and PE types can be seen as the colors of the edges and nodes in the graph.
 
 This architecture graph can be readily obtained from the architecture description in the SLX Tool Suite, or any similar description which includes the structure of the hardware architecture. 
 In fact, the objective of the architecture graph is to allow us to capture, in a mathematical object, precisely this \textbf{structure}: the topology, PE types and the communication resources available.
@@ -204,8 +227,10 @@ Only by using the formal nature of this architecture graph we can extract the sy
 	\label{fig:actionsm1}
  \end{figure*}
  
-A mapping of a KPN $K$ to an architecture with architecture graph $A$ is thus simply a morphism of graphs $m: K \rightarrow A$. The condition that edges from $K$ are mapped to edges from $A$ ensures that FIFO buffers can be realized.
-In practice, FIFO buffers and communication resources would have an annotation to their size, and a valid mapping would additional respect these sizing constraints. In this exposé, however, we will disregard these issues for simplicity.
+A mapping of a KPN $K$ to an architecture with architecture graph $A$ is simply a morphism of graphs $m: K \rightarrow A$.
+This means that edges from $K$ are mapped to edges from $A$ and ensures that FIFO buffers can be realized.
+In practice, FIFO buffers and communication resources have an annotation to their size, and a valid mapping would has to respect these sizing constraints.
+In this exposé, however, we will disregard these issues for simplicity.
 
 An automorphism $\varphi: A \rightarrow A$ of the architecture graph, i.e. a graph isomorphism respecting labels of $A$ to itself, describes a symmetry of the problem.
 Since even heterogenous architectures usually have several identical components, the groups of automorphisms of architecture graphs $A$ are non-trivial~\cite{goens_iess15}.
@@ -213,15 +238,18 @@ These symmetries of the architecture induce symmetries on mappings, as illustart
 Similarly, if we know an automorphism from the semantics, it also induces symmetries in the space of mappings. 
 
 In general, however, to capture all symmetries of an architecture that can be exploited, the approach using group theory is not sufficient. 
-Consider the NoC-mesh as depicted in Figure~\ref{fig:4x4NoC_inv_semi}. Compare the colored regions in the different depictions of the architecture in the figure.
+Consider the NoC-mesh as depicted in Figure~\ref{fig:4x4NoC_inv_semi}.
+Compare the colored regions in the different depictions of the architecture in the figure.
 A computation using only the cores of the blue region to the left should have the same performance values as the one in the blue region to the right, with the transformation implied by the dark-blue arrow:
 \begin{align}
 \label{eq:partial_4by4}\text{PE}_1 \mapsto \text{PE}_{2}, \text{PE}_{5} \mapsto \text{PE}_{6}, \text{PE}_9 \mapsto \text{PE}_{10}, \text{PE}_{13} \mapsto \text{PE}_{14}
 \end{align}
 However, this mapping is not an automorphism of the architecture graph corresponding to this mesh.
-The fundamental difference between this transformation and symmetries of the automorphism group, like rotations and reflections is that this transformation is only defined on a subset of the four-by-four mesh and cannot be extended to a symmetry of the full mesh.
-To accurately describe and leverage symmetries like that depicted in Figure~\ref{fig:4x4NoC_inv_semi}, an approach using the mathematical theory of inverse semigroups is required~\cite{goens_taco17}. For space reasons, this exposé will not delve into the details of this approach.
-
+The fundamental difference between this transformation and symmetries of the automorphism group, like rotations and reflections is that this transformation is only defined on a subset of the four-by-four mesh.
+It cannot be extended to a symmetry of the full mesh.
+To accurately describe and leverage symmetries like that depicted in Figure~\ref{fig:4x4NoC_inv_semi}, an approach using the mathematical theory of inverse semigroups is required~\cite{goens_taco17}.
+For space reasons, we will not delve into the details of this approach.
+Instead, we will present two applications of the described symmetries to improve software synthesis.
 
 \begin{figure}[h]
 	\centering
@@ -241,10 +269,13 @@ An application of the symmetries found using the graph formalizations and the th
 To find a good mapping of an application to an architecture, a designer or tool doing software synthesis has to explore an extensive design-space of possible mappings. 
 If two mappings are equivalent through symmetries, however, only one of them has to be considered.
 
-Following this principle, we modified a design space exploration framework to leverage the symmetries of the architecture. The design-space exploration uses evolutionary algorithms within the Sesame~\cite{sesame} framework to explore the space of mappings. 
+Following this principle, we modified a design space exploration framework to leverage the symmetries of the architecture.
+The design-space exploration uses evolutionary algorithms within the Sesame~\cite{sesame} framework to explore the space of mappings. 
 It has a cache which tests if a configuration has been evaluated before, in order to avoid reevaluation.
-We augumented this cache with a symmetry-testing improvement, such that it would also stop reevaluation if an equivalent mapping had already been evaluated before, instead of only an identical one.
-We tested several applications applications from the signal processing and multimedia domains by mapping on an accurate model of a state-of-the art heterogeneous multicore system, the Texas Instruments (TI) Keystone II. It features 4 ARM Cortex-A15 processing elements and 8 DSPs~\cite{keystone2_whitepaper}. 
+We augumented this cache with a symmetry-testing improvement. If an equivalent mapping has already been evaluated before, it will not re-evaluate it.
+The original cache does the same, but only of if the mappings are identical.
+We tested several applications applications from the signal processing and multimedia domains by mapping on an accurate model of a state-of-the art heterogeneous multicore system, the Texas Instruments (TI) Keystone II.
+It features 4 ARM Cortex-A15 processing elements and 8 DSPs~\cite{keystone2_whitepaper}. 
 The model was adapted~\cite{goens_mcsoc16} from a model of the commercial state-of-art MPSoC compiler from the SLX Tool Suite and confirmed with measurements from hardware~\cite{odendahl2013split}.
 
 \begin{figure*}
@@ -266,12 +297,14 @@ The plot shows the overhead is negligible in all cases; indeed, it represents be
 The plot also shows that the improved cache results in a net improvement of the execution time, in spite being a prototype implementation. 
 As expected, the effects of symmetry were more visible in explorations with a larger number of generations (and thus, of simulations).
 
-Similarly, we modified an iterative algorithm for minimal resource usage in soft real-time scenarios in SLX. We obtained significantly better resource utilization by considering symmetries, compared to a simple algorithm which does not consider them. 
-Compared to a brute-force approach, we obtained a speed-up by a factor of $10$. More details of both usecases, as well as the theory behind the symmetry identification and reduction can be found in~\cite{goens_taco17}.
+Similarly, we modified an iterative algorithm for minimal resource usage in soft real-time scenarios in SLX.
+We obtained significantly better resource utilization by considering symmetries, compared to a simple algorithm which does not consider them. 
+Compared to a brute-force approach, we obtained a speed-up by a factor of $10$.
+More details of both usecases, as well as the theory behind the symmetry identification and reduction can be found in~\cite{goens_taco17}.
 
 \subsubsection{Run-time adaptivity}
 
-
+Another application of the structure of symmetries comes in the context of run-time adaptivity.
 When designing software for embedded systems, reliability and predictability are usually just as much an asset as raw performance~\cite{edwards2007case,axer2014building,lee2008cyber}.
 Today, with the increasing availability of high-performance embedded devices, like the ARM big.LITTLE\texttrademark~platforms~\cite{biglittlewhitepaper} or the many-core Epiphany-based systems~\cite{olofsson2016epiphany}, the lines between commodity, high-performance and embedded system devices and ecosystems are becoming increasingly blurred.
 Several modern embedded systems interact with the environment in a plethora of ways at the same time.
@@ -289,49 +322,75 @@ This increases the unpredictability of software execution, since the workload of
 %  \vspace{-3mm}
 \end{figure}
 
-In several cases, the traditional notions of real-time software do not always apply anymore: many applications are too complex and variable, yet not critical enough for a rigorous worst-case execution-time analysis and verification.
-Consider a modern mobile phone. It has to keep several background processes running for the normal functioning of the phone, while being used for high-quality video playback. If then, a high-performance request 
-gets scheduled, e.g., from a bluetooth device which wants to do simultaneous location and mapping using the phone, it would be ideal to keep the same performance for the other tasks, without changing the user experience.
+In several cases, the traditional notions of real-time software do not apply anymore: many applications are too complex and variable, yet not critical enough for a rigorous worst-case execution-time analysis and verification.
+Consider a modern mobile phone.
+It has to keep several background processes running for the normal functioning of the phone, while being used for high-quality video playback.
+If then, a high-performance request gets scheduled, e.g., from a Bluetooth device which wants to do simultaneous location and mapping using the phone, it would be ideal to keep the same performance for the other tasks, without changing the user experience.
 To ensure this, the allocation of resources might need to be adapted dynamically, while keeping the performance equal.
 We need approaches that ensure an execution that is predictable and efficient on average, even in the presence of dynamic changes in the system's load.
 
-A large body of research has been dedicated to programming applications for these modern embedded systems~\cite{eker2003taming,thiele2007mapping,maps08,pimentel2006systematic,nikolov2008daedalus}. Common approaches structure the application in an abstract way, and can thus make
-decisions based on these abstract models of computation. Usually: how to partition the application code, and where and how to schedule this partitioned code. The ``where'' question is sometimes also called \emph{mapping}.
+A large body of research has been dedicated to programming applications for these modern embedded systems~\cite{eker2003taming,thiele2007mapping,maps08,pimentel2006systematic,nikolov2008daedalus}.
 In particular, it is a common practice to use static mapping and scheduling strategies at compile-time to obtain predictable outcomes~\cite{bekooij2004predictable}.
-
 However, flows considering static resource allocation and concentrating on a single application struggle when dealing with multiple applications.
 The estimated performance of an application does not consider other applications that will compete for system resources.
 This leads to significantly worse and less predictable performance when, at run-time, this isolated view of the application does not hold anymore.
-To avoid contention in the communication, hardware support like Network-on-Chip technologies  
-or mechanisms at the hardware level to ensure isolation and predictable communication patterns between tasks~\cite{hansson2009compsoc,kumar2008analyzing} are required. 
-These concepts, along the lines with the concept of precision timed (PRET) machines~\cite{edwards2007case}, require very specific hardware, not all of which has been embraced by chip manufacturers yet.
+To avoid contention in the communication, hardware support is required.
+This can mean Network-on-Chip technologies or more dedicated mechanisms~\cite{hansson2009compsoc,kumar2008analyzing} to ensure isolation and predictable communication patterns between tasks. 
+These concepts, along the lines with the concept of precision timed (PRET) machines~\cite{edwards2007case}, require very specific hardware, not all of which has been embraced by mainstream chip manufacturers yet.
 
-We can leverage the same mathematical structure of symmetries to deal with these issues. Instead of considering only one mapping out of a whole equivalence class in the desgin-space exploration at compile-time, we can leverage the equivalence class at run-time.
-In this section we present a novel approach to keep applications in their isolated view at the software level, obtaining reliable performance in dynamic multi-application scenarios.
+We can leverage the same mathematical structure of symmetries to deal with these issues.
+Instead of considering only one mapping out of a whole equivalence class in the desgin-space exploration at compile-time, we can leverage the equivalence class at run-time.
+In the following we present a novel approach to keep applications in their isolated view at the software level, obtaining reliable performance in dynamic multi-application scenarios.
 While the methods should produce the best results on precision-timed machines, our implementation also works on off-the-shelf heterogeneous multi-processor system-on-chips (MPSoCs) and is compatible with Linux.
 We call our approach the \textbf{T}ransitive \textbf{E}fficient \textbf{T}emplate \textbf{R}un-t\textbf{i}me \textbf{S}ystem (TETRiS).
 
-Figure~\ref{fig:tetris_idea} summarizes the idea of the TETRiS approach. It uses near-optimal static mappings for the isolated applications, as depicted
-on the upper side of Figure~\ref{fig:tetris_idea}. Then, it revolves around an innovative strategy for mapping multiple applications by 
-identifying and selecting mappings with equivalent performance properties. By using the mathematical structure from the symmetries, it can automatically and precisely identify, at compile-time, classes of mappings that will have the same performance on a system.
-Figure~\ref{fig:tetris_idea} shows what would happen when using no strategy at all, which results in a very
-inefficient resource distribution, an unpredictable redistribution, as would probably be computed, e.g., by the operating system's scheduler (CFS, the Completely Fair Scheduler, in the case of Linux), and TETRiS, where the structure of the 
-mapping is preserved. Since our method leverages the structure of the architecture only, it is agnostic to the mapping strategy and its objectives. By using a strategic precomputation step, this can be done with almost no overhead at run-time. 
+Figure~\ref{fig:tetris_idea} summarizes the idea of the TETRiS approach.
+It uses near-optimal static mappings for the isolated applications, as depicted on the upper side of Figure~\ref{fig:tetris_idea}.
+To execute multiple applications with a given near-optical mapping, a strategy is required to combine the mappings in a configuration.
+Figure~\ref{fig:tetris_idea} shows what would happen when using no strategy at all, which results in a very inefficient resource distribution.
+It also depicts an unpredictable redistribution, as would probably be computed, e.g., by the operating system's scheduler (CFS, the Completely Fair Scheduler, in the case of Linux).
+Finally, the figure depicts our approach, TETRiS, where the structure of the mapping is preserved.
+By using the mathematical structure from the symmetries, it can automatically and precisely identify, at compile-time, classes of mappings that will have the same performance on a system.
+Since our method leverages the structure of the architecture only, it is agnostic to the mapping strategy and its objectives.
+By using a strategic precomputation step, this can be done with almost no overhead at run-time. 
 
-We evaluate the TETRiS approach by embedding it into a state-of-the art commercial compiler for multicore systems, SLX~\cite{slx}.
-We use it then to execute multiple applications from the signal processing and multimedia domains on a modern heterogeneous architecture.
+We evaluate TETRiS approach in an implementation using SLX, and executing it on the Hardkernel Odroid XU3, a modern off-the-shelf heterogeneous multicore system.
+The system features an Exynos~5422 big.LITTLE chip with four Cortex-A15 cores and four Cortex-A7. 
+We used two different applications for benchmarks, AF, a band-pass filter for stereo files, and MIMO, a multiple-input multiple-output orthogonal frequency-division multiplexer.
+For our benchmarks we measured the wall-clock time, which is the time as (humanly) perceived from start to finish.
+%The energy was measured by accessing the on-board energy sensors featured on the Odroid XU3.
+%These INA-231 sensors are connected via the I2C bus and measure the energy at the voltage regulators of individual components.
+%They provide detailed energy data for the big cluster, little cluster, memory and GPU of the system, sampled at \unit[10]{Hz}.
 
-\subsection{Mapping Algorithms}
-The approaches we have outlined so far assume an existing algorithm for mapping and improve it. However, the mathematical structure of the problem can also be leveraged to improve 
-\subsubsection{Comparing Algorithms}
-%The need for abstract models of architecture
-%Metaheuristics > Heuristics, problem: time!
-\subsubsection{Design centering}
- %Robust mappings
+ \begin{figure}
+ 	\centering
+ 	\includegraphics[width=.48\textwidth]{figures/wall_af_mimo.pdf} 
+ 	%	\vspace{-5mm}
+ 	\caption{A comparison of different strategies for executing multiple applications.}
+ 	\label{fig:tetris_eval}
+ 		\vspace{-3mm}
+ \end{figure}
 
-\section{Planned Work}
+Figure~\ref{fig:tetris_eval} shows the comparison of different strategies for combining mappings. The first, CFS, lets the Linux scheduler freely decide the scheduling of processes to cores. 
+The strategy marked with SLX M. uses mappings obtained with SLX and the TETRiS to execute equivalent mappings for executing the different applications in parallel. 
+Finally, the C. Pin. strategy uses a mixture of both, by pinning applications only to the cores selected by the equivalent mappings for TETRiS, but letting Linux schedule the processes completely within the constrains of these cores.
+The figure shows the box plot for $50$ executions of the experiment, where two instances of the AF benchmark run concurrently with two instances of MIMO. 
+It shows how TETRiS can effectively preserve the properties of mappings and produce more reliable and predictable execution, even in an environment like Linux.
+Moreover, while the average execution time of the dynamic schedulers is better, the worst case execution time in the experiments was worst for both strategies, CFS and C. Pin, compared to SLX M. 
 
-In this section we will propose diverse options of other mathematical structures in software synthesis that can be explored, or ways to leverage the ones identified already.
+%\subsection{Mapping Algorithms}
+%The approaches we have outlined so far assume an existing algorithm for mapping and improve it. However, the mathematical structure of the problem can also be leveraged to improve 
+%\subsubsection{Comparing Algorithms}
+%%The need for abstract models of architecture
+%%Metaheuristics > Heuristics, problem: time!
+%\subsubsection{Design centering}
+ %%Robust mappings
+
+\section{Future Work}
+\label{sec:future}
+
+While previous work already illustrates how mathematical structure can be effectively leveraged and exploited for improving software synthesis, there are several additional structures in software synthesis and promising ways to further improve these methods.
+In this section we propose diverse options of other mathematical structures in software synthesis that can be explored, or ways to leverage the ones identified already.
 
 \subsection{Application Graphs}
 
@@ -347,9 +406,9 @@ We are currently working on \"Yauhau, an engine that transforms dataflow graphs 
 \subsubsection{Graph semantics}
 The KPN semantics are usually implemented using the Kahn-MacQueen execution model~\cite{kahnmacqueen}. This model uses blocking reads and writes on communication channels in order to ensure a deterministic execution.
 However, the semantics as defined by Kahn~\cite{kahn74} do not require these blocking writes and reads. A model with a non-deterministic execution order, which nevertheless ensures the ordering of channel tokens is thus also compatible with the KPN semantics.
-This ``MacQueen Gap'' can be thus leveraged to extract instances of data-parallelism in Kahn Process Networks.
+This ``MacQueen Gap'' can be thus leveraged to efficiently execute instances of data-parallelism in Kahn Process Networks.
 
-\subsubsection{Graph Symmetries}
+\subsubsection{Application Symmetries}
 As explained in Section~\ref{sec:symmetries}, symmetries at the application (graph) level can be leveraged for mapping just as those for the architecture.
 While determining the symmetries for the architecture is straightforward from the architecture graph, the same does not hold for the application.
 In order to determine if a graph automorphism of the application graph is indeed a symmetry in the execution, the semantics of the program have to remain unchanged by it. 
@@ -379,7 +438,7 @@ This is done through execution traces. Traces record different events throughout
 
 \subsubsection{Multiple Traces}
 In order to deal with the dynamic behavior of applications, the behavior of different executions of a single application has to be captured and analyzed.
-This includes understanding commonalities of the execution behavior of an application to all inputs, as well as potential differences that might be input-dependent.
+This includes understanding those parts of the execution behavior of an application that are common to all inputs, as well as potential differences that might be input-dependent.
 This can be directly translated into the language of traces.
 For a deterministic model of computation, there is a one-to-one correspondence from input stimuli to execution traces.
 Thus, analyzing the different possible execution behaviors is tantamount to an analysis framework for multiple traces.
@@ -393,6 +452,16 @@ In fact, we believe that in most cases, there should be a very limited set of po
 Similarly, in any deterministic model of computation, a trace itself only depends on the application description and the input data set. This very clearly gives bounds on the Kolgomorov Complexity of traces, which favors the hypothesis.
 Thus, we believe if we can identify the relationship between the applications and the structure of its traces, we could find ways of describing traces in a compact and efficient fashion. 
 This would have direct effects in the usefulness of all methods which are based on trace-analysis, which includes most state-of-the-art heuristics in the field of software synthesis.
+
+
+ \begin{figure*}
+ 	\centering
+ 	\includegraphics[width=.76\textwidth]{figures/gantt.png} 
+ 	%	\vspace{-5mm}
+ 	\caption{A Gantt Chart of the Proposed Work Plan.}
+ 	\label{fig:gantt}
+ 		\vspace{-3mm}
+ \end{figure*}
 
 \subsubsection{Synthetic Traces}
 In order to evaluate the efficacy of methods, as well as to apply learning-based methods, the behavior of many applications in different scenarios is required. 
@@ -428,13 +497,23 @@ In order to deal with this, the graph structures of applications and architectur
 We plan to utilize the structure described in this exposé to restrict search algorithms to find mappings with good spatial qualities in their resource utilization. This will be useful for increasing security and reliability by restricting or avoid contention on communication subsystems,
 as well as an efficient resource utilization to leverage a single architecture for executing different applications dynamically.
 
-\section{Timetable/Workplan}
+\section{Workplan}
+\label{sec:visit}
+
+While the general methodology for this thesis has already been identified in previous work, several of the additional possible structures should be identified and we should strive to leverage them. This work is planned mostly in co-operation with colleagues in the group. Thereby, my principal task is to identify and describe the mathematical structure and propose methods to leverage it.
+The concrete methods should be developed in unison with colleagues who better know the details and other the engineering aspects of a particular part of the problem. However, this allows concurrent work on several sub-projects from those described in the previous section.
+
+Figure~\ref{fig:gantt} shows a Gantt chart of the proposed work plan. It starts with the projects I am currently working on, namely on the transformations and semantics. Both projects show promising results and we finish evaluating them, and then write up and publish them.
+Continuing with the work on traces after finishing with graph semantics, I would start with synthetic traces, in order to have data to test the methods of the other projects. Then continue with multiple traces and trace compaction, which will probably benefit from the insights of understanding multiple traces.
+In the field of mapping algorithms and representations, some of the present ideas have to be refined and implemented, but this can begin starting next year. Since we have previous work with design centering~\cite{hempel2017robust}, we would continue by implementing the methods there first and proceed to use them to generate compact mappings and improve genetic algorithms.
+Work on symmetries, both new work concerning application symmetries, as well as continued work on the framework presented in this exposé will be subject of the time after the other projects mentioned. Similarly work formalizing models of architecture. Finally, six months have been allocated to wrap up all projects, and write a monolithic dissertation using all insight and approaches gained during the first year and a half.
+
 
 
 %\section{Related Work}
 
 
-\section{Conclusions} 
+%\section{Conclusions} 
 %\bibliographystyle{ACM-Reference-Format}
 \bibliographystyle{abbrv}
 \bibliography{expose} 
