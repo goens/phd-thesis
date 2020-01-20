@@ -9,6 +9,8 @@ LATEX_PROJECT = 'thesis'
 # Default target.
 DEFAULT_TARGET = 'dvi2pdf'
 
+
+
 # --- Things below should mostly not need touching. ---
 # Some rather fixed configurations.
 
@@ -20,6 +22,8 @@ FILE_EXTENSIONS = {'eps': '.eps',
                    'pdf': '.pdf',
                    'png': '.png',
                    'jpg': '.jpg',
+                   'tikz': '.tex',
+                   'R' : '.R',
                    'gnuplot': '.gnuplot'}
 
 MAKEINDEX_EXTENSIONS = ['.glg', '.glo', '.gls']

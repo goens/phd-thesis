@@ -36,14 +36,15 @@ class LatexBuilder(object):
         self.figures = {'eps': [],
                         'pdf': [],
                         'png': [],
+                        'R' : [],
                         'jpg': [],
                         'gnuplot': []}
 
         self._get_chapters()
-        self._get_chapter_configs()
+        #self._get_chapter_configs()
         #self._collect_figures_from_configs()
         self._collect_figures_from_dirs()
-        
+
 
     def _get_chapters(self):
         """Colect chapter names."""
@@ -51,8 +52,8 @@ class LatexBuilder(object):
                                       '*.tex')
         self.chapters = [os.path.split(x)[-1][:-4]
                          for x in Glob(chapter_finder, strings=True)]
-    
-    
+
+
     def _get_chapter_configs(self):
         """Load the chapter config modules."""
         import_list = ['%s_config' % x for x in self.chapters]
@@ -63,8 +64,8 @@ class LatexBuilder(object):
         for item in dir(chapter_modules):
             if item.endswith('_config'):
                 self.chapter_configs[item[:-7]] = getattr(chapter_modules, item)
-    
-    
+
+
     def build_config(self):
         """Configure the two build targets for DVI and PDF output."""
         self.dvi_output = env.DVI(source=self.latex_project + '.tex',
@@ -76,7 +77,7 @@ class LatexBuilder(object):
                                 target=self.latex_project + '.ps')
         env.Alias('ps', self.latex_project + '.ps')
         env.Clean(self.ps_output, self.makeindex_file_list)
-        
+
         self.pdf_output = env.PDF(source=self.latex_project + '.tex',
                                   target=self.latex_project + '.pdf')
         env.Alias('pdf', self.latex_project + '.pdf')
@@ -88,9 +89,9 @@ class LatexBuilder(object):
         env.Clean(self.dvi_output, self.makeindex_file_list)
         env.Clean(self.dvi2pdf_output, self.makeindex_file_list)
 
-        
+
         env.Default(build_config.DEFAULT_TARGET)
-    
+
 
     def _collect_figures_from_configs(self):
         """Find all figures in the modules and add them to my list."""
@@ -118,15 +119,14 @@ class LatexBuilder(object):
         found_files = [x[x.index(os.sep) + 1:-length_extension]
                        for x in found_files]
         return found_files
-    
-    
+
+
     def _collect_figures_from_dirs(self):
         """Find all figures in the modules and add them to my list."""
-        for chapter in self.chapters:
-            for extension in ['eps', 'pdf', 'png', 'jpg', 'gnuplot']:
-                new_files = self._find_files(chapter,
-                                             build_config.FILE_EXTENSIONS[extension])
-                self.figures[extension].extend(new_files)
+        for extension in ['eps', 'pdf', 'png', 'jpg', 'gnuplot', 'R']:
+            new_files = self._find_files('src',
+                                         build_config.FILE_EXTENSIONS[extension])
+            self.figures[extension].extend(new_files)
 
 
     def _build_gnuplot(self, gnuplot_figures):
@@ -188,10 +188,21 @@ class LatexBuilder(object):
             env.Eps2pdf(pdf_file, eps_file)
             env.Depends(self.pdf_output, pdf_file)
 
+    def _build_R(self, R_figures):
+        """Build R targets."""
+        print("building R figures: %s" % str(R_figures))
+        for item in R_figures:
+            R_script_file = os.path.join(build_config.IMAGES_DIRECTORY,
+                                    item + build_config.FILE_EXTENSIONS['R'])
+            tikz_file = os.path.join(build_config.GENERATED_DIRECTORY,
+                                    item + build_config.FILE_EXTENSIONS['tikz'])
+            env.Rscript(tikz_file,R_script_file)
+            env.Depends(self.dvi_output, R_script_file)
 
     def build_figures(self):
         """Build all figures according to dependencies."""
         self._build_gnuplot(self.figures['gnuplot'])
+        self._build_R(self.figures['R'])
         self._build_png(self.figures['png'])
         self._build_jpg(self.figures['jpg'])
         self._build_pdf(self.figures['pdf'])
@@ -202,9 +213,10 @@ def main():
     """Do the magic of building the LaTeX document."""
     # Set the number of maximum LaTeX retries to 4, as we need it here.
     env['LATEXRETRIES'] = 4
+    os.mkdir(build_config.GENERATED_DIRECTORY)
     builder = LatexBuilder(build_config.LATEX_PROJECT)
-    builder.build_config()
     builder.build_figures()
+    builder.build_config()
 
 
 # Make it so!
