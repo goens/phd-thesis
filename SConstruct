@@ -190,12 +190,11 @@ class LatexBuilder(object):
 
     def _build_R(self, R_figures):
         """Build R targets."""
-        print("building R figures: %s" % str(R_figures))
         for item in R_figures:
             R_script_file = os.path.join(build_config.IMAGES_DIRECTORY,
                                     item + build_config.FILE_EXTENSIONS['R'])
             tikz_file = os.path.join(build_config.GENERATED_DIRECTORY,
-                                    item + build_config.FILE_EXTENSIONS['tikz'])
+                                    os.path.basename(item) + build_config.FILE_EXTENSIONS['tikz'])
             env.Rscript(tikz_file,R_script_file)
             env.Depends(self.dvi_output, R_script_file)
 
@@ -213,7 +212,8 @@ def main():
     """Do the magic of building the LaTeX document."""
     # Set the number of maximum LaTeX retries to 4, as we need it here.
     env['LATEXRETRIES'] = 4
-    os.mkdir(build_config.GENERATED_DIRECTORY)
+    if not os.path.exists(build_config.GENERATED_DIRECTORY):
+        os.mkdir(build_config.GENERATED_DIRECTORY)
     builder = LatexBuilder(build_config.LATEX_PROJECT)
     builder.build_figures()
     builder.build_config()

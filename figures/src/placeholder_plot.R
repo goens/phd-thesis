@@ -1,0 +1,5 @@
+library(tidyverse)
+library(tikzDevice)
+tikz("generated/placeholder_plot.tex")
+print(ggplot(data = mpg) + geom_point( mapping = aes(x = hwy, y = displ)))
+dev.off()
