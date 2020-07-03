@@ -1,7 +1,7 @@
 \documentclass{report}
 
 \input{tex/preamble}
-\title{Leveraging Mathematical Structure in Software Synthesis}
+\title{Leveraging Mathematical Structure in Software Synthesis (how to include part II?)}
 \author{Andr\'{e}s Goens}
 \begin{document}
 \date{}
@@ -15,37 +15,45 @@
 \chapter{Introduction}
 \input{tex/intro/introduction.tex}
 
-\part{Traditional Software Synthesis}
+\part{Dataflow-based Software Synthesis(?)}
 \input{tex/intro/traditional.tex}
-\chapter{Mappings}
+\chapter{Mapping KPNs to Heterogenous MPSoCs}
 \input{tex/mappings/intro.tex}
 \section{Background}
 \input{tex/mappings/background.tex}
 \section{Simulating Mappings}
 \input{tex/mappings/simulating.tex}
+
+\chapter{Mathematical Structures in Mappings}
 \section{Symmetries}
 \input{tex/mappings/symmetries.tex} %IESS15
 \section{Metric Spaces}
 \input{tex/mappings/metric.tex} %mcsoc18 + new stuff
 \section{Representations}
-\input{tex/mappings/representations.tex}
+\input{tex/mappings/representations.tex} %mcsoc18 
 %\section{Dataflow}
 %\input{tex/mappings/dataflow.tex}
 
-\chapter{Applications}
+\chapter{Compile-Time Applications}
 \input{tex/apps_traditional/intro.tex}
-\section{Design Space Exploration}
-\input{tex/apps_traditional/dse.tex} %taco, mcsoc18
 \section{Compact Mappings}
 \input{tex/apps_traditional/compact.tex} %samos19
-\section{TETRiS}
-\input{tex/apps_traditional/tetris.tex} %scopes17_tetris + new
 \section{Design Centering}
 \input{tex/apps_traditional/dc.tex} %scopes17_dc + new
 \section{Genetic Algorithms}
 \input{tex/apps_traditional/genetic.tex} %mcsoc16 + new
+\section{Design Space Exploration}
+\input{tex/apps_traditional/dse.tex} %taco, mcsoc18
+
+\chapter{Other Applications}
+\input{tex/apps_traditional/other_apps_intro.tex}
+\section{Run-time applications: TETRiS}
+\input{tex/apps_traditional/tetris.tex} %scopes17_tetris + new
 \section{Memory Allocation}
 \input{tex/apps_traditional/mem.tex} %date14,jsa16,date20_rt
+
+\chapter{Conclusions}
+\input{tex/mappings/conclusions.tex}
 
 \chapter{Related Work}
 \input{tex/related/traditional.tex}
@@ -54,27 +62,32 @@
 \part{Expanded Semantics (IoT, CPS, etc)}
 \input{tex/intro/expanded_semantics.tex}
 
-\chapter{semantics}
+\chapter{Models of Computation}
 \input{tex/semantics/intro.tex}
-\section{Models of Computation}
+\section{An overview of Models of Computation}
 \input{tex/semantics/moc.tex}
-\section{MacQueen Gap}
+\section{Extending Semantics: The MacQueen Gap} %maybe use like a motivational example for part
 \input{tex/semantics/macqueen.tex} %parma_ditam, cgo_src (should I move this to applications?)
-\section{ohua/transformations?}
+
+\chapter{Language-Level Transformations}
+\section{Ohua}
 \input{tex/semantics/ohua.tex} 
+\section{yauhau}
+\input{tex/apps_semantics/yauhau.tex} %cc_18
 \section{smap?}
 \input{tex/semantics/smap.tex}
+
+
+\chapter{Novel Semantics}
+\input{tex/apps_semantics/intro.tex}
 \section{reactors}
 \input{tex/semantics/reactors.tex} %dac19,cyphy
-
-\chapter{Applications}
-\input{tex/apps_semantics/intro.tex}
 \section{autosar}
 \input{tex/apps_semantics/autosar.tex} %dac20_autosar
 \section{5G}
 \input{tex/apps_semantics/5g.tex} %ict + new
-\section{yauhau}
-\input{tex/apps_semantics/yauhau.tex} %cc_18
+
+\chapter{Benchmarking and Beyond}
 \section{level graphs}
 \input{tex/apps_semantics/level_graphs.tex} %multiprog
 \section{MAPL + ML representations?}
