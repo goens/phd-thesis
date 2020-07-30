@@ -1,2 +1,22 @@
-Explain how simulation can work (TRM), etc. Introduce pykpn.
-\Blindtext[10]
+The behavior of systems is commonly captured in execution traces, which simply record the behavior of different entities (e.g. processes or actors) at different timepoints. This can be formally captured in a monoid structure of (Mazurkiewicz) traces or, equivalently, histories~\cite{bookoftraces}. Traces are useful to understand the behavior of systems~\cite{vampir} and are common in many domains. However, for systems that are non-deterministic, (by definition) the behavior of the system does not only depend on the input. This can make designing~\cite{lee_problem_with_threads} and debugging~\cite{murillo}. In cyber-physical-sytems or, more generally, reactive systems in the sense of Harel and Pnueli~\cite{harel_pnueli_reactive}, input from the physical world might come in a non-deterministic fashion. The problem of capturing the behavior of such a system is even more complex when the system is distributed~\cite{shaver_phdthesis}. 
+
+Kahn Process Networks are deterministic, as are all the dataflow models that can be embedded as KPNs.
+This means that the behavior of a KPN application depends only on the input to the network, not on the mapping and scheduling or related execution details.
+Thus, their behavior can be captured by a (Mazurkiewicz) trace.
+In particular, this permits to recrate their behavior in a fashion that is independent of the mapping~\cite{find_proper_references}.
+By ``replaying'' the trace, i.e. simulating the execution of a process for every input in the trace, a discrete-event simulator can sucesfully simulate the execution of a KPN, since the tooken sequence is guaranteed to be identical given identical inputs. In particular, this allows us to do design-space exploration.
+
+\subsection{Mocasin}
+
+In this thesis we will use \textbf{MoCASin}, a tool for the \textbf{M}odel-\textbf{o}f-\textbf{C}omputation-based \textbf{A}nalysis and \textbf{Si}mulatio\textbf{n} of applications. This tool, formerly known as pykpn~\cite{goens_mcsoc18}, has been developed as part of a collaborative effort between multiple researchers at the Chair for Compiler Construction at TU Dresden. Many concepts introduced in this thesis have been implemented and tested using MoCASin. A central part of MoCASin is a discrete-event simulator that uses the principles outlined above to simulate KPN applications based on their traces (as well as other models of computation). This simulation core is necessary to design and test many of the concepts of this thesis. The rest of this section will explain the basics of the simulation and the concepts of MoCASin required for the rest of this thesis.
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.55\textwidth}{!}{\input{figures/placeholder.tex}}
+	\caption{Simulating KPN Applications in MoCASin.}
+	\label{fig:mocasin_kpn_simulation}
+\end{figure}
+
+Figure~\ref{fig:mocasin_kpn_simulation} depicts the basic flow of simulating KPN applications in MoCASin. In general, simulating a KPN requires four inputs, as explained in Section~\ref{sec:mappings_background}: the KPN graph, a platform description, execution traces and a mapping. Instead of a concrete trace, MoCASin expects a trace generator, which can generate the trace on the fly: this is useful e.g. for non-deterministic models computation, but for KPNs the two are equvialent. A mapping, while required for simulation, does not need to be provided: it can be calculated in a design-space exploration. This is not surprising, since a significant part of Part I of this thesis concerns itself with finding good mappings efficiently.
+
+TODO: finish explanation, add figure.
