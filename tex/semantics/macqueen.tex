@@ -1,1 +1,27 @@
-\Blindtext[15]
+The \ac{KPN} model was defined by Gilles Kahn in 1974~\cite{kahn74}. While in this paper he motivated examples of such networks could we defined, the semantics of a concrete language to were only postulated by Kahn with MacQueen in 1976~\cite{macqueen}. However, there is a gap in the semantics of formally defined networks (\ac{KPN}) and the concrete networks that can be defined by the Kahn-MacQueen blocking-reads execution semantics: These concrete semantics are not as general as the formal model allows them to be. More interestingly, there are networks which fall under the \ac{KPN} formalism that cannot be expressed using the Kahn-MacQueen blocking-reads semantics. We call this gap in the semantics ``the MacQueen gap'', as the gap between the formal model by Kahn and the concrete execution semantics by Kahn and MacQueen~\cite{lee_matsikoudis_semantics,khasanov_parmaditam18}. 
+
+In this Section we explore the MacQueen gap by showing the difference is between the two formalisms, and see how we can exploit it. The theoretical advantage from this semantics gap is the contribution of this thesis with regards to this subject. To better understand it, however, we also discuss the results of a practical implementation of a library implemented by Khasanov~\cite{khasanov_parmaditam18} that exploits this gap in the semantics. 
+
+\subsection{The Kahn and Kahn-MacQueen Semantics}
+
+Recall the definition of a \ac{KPN} from~\ref{sec:mocs}.
+A Kahn Process Network is a directed graph $K = (V,E)$ where the edges $V$ are Scott-continuous~\cite{scott_theory_of_computation} functions $f \in V$ mapping from the set of sequences from the input channels $S_{i_1} \times S_{i_k}$ to the set of output channels $S_{o_1} \times S_{o_l}$, and the edges represent the corresponding sequence domains.
+
+Conversely, the Kahn-MacQueen blocking reads semantics are defined as follows: 
+\todo{describe}
+\begin{theorem}
+\label{thm:macqueen}
+Every network defined this way is a Kahn Process Network.
+\begin{proof}
+\todo{prove}
+\end{proof}
+\end{theorem}
+
+\subsection{The MacQueen Gap}
+The crucial observation is that the converse of Theorem~\ref{thm:macqueen} is not true. There are \acp{KPN} that are not expressable as a Kahn-MacQueen network. To see this, consider the network depicted in Figure~\ref{fig:macqueen_gap_example}.
+\todo{write up example}
+
+\subsection{Exploting the Gap}
+The example in Figure~\ref{fig:macqueen_gap_example} readily suggests how this gap could be exploited. In general, the Scott continuity of \acp{KPN} requires the arrival of tokens to be determistic, but it does not require the execution of independent nodes to follow the same order as the tokens, as required by the Kahn-MacQueen blocking-read semantics. Thus, as suggested by the example, the MacQueen gap can be exploited to asynchronously execute multiple workers in a data-parallel fashion.
+
+\subsection{An implementation by Khasanov}
