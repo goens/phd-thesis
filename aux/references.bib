@@ -1,0 +1,46 @@
+@phdthesis{shaver_phdthesis,
+    Author = {Shaver, Christopher},
+    Title = {On the Representation of Distributed Behavior},
+    School = {EECS Department, University of California, Berkeley},
+    Year = {2016},
+    Month = {Dec},
+    URL = {http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-206.html},
+    Number = {UCB/EECS-2016-206},
+    Abstract = {  Technologies pervasive today have enabled a plethora of diverse networked devices to proliferate in the market. Among these devices are sensors, wearables, mobile devices, and many other embedded systems, in addition to conventional computers. This diverse tapestry of networked devices, often termed the Internet of Things (IoT) and the Swarm, has the potential to serve as a platform for a new breed of sophisticated distributed applications that leverage the ubiquity, concurrency, and flexibility of these devices, often to integrate the similarly diverse information to which these devices have access. These kinds of applications, which we are calling Highly Dynamic Distributed Applications (HDDA), are particularly important in the domain of automated environments such as smart homes, buildings, and even cities.
+  
+  In contrast with the kind of concurrent computation that can be represented with petri nets, synchronous systems, and other rigid models of concurrent computation, applications running on networks of devices such as the IoT demand models that are more dynamic, semantically heterogeneous, and composable. Because these devices are more than just peripherals to central servers, themselves capable of significant amounts of computation, HDDAs can involve the establishment of direct connections between these devices to share and process information. From the perspective of the platform this will look like an ever-evolving network of dynamic configuration and communication that may have no clear sense of a center, or even a central point of observation. Computation in this fashion begins to look less like a sequence of coherent states and more like a physical interaction in space.
+  
+  Designing and reasoning about these kinds of applications in a rigorous and scalable fashion will require the development of new programming language semantics, specification logics, verification methods, and synthesis algorithms. At the core of all of these components of a robust programming model will be a need for an appropriate mathematical representation of behavior, specifying precisely what happens in these spaces of devices during the execution of a HDDA. This behavioral representation must characterize an application in as much detail as is necessary, without having to introduce details regarding the realization of the execution on a particular platform, bound to a specific architecture of concrete process and communication relationships. This representation must also be itself as scalable, modular, and composable as the distributed computations it describes. 
+
+  The aim of this thesis is to identify the mathematical representation of behavior best fit to meet the challenges HDDAs pose to formal semantics and formal verification. To this end, this thesis proposes a new mathematical representation of concurrent computational behavior called an OEG, which generalizes, subsumes, or improves upon other representations of concurrent behavior such as Mazurkiewicz Traces, Event Structures, and Actor Event Diagrams. In contrast with many other representations of concurrent behavior, which are either graphs or partial orders, OEGs are, in essence, acyclic ported block diagrams. In these diagrams, each ported block represents an event and each connection between ports represents a direct dependency between events, while each port around a block represents the specific kind of information or influence consumed or produced in the event. OEGs have the advantage over other representations of concurrent behavior of being both modular and composable, as well as possessing a clear concept of hierarchy and abstraction.}
+}
+
+@incollection{harel_pnueli_reactive,
+  title={On the development of reactive systems},
+  author={Harel, David and Pnueli, Amir},
+  booktitle={Logics and models of concurrent systems},
+  pages={477--498},
+  year={1985},
+  publisher={Springer}
+}
+
+@techreport{kahn_macqueen,
+  TITLE = {{Coroutines and Networks of Parallel Processes}},
+  AUTHOR = {Kahn, Gilles and MacQueen, David},
+  URL = {https://hal.inria.fr/inria-00306565},
+  TYPE = {Research Report},
+  PAGES = {20},
+  YEAR = {1976},
+  PDF = {https://hal.inria.fr/inria-00306565/file/rr_iria202.pdf},
+  HAL_ID = {inria-00306565},
+  HAL_VERSION = {v1},
+}
+
+@article{lee_matsikoudis_semantics,
+  title={The semantics of dataflow with firing},
+  author={Lee, Edward A and Matsikoudis, Eleftherios},
+  journal={G. Huet, G. Plotkin, J.-J. L{\'e}vy, and Y. Bertot, editors, From Semantics to Computer Science: Essays in Honour of Gilles Kahn},
+  pages={71--94},
+  year={2009},
+  publisher={Citeseer}
+}

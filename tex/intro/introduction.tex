@@ -1,4 +1,33 @@
-\Blindtext[3]
+The last two decades have firmly established the multicore era. Modern computing systems are almost universally composed of multiple logical cores, and there is a clear trend of increasing both the number and the heterogeneity of these cores. This increasing complexity brings about an increasing challenge in taming it. Inspired by hardware design flows, a family of methods called software synthesis aims to bridge the ensuing (software) productivity gap by integrating knowledge of the application and target multicore architecture into the compilation process. The aim of this thesis is to identify and exploit structures in the different parts of this process to improve the methods.
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.55\textwidth}{!}{\input{figures/placeholder.tex}}
+	\caption{The multicore era.} %something like: https://www.karlrupp.net/wp-content/uploads/2015/06/40-years-processor-trend.png
+	\label{fig:multicore_era}
+\end{figure}
+
+
+%Multicore Era
+Both the execution frequency and the closely intertwined single-core processing speed of computing systems increased exponentially up until the early 2000s (cf. Figure~\ref{fig:multicore_era}), an empirical fact observed by Gordon Moore in 1965~\cite{moore}. A programmer writing a piece of C code in the early 1970s would automatically benefit from the increasing processing speeds. By recompiling her code for a processor $10 \times$ faster, she could expect her code also to run about $10 \times$ as fast.% Do I want to make this concrete (with Processor names?)
+
+Since the early 2000s, however, while tranistor size continue to decrease, the exponential frequency scaling has stopped. Instead, hardware designers resorted to develop microchips composed of multiple logical cores that can execute in parallel. Additionally, since different use-cases benefit from different computing core architectures, the inclusion of multiple chips has paved the way for heterogeneity. This has resulted in a multicore era of computing. Contemportary systems almost ubiqutiously consist of multicore chips, in many cases heterogeneous, which tremendously increases the system complexity. The trend is clear, the number of cores, heterogeneity and overall system complexity will only continue to increase.
+
+% Software Productivity gap: Software Synthesis
+Nowadays thus, a programmer writing a piece of (sequential) C code in the early 2000s cannot expect anywhere near a $100$-fold increase in performance today when she uses a microchip with $100 \times$ the number of transistors.
+At least not without fundamentally restructuring her code to exploit parallelism.
+More generally, the burden of maximally exploiting the hardware capabilities falls on the compiler and programmer, instead of coming automatically with the improvements in hardware.
+This includes difficult problems like expressing parallelism and dividing tasks between different physical cores. %todo: perhaps discuss expressing parallelism
+
+Software synthesis refers to a family of methods deviced precisely to help with this burden of fully exploiting the capabilities of modern multicores. At the core of these methods lies a shift in the programming model. Instead of the de-facto sequential, shared-memory model, programmers express the code in diverse \acp{MoC}. These models expose the structure of the computation in ways that permit a compiler to reason about its parallel execution, even in the prescence of heterogeneous hardware. Aided by abstract models of the target archicecture, we can design compilers for multicore systems that devise execution strategies specialized to the target architecture and applications. This can be realized for example by finding efficient mappings, i.e. allocations of computational and communication resources to the different parts of an application.
+
+% Exploiting Structure in Dataflow Software Synthesis: Part I
+The software synthesis process is centered around multiple formal constructs modeling the application and architectures, as well as decisions of the execution of the former on the latter, like mappings.
+These are all rich in (mathematical) structure. Architectures for example, even heterogeneous ones, exhibit a great deal of symmetry. Similarly, the space of mappings has locality properties, where some mappings are similar whereas others are to others. In this thesis we aim to identify and exploit these structures in different ways. The first part of this thesis does this with a concrete software synthesis flow, which models applications as \acp{KPN} and finds mappings of these to heterogeneous systems.
+
+% Other improvements changing the methods (Part II)
+While Software Synthesis refers to a family of methods, each concrete method has a corresponding choice of abstractions it uses. Instead of exploiting the structure of the given abstractions, in the second part of this thesis we explore ways in which we can improve upon software synthesis methods by changing the structure we use: be it the semantics of the model of computation, implicit language structures or even the benchmarks we evaluate to asses our methods.
+
 \begin{figure}[h]
 	\centering
    \resizebox{0.55\textwidth}{!}{\input{figures/placeholder.tex}}
