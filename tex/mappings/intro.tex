@@ -1,1 +1,7 @@
-\blindtext[2]
+The central concept in software synthesis as studied in this chapter is the concept of a \emph{mapping}\index{mapping}.
+In this chapter we will consider mappings and their general mathematical structure, whereas Chapter~\ref{chap:mapping_applications} will deal with concrete applications of this structure to improve different aspects of the software synthesis process.
+
+Intuitively, a mapping distributes a computation (and its corresponding data) to physical resources in a specific hardware.
+This can be done dynamically\index{mapping!dynamic}, for example as is the case with tasks scheduled by \acs{CFS} in a modern Linux-based operating system.
+Conversely, a \emph{static} mapping\index{mapping!static} as the one depicted in Figure~\ref{fig:mapping_idea} maps the computation and data statically, usually at compile time, to specific hardware resources.
+Finally, there are also \emph{hybrid} mappings \index{mapping!hybrid}, in which partial decisions are taken statically, but the final decision happens at compile-time. 

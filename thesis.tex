@@ -31,6 +31,7 @@
 \input{tex/mappings/dataflow.tex}
 
 \chapter{Applications}
+\label{chap:mapping_applications}
 \input{tex/apps_traditional/intro.tex}
 \section{Design Space Exploration}
 \input{tex/apps_traditional/dse.tex}
@@ -80,7 +81,17 @@
 \chapter{Conclusions} 
 \input{tex/conclusion.tex}
 
-\section*{Bibliography} 
-\section*{Index} 
-%\makeindex
+\bibliographystyle{abbrv}
+\bibliography{thesis}
+
+\chapter*{List of Acronyms}
+\begin{acronym}
+\input{tex/acronyms}
+\end{acronym}
+\clearpage
+
+\listoffigures
+
+\printindex
+
 \end{document}
