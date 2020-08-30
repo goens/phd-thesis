@@ -1,0 +1,46 @@
+\usetikzlibrary{arrows, automata}
+%inspired from: https://tex.stackexchange.com/questions/386345/directed-graph-example-in-tikz
+\begin{tikzpicture}[
+     > = stealth, % arrow head style
+     shorten > = 1pt, % don't touch arrow head to node
+     auto,
+     node distance = 2cm, % distance between nodes
+     semithick % line style
+ ]
+
+ \tikzstyle{every state}=[
+     draw = black,
+     thick,
+     fill = white,
+     minimum size = 4mm
+ ]
+ \tikzstyle{mybox} = [
+   very thick,
+   rectangle,
+   rounded corners,
+   inner sep=10pt,
+   inner ysep=20pt]
+
+ \node[state] (s1) {$s_1$};
+ \node[state] (f) [below right of=s1] {$f$};
+ \node[state] (s2) [below left of=f] {$s_2$};
+ \node[state] (k) [right of=f] {$k_1$};
+
+ \path[->] (s1) edge node {$i_1$}(f);
+ \path[->] (s2) edge node {$i_2$}(f);
+ \path[->] (f) edge node {$o_1$}(k);
+
+ \node[mybox] (defn) [right of=k, node distance = 4cm] {
+  \begin{minipage}{0.5\textwidth}
+   \begin{equation*}
+     f : S_{i_1} \times S_{i_2} \rightarrow S_{o_1}  
+   \end{equation*} 
+   \begin{equation*}
+     \begin{split}
+     f : (x,y) = ((x_1,\ldots,x_j),(y_1,\ldots,y_k))  \\
+     \mapsto (x_1+y_1,\ldots,x_{\min(j,k)}+y_{\min(j,k)})
+     \end{split}
+   \end{equation*}
+  \end{minipage}
+};
+\end{tikzpicture}

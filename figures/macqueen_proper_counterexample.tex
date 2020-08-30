@@ -1,0 +1,45 @@
+\usetikzlibrary{arrows, automata}
+%inspired from: https://tex.stackexchange.com/questions/386345/directed-graph-example-in-tikz
+\begin{tikzpicture}[
+     > = stealth, % arrow head style
+     shorten > = 1pt, % don't touch arrow head to node
+     auto,
+     node distance = 2cm, % distance between nodes
+     semithick % line style
+ ]
+
+ \tikzstyle{every state}=[
+     draw = black,
+     thick,
+     fill = white,
+     minimum size = 4mm
+ ]
+ \tikzstyle{mybox} = [
+   very thick,
+   rectangle,
+   rounded corners,
+   inner sep=10pt,
+   inner ysep=20pt]
+
+ \node[state] (s1) {$s_1$};
+ \node[state] (g) [below right of=s1] {$g$};
+ \node[state] (s2) [below left of=g] {$s_2$};
+ \node[state] (k1) [above right of=g] {$k_1$};
+ \node[state] (k2) [below right of=g] {$k_2$};
+
+ \path[->] (s1) edge node {$i_1$}(g);
+ \path[->] (s2) edge node {$i_2$}(g);
+ \path[->] (f) edge node {$o_1$}(k1);
+ \path[->] (f) edge node {$o_2$}(k2);
+
+ \node[mybox] (defn) [right of=k, node distance = 4cm] {
+  \begin{minipage}{0.5\textwidth}
+   \begin{equation*}
+     g : S_{i_1} \times S_{i_2} \rightarrow S_{o_1}  \times S_{o_2}
+   \end{equation*} 
+   \begin{equation*}
+     g : (x,y) = (y,x)
+   \end{equation*}
+  \end{minipage}
+};
+\end{tikzpicture}

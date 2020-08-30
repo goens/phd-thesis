@@ -1,0 +1,30 @@
+\usetikzlibrary{arrows, automata}
+%inspired from: https://tex.stackexchange.com/questions/386345/directed-graph-example-in-tikz
+\begin{tikzpicture}[
+     > = stealth, % arrow head style
+     shorten > = 1pt, % don't touch arrow head to node
+     auto,
+     node distance = 2cm, % distance between nodes
+     semithick % line style
+ ]
+
+ \tikzstyle{every state}=[
+     draw = black,
+     thick,
+     fill = white,
+     minimum size = 4mm
+ ]
+
+ \node[state] (src) {src};
+ \node[state] (wn) [below right of=src] {$w_n$};
+ \node[state] (wdots) [ight of=src] {$\ldots$};
+ \node[state] (w1) [above right of=src] {$w_1$};
+ \node[state] (sink) [right of=wdots] {sink};
+
+ \path[->] (src) edge node {}(w1);
+ \path[->] (src) edge node {}(wdots);
+ \path[->] (src) edge node {}(wn);
+ \path[->] (w1) edge node {}(sink);
+ \path[->] (wdots) edge node {}(sink);
+ \path[->] (wn) edge node {}(sink);
+\end{tikzpicture}
