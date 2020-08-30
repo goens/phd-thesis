@@ -1,4 +1,4 @@
-\usetikzlibrary{arrows, automata}
+\usetikzlibrary{arrows, topaths}
 %inspired from: https://tex.stackexchange.com/questions/386345/directed-graph-example-in-tikz
 \begin{tikzpicture}[
      > = stealth, % arrow head style
@@ -8,18 +8,25 @@
      semithick % line style
  ]
 
- \tikzstyle{every state}=[
+ \tikzstyle{process} = [
+     cicrle,
+     draw = black,
+     thick,
+     fill = white,
+     minimum size = 4mm
+ ]
+ \tikzstyle{dots} = [
      draw = black,
      thick,
      fill = white,
      minimum size = 4mm
  ]
 
- \node[state] (src) {src};
- \node[state] (wn) [below right of=src] {$w_n$};
- \node[state] (wdots) [ight of=src] {$\ldots$};
- \node[state] (w1) [above right of=src] {$w_1$};
- \node[state] (sink) [right of=wdots] {sink};
+ \node[process] (src) {src};
+ \node[dots] (wdots) [right of=src] {$\ldots$};
+ \node[process] (wn) [below of=wdots] {$w_n$};
+ \node[process] (w1) [above of =wdots] {$w_1$};
+ \node[process] (sink) [right of=wdots] {sink};
 
  \path[->] (src) edge node {}(w1);
  \path[->] (src) edge node {}(wdots);

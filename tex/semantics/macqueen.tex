@@ -63,14 +63,15 @@ Process F in I1,I2 out O1 ;
 }
 
 This implementation will block in Case 1 leaving unread data in channels, while it will execute normally in cases 2 and 3.
-This is because we (arbitrarily) choose to read $I1$ before $I2$.
-If we reverse this order, the implementation would block on Case 2 instead, leaving unread tokens in the channel $I1$.
+This is because we (arbitrarily) choose to read $i_1$ before $i_2$.
+If we reverse this order, the implementation would block on Case 2 instead, leaving unread tokens in the channel $i_1$.
 This is relevant if we consider the execution and communication times, since e.g. there is a finite read time required to read every channel. 
-Consider the Gantt-chart depicted in Figure~\ref{fig:macqueen_example_gantt}.
+Consider the Gantt-charts depicted in Figure~\ref{fig:macqueen_example_gantt}. They show how blocking when reading $i_1$ delays the whole execution, even if $i_2$ could be read.
+This is because the blocking-read semantics forces a deterministic ordering of reading tokens when executing, whereas the \ac{KPN} semantics only require the output to be deterministic, not the order of the computation itself.
 
 \begin{figure}[h]
 	%\centering
-   \resizebox{0.85\textwidth}{!}{\input{figures/macqueen_counterexample.tex}}
+   \resizebox{0.85\textwidth}{!}{\input{figures/macqueen_example_gantt.tex}}
 	\caption{Examples of Gantt Charts corresponding to implementations of the Kahn Function $f$.}
 	\label{fig:macqueen_example_gantt}
 \end{figure}
@@ -106,7 +107,6 @@ Unlike $f$, $g$ has a different behavior for every case:
 This process cannot be realized by a Kahn-MacQueen process with blocking reads. Assume there was such a process. Then, from the sequentiality of code, either $i_1$ or $i_2$ will be read first. Without loss of generality let us assume that $i_1$ is read first. Then for the input stream $(\epsilon,1)$ however, the process will block and will never output the $1$ from channel $i_2$, which yields the contradiction.
 
 
-
 \subsection{Exploting the Gap}
 We have seen in the previous section how there is a gap in the operational blocking-read semantics proposed by Kahn and MacQueen and the denotational \ac{KPN} semantics. While the counterexample from Figure~\ref{fig:macqueen_proper_counterexample} does not seem very useful, the gap in the operational nature shown in Figure~\ref{fig:macqueen_example_gantt} readily suggests how this gap could be exploited.
 In general, the Scott continuity of \acp{KPN} requires the arrival of tokens to be determistic, but it does not require the execution of independent nodes to follow the same order as the tokens, as required by the Kahn-MacQueen blocking-read semantics. Thus, as suggested by the example, the MacQueen gap can be exploited for asynchronous computation, as long as it does not break determinism.
@@ -115,9 +115,12 @@ This asynchronous execution can be used to execute multiple workers in a data-pa
 Figure~\ref{fig:data_parallel_kpn} shows an example of a network which does this.
 \begin{figure}[h]
 	%\centering
-   \resizebox{0.85\textwidth}{!}{\input{figures/data_parallel_kpn.tex}}
+   \resizebox{0.45\textwidth}{!}{\input{figures/data_parallel_kpn.tex}}
 	\caption{An example of data-parallelism exploiting the MacQueen gap.}
 	\label{fig:data_parallel_kpn}
 \end{figure}
 
-\subsection{An implementation by Khasanov}
+The worker processes $w_1, \ldots, w_n$ can exploit data parallelism by dividing a workload into different parts. This allows us to asynchronously execute the workloads, as long as we take care to preserve the order at the sink node. 
+We can achieve this by making it part of the logic of the channels. In joint work with R. Khasanov we proposed to exploit this gap and tested an implementation of this in the SLX framework which modified the FIFO libraries of nodes labeled as data-parallel to relax the deterministic semantics of the Kahn-MacQueen blocking-reads and allowed asynchronous execution of data-parallel workers while preserving the deterministic \ac{KPN} execution~\cite{khasanov_parmaditam18}. The implementation of this library is beyond the contribution of this thesis, which is limited to the theoretical part of identifying the semantics gap and ways of exploiting it.  
+
+\todo{Question: Should I nevertheless discuss some results?}
