@@ -1,7 +1,8 @@
 In this chapter we will explore the mathematical structure of symmetry in the software synthesis process. The
 \blindtext[2]
 
-The material in this section makes use of concepts in group theory and the theory of inverse semigroups. A brief introduction, to the level required by this chapter, can be fonud in Appendix~\ref{appendix:groups}.
+The material in this section makes use of concepts in group theory. A brief introduction, to the level required by this chapter, can be fonud in Appendix~\ref{appendix:groups}.
+
 
 \subsection{Architectures and Applications}
 \Blindtext[5]
@@ -11,3 +12,56 @@ The material in this section makes use of concepts in group theory and the theor
 
 \subsection{Orbits}
 \Blindtext[5]
+
+\subsection{Partial Symmetries}
+
+The symmetries we have considered so far can be considered as ``global'' symmetries: they are transformations of the complete structure (e.g. architecture, mapping).
+The intuitive notion of symmetry, however, is more general than this. What we consider as symmetry also inlcludes the relationship of as tructure to each parts.
+In particular, a symmetry can be local to a part of the structure, without being global. A general discussion of this can be found in~\cite{lawson_inverse_semigroups}, as well as a detailed exposition of the mathematical background of this section.
+
+We can see what we mean by local structures in the example depicted in Figure~\ref{fig:motivation_partial_symmetries}.
+It shows two \ac{NoC} architectures both with a regular mesh topology.
+The first one is a two-by-two mesh, the second one four-by-four.
+We can compare now the symmetries of both architectures intuitively, and see how these translate to the group-theoretic sense.
+The four-by-four mesh is larger, and has a sort of self-similarity: it can be thought of as composed of four copies of the two-by-two mesh arranged in a larger two-by-two mesh.
+Intuitively, thus, this four-by-four mesh has more symmetry.
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.55\textwidth}{!}{\input{figures/noc.tex}}
+	\caption{A comparison of the symmetries of two meshes.}
+	\label{fig:motivation_partial_symmetries}
+\end{figure}
+
+However, if we look at the group of automorphisms of the corresponding architecture graphs, we get a result that defies this intuition:
+both archtiectures have the same groups of symmetries!
+More precisely, their groups of automorphisms are isomorphic, they are dihederal groups on 4 points, $D_4$.
+More concretely, there are only 8  possible structure-preserving transformations acting on these two topologies, which are the rotations of $90^\circ,180^\circ,270^\circ,360^\circ = 0^\circ$ and the reflections among each of the axes (horizontal, vertical and both diagonals). We cannot, for example, divide the four-by-four mesh into a two-by-two mesh of two-by-two meshes, and rotate that larger two-by-two mesh by $90^\circ$ or one of the smaller ones by $90^\circ$. These two operations both work locally, if we ignore the rest of the structure, but do not preserve the whole structure of the mesh, as illustrated by Figure~\ref{fig:partial_symmetries_4x4}.
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.55\textwidth}{!}{\input{figures/placeholder.tex}}
+	\caption{Some partial symmetries of a 4x4 mesh.}
+	\label{fig:partial_symmetries_4x4}
+\end{figure}
+
+There are essentially two ways equvialent ways of formalizing this intuitive notion of local symmetries, inverse semigroups and ordered groupoids~\cite{lawson_inverse_semigroups}.
+We will consider the formalization using inverse semigroups, as it is conceptually simpler for computations, and mathematically equally as powerful.
+In the case of global symmetries there are concrete trasformations of architectures and mappings and corrpesponding abstract groups. For partial symmetries we will consider partial trasformations of mappings which we will model as partial permutations, and these partial permutations (transformations) have a corresponding abstract inverse semigroup.
+
+We start by defining partial functions and partial permutations.
+\begin{defn}
+Let X,Y be sets.
+A \emph{partial function} $f: X \rightarrow Y$ is a function from a subset of $X$ to a subset of $Y$.
+We denote the domain of by $\dom(f)$ the codomain of $f$ by $\cod(f)$.
+Thus, the partial function $f: X \rightarrow Y$ is a (total) function $f: \dom(f) \rightarrow \cod(f)$
+\end{defn}
+
+\begin{defn}
+Let $X$ be a set.
+A partial function $f: X \rightarrow X$ from $X$ to itself is called a \emph{partial permutation} if the (total) function $f: \dom(f) \rightarrow \cod(f)$ is a bijection between $\dom(f)$ and $\cod(f)$.
+\end{defn}
+
+We can think of partial functions thus as functions that are not defined everywhere, and partial permutations, acordingly, are not defined everywhere.
+For example, the partial permutation ...
+We can write this ...
