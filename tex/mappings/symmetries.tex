@@ -1,7 +1,7 @@
-In this chapter we will explore the mathematical structure of symmetry in the software synthesis process. The
+In this chapter we will explore the mathematical structure of symmetry in the software synthesis process, mostly the work published in ~\cite{goens_iess15,taco_symmetries,scopes17_tetris}.
 \blindtext[2]
 
-The material in this section makes use of concepts in group theory. A brief introduction, to the level required by this chapter, can be fonud in Appendix~\ref{appendix:groups}.
+The material in this section makes use of concepts in group theory. We assume the basic concepts as seen in any undergraduate course on group theory, with the definitions of groups, actions and orbits. A brief introduction, to the level required by this chapter, can be fonud in Appendix~\ref{appendix:groups}. 
 
 
 \subsection{Architectures and Applications}
@@ -11,6 +11,19 @@ The material in this section makes use of concepts in group theory. A brief intr
 \Blindtext[5]
 
 \subsection{Orbits} \Blindtext[5]
+
+\subsection{Calculating Symmetries}
+There branch of mathematics known as computational group theory deals with computational aspects of the theory of groups, which we have used here for formalizing the symmetries of applications, architectures and mappings. 
+An overview of the methods of computational group theory can be found in~\cite{serres} covering beyond the basics presented in this subsection.
+Here we will present only the methods necessary for the calculations required of applications to software synthesis.
+
+To leverage the symmetries explained in this theses for software synthesis, we need to methods to calculate the following:
+\begin{itemize}
+\item Given an architecture graph $A$, the group of symmetries $\Aut(A)$.
+\item Given a mapping $m : T \rightarrow A$ and the symmetry group $G := \Aut(T \rightarrow A)$, enumerate the orbit $Gm$.
+\item Given two mappings $m,m' : T \rightarrow A$ and the symmetry group $G := \Aut(T \rightarrow A)$, determine wether $m = gm'$ for a $g \in G$, i.e. if the two mappings are in the same orbit.
+\end{itemize}
+
 
 \subsection{Partial Symmetries}
 
@@ -44,7 +57,8 @@ More concretely, there are only 8  possible structure-preserving transformations
 	\label{fig:partial_symmetries_4x4}
 \end{figure}
 
-There are essentially two ways equvialent ways of formalizing this intuitive notion of local symmetries, inverse semigroups and ordered groupoids~\cite{lawson_inverse_semigroups}.
+For the mathematical formalization of this intuitive notion of local symmetries, in this section, we follow~\cite{lawson_inverse_semigroups}.
+There are essentially two ways equvialent ways of formalizing this intuitive notion of local symmetries, inverse semigroups and ordered groupoids.
 We will consider the formalization using inverse semigroups, as it is conceptually simpler for computations, and mathematically equally as powerful.
 In the case of global symmetries there are concrete trasformations of architectures and mappings and corrpesponding abstract groups. For partial symmetries we will consider partial trasformations of mappings which we will model as partial permutations, and these partial permutations (transformations) have a corresponding abstract inverse semigroup.
 
@@ -185,10 +199,11 @@ For mappings $m,m' : T \rigtharrow A$, the following statements are equvialent:
 \end{enumerate}
 \begin{proof}
 The implication $(1) \Rightarrow (2)$ follows directly from the definition of $\vaprhi$ and the action of $S \times G$. For the implication $(2) \Rightarrow (1)$, since $m$ and $m'$ are in the same s.c.c. of the orbit of $S \times G$, there exists an $x \in S \times G$ such that $m = x \cdot m'$. We can use the direct product structure of $S \times G$ to decompose $ x = fg$ for $f \in S, g \in G$. This means that m = fg \cdot m' = f \cdot (g \cdot m')$.
-Applying Lemma~\ref{lem:symmetry_to_iso} on $m$ and $g \cdot m'$ shows that $\vaprhi \circ g$ is an isomorphism.
+Applying Lemma~\ref{lem:symmetry_to_iso} on $m$ and $g \cdot m'$ shows that $\varphi \circ g$ is an isomorphism.
 \end{proof}
 \end{thm}
 
 \subsection{Calculating Semigroups of Symmetries}
 
-Now that we have seen how to describe partial symmetries, we can 
+Now that we have seen how to describe partial symmetries, we can proceed to explain how to calculate them.
+This subsection is a simplification of the methods of~\cite{standrews}, and our applications of it in joint work with S. Siccha and J. Castrillon~\cite{taco_symmetries}.
