@@ -16,7 +16,9 @@ print(
 ggplot(data=moore) +
   facet_grid(panel~., scale="free") + 
   geom_point(data = moore_transistors,mapping = aes(x=year,y=transistors,size = cores, color = frequency), stat='identity') +
+  geom_smooth(data = moore_transistors, se = FALSE, mapping = aes(x=year,y=transistors), method = 'lm', formula= y ~ x, color = 'grey') + 
   geom_point(data = moore_specint,mapping = aes(x=year,y=specint,size = cores, color = frequency), stat = 'identity') +
+  geom_smooth(data = moore_specint, se = FALSE, mapping = aes(x=year,y=specint), method = 'lm', formula= y ~ x, color = 'grey') + 
   scale_y_log10() +
   scale_radius(trans='log2') +
   scale_color_viridis_c(trans='log2') +
