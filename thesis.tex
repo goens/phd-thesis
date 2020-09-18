@@ -1,121 +1,124 @@
 \documentclass{report}
 
 \input{tex/preamble}
-\input{aux/commands}
 \title{Leveraging Mathematical Structure in Software Synthesis (how to include part II?)}
 \author{Andr\'{e}s Goens}
 \begin{document}
+\input{aux/commands}
 \date{}
 
 \maketitle
 \tableofcontents
 \clearpage
 \section*{Acknowledgments}
-\input{tex/acknowledgements.tex}
+\input{tex/acknowledgements}
 
 \chapter{Introduction}
-\input{tex/intro/introduction.tex}
+\input{tex/intro/introduction}
 
 \part{Dataflow-based Software Synthesis(?)}
-\input{tex/intro/traditional.tex}
+\input{tex/intro/traditional}
 \chapter{Mapping KPNs to Heterogenous MPSoCs}
-\input{tex/mappings/intro.tex}
+\input{tex/mappings/intro}
 \section{Background}
-\input{tex/mappings/background.tex}
+\input{tex/mappings/background}
 \section{Simulating Mappings}
-\input{tex/mappings/simulating.tex}
+\input{tex/mappings/simulating}
 \section{The SLX Mapping flow}
-\input{tex/mappings/slx.tex}
+\input{tex/mappings/slx}
 
 \chapter{Mathematical Structures in Mappings}
-\input{tex/mappings/intro_structures.tex}
+\input{tex/mappings/intro_structures}
 \section{Symmetries}
-\input{tex/mappings/symmetries.tex} %IESS15
+\input{tex/mappings/symmetries} %IESS15
 \section{Metric Spaces}
-\input{tex/mappings/metric.tex} %mcsoc18 + new stuff
+\input{tex/mappings/metric} %mcsoc18 + new stuff
 \section{Representations}
-\input{tex/mappings/representations.tex} %mcsoc18 
+\input{tex/mappings/representations} %mcsoc18 
 %\section{Dataflow}
-%\input{tex/mappings/dataflow.tex}
+%\input{tex/mappings/dataflow}
 
 \chapter{Compile-Time Applications}
 \label{chap:mapping_applications}
-\input{tex/apps_traditional/intro.tex}
+\input{tex/apps_traditional/intro}
 \section{Compact Mappings}
-\input{tex/apps_traditional/compact.tex} %samos19
+\input{tex/apps_traditional/compact} %samos19
 \section{Design Centering}
-\input{tex/apps_traditional/dc.tex} %scopes17_dc + new
+\input{tex/apps_traditional/dc} %scopes17_dc + new
 \section{Genetic Algorithms}
-\input{tex/apps_traditional/genetic.tex} %mcsoc16 + new
+\input{tex/apps_traditional/genetic} %mcsoc16 + new
 \section{Design Space Exploration}
-\input{tex/apps_traditional/dse.tex} %taco, mcsoc18
+\input{tex/apps_traditional/dse} %taco, mcsoc18
 
 \chapter{Other Applications}
-\input{tex/apps_traditional/other_apps_intro.tex}
+\input{tex/apps_traditional/other_apps_intro}
 \section{Run-time applications: TETRiS}
-\input{tex/apps_traditional/tetris.tex} %scopes17_tetris + new
+\input{tex/apps_traditional/tetris} %scopes17_tetris + new
 \section{Memory Allocation}
-\input{tex/apps_traditional/mem.tex} %date14,jsa16,date20_rt
+\input{tex/apps_traditional/mem} %date14,jsa16,date20_rt
 
 \chapter{Conclusions}
-\input{tex/mappings/conclusions.tex}
+\input{tex/mappings/conclusions}
 
 \chapter{Related Work}
-\input{tex/related/traditional.tex}
+\input{tex/related/traditional}
 
 
 \part{Expanded Semantics (IoT, CPS, etc)}
-\input{tex/intro/expanded_semantics.tex}
+\input{tex/intro/expanded_semantics}
 
 \chapter{Models of Computation}
-\input{tex/semantics/intro.tex}
+\input{tex/semantics/intro}
 \section{An overview of Models of Computation}
-\input{tex/semantics/moc.tex}
+\input{tex/semantics/moc}
 \section{Extending Semantics: The MacQueen Gap} %maybe use like a motivational example for part
-\input{tex/semantics/macqueen.tex} %parma_ditam, cgo_src (should I move this to applications?)
+\input{tex/semantics/macqueen} %parma_ditam, cgo_src (should I move this to applications?)
 
 \chapter{Language-Level Transformations}
 \section{Ohua}
-\input{tex/semantics/ohua.tex} 
+\input{tex/semantics/ohua} 
 \section{yauhau}
-\input{tex/apps_semantics/yauhau.tex} %cc_18
+\input{tex/apps_semantics/yauhau} %cc_18
 \section{smap?}
-\input{tex/semantics/smap.tex}
+\input{tex/semantics/smap}
 
 
 \chapter{Novel Semantics}
-\input{tex/apps_semantics/intro.tex}
+\input{tex/apps_semantics/intro}
 \section{reactors}
-\input{tex/semantics/reactors.tex} %dac19,cyphy
+\input{tex/semantics/reactors} %dac19,cyphy
 \section{autosar}
-\input{tex/apps_semantics/autosar.tex} %dac20_autosar
+\input{tex/apps_semantics/autosar} %dac20_autosar
 \section{5G}
-\input{tex/apps_semantics/5g.tex} %ict + new
+\input{tex/apps_semantics/5g} %ict + new
 
 \chapter{Benchmarking and Beyond}
 \section{level graphs}
-\input{tex/apps_semantics/level_graphs.tex} %multiprog
+\input{tex/apps_semantics/level_graphs} %multiprog
 \section{MAPL + ML representations?}
-\input{tex/apps_semantics/machine_learning.tex} %mapl, cc20
+\input{tex/apps_semantics/machine_learning} %mapl, cc20
 
 \chapter{Related Work}
-\input{tex/related/semantics.tex}
+\input{tex/related/semantics}
 
+\part{Conclusions}
 \chapter{Conclusions} 
-\input{tex/conclusion.tex}
+\input{tex/conclusion}
+\part{Appendices}
 \appendix
+
 \chapter{Groups and Inverse Semigroups}
 \label{appendix:groups}
-\input{tex/appendix/groups.tex}
+\input{tex/appendix/groups}
 \chapter{Metric Spaces and Low-Distortion Embeddings}
 \label{appendix:metric}
-\input{tex/appendix/metric.tex}
+\input{tex/appendix/metric}
 \chapter{Denotational Semantics}
 \label{appendix:semantics}
-\input{tex/appendix/semantics.tex}
+\input{tex/appendix/semantics}
 
 \bibliographystyle{abbrv}
-\bibliography{thesis}
+\bibliography{aux/references,aux/mios}
 
 \listoffigures
 

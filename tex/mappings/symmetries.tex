@@ -1,7 +1,7 @@
-In this chapter we will explore the mathematical structure of symmetry in the software synthesis process. The
+In this chapter we will explore the mathematical structure of symmetry in the software synthesis process, mostly the work published in ~\cite{goens_iess15,taco_symmetries,scopes17_tetris}.
 \blindtext[2]
 
-The material in this section makes use of concepts in group theory. A brief introduction, to the level required by this chapter, can be fonud in Appendix~\ref{appendix:groups}.
+The material in this section makes use of concepts in group theory. We assume the basic concepts as seen in any undergraduate course on group theory, with the definitions of groups, actions and orbits. A brief introduction, to the level required by this chapter, can be fonud in Appendix~\ref{appendix:groups}. 
 
 
 \subsection{Architectures and Applications}
@@ -10,8 +10,20 @@ The material in this section makes use of concepts in group theory. A brief intr
 \subsection{Mappings}
 \Blindtext[5]
 
-\subsection{Orbits}
-\Blindtext[5]
+\subsection{Orbits} \Blindtext[5]
+
+\subsection{Calculating Symmetries}
+There branch of mathematics known as computational group theory deals with computational aspects of the theory of groups, which we have used here for formalizing the symmetries of applications, architectures and mappings. 
+An overview of the methods of computational group theory can be found in~\cite{serres} covering beyond the basics presented in this subsection.
+Here we will present only the methods necessary for the calculations required of applications to software synthesis.
+
+To leverage the symmetries explained in this theses for software synthesis, we need to methods to calculate the following:
+\begin{itemize}
+\item Given an architecture graph $A$, the group of symmetries $\Aut(A)$.
+\item Given a mapping $m : T \rightarrow A$ and the symmetry group $G := \Aut(T \rightarrow A)$, enumerate the orbit $Gm$.
+\item Given two mappings $m,m' : T \rightarrow A$ and the symmetry group $G := \Aut(T \rightarrow A)$, determine wether $m = gm'$ for a $g \in G$, i.e. if the two mappings are in the same orbit.
+\end{itemize}
+
 
 \subsection{Partial Symmetries}
 
@@ -28,7 +40,7 @@ Intuitively, thus, this four-by-four mesh has more symmetry.
 
 \begin{figure}[h]
 	\centering
-   \resizebox{0.55\textwidth}{!}{\input{figures/noc.tex}}
+   \resizebox{0.55\textwidth}{!}{\input{figures/noc_comparison.tex}}
 	\caption{A comparison of the symmetries of two meshes.}
 	\label{fig:motivation_partial_symmetries}
 \end{figure}
@@ -45,7 +57,8 @@ More concretely, there are only 8  possible structure-preserving transformations
 	\label{fig:partial_symmetries_4x4}
 \end{figure}
 
-There are essentially two ways equvialent ways of formalizing this intuitive notion of local symmetries, inverse semigroups and ordered groupoids~\cite{lawson_inverse_semigroups}.
+For the mathematical formalization of this intuitive notion of local symmetries, in this section, we follow~\cite{lawson_inverse_semigroups}.
+There are essentially two ways equvialent ways of formalizing this intuitive notion of local symmetries, inverse semigroups and ordered groupoids.
 We will consider the formalization using inverse semigroups, as it is conceptually simpler for computations, and mathematically equally as powerful.
 In the case of global symmetries there are concrete trasformations of architectures and mappings and corrpesponding abstract groups. For partial symmetries we will consider partial trasformations of mappings which we will model as partial permutations, and these partial permutations (transformations) have a corresponding abstract inverse semigroup.
 
@@ -62,6 +75,135 @@ Let $X$ be a set.
 A partial function $f: X \rightarrow X$ from $X$ to itself is called a \emph{partial permutation} if the (total) function $f: \dom(f) \rightarrow \cod(f)$ is a bijection between $\dom(f)$ and $\cod(f)$.
 \end{defn}
 
+\begin{figure}[h]
+	\centering
+   \resizebox{0.55\textwidth}{!}{\input{figures/placeholder.tex}}
+	\caption{An example of a partial permutation in a $4 \times 4$ mesh.}
+	\label{fig:example_partial_permutation}
+\end{figure}
+
 We can think of partial functions thus as functions that are not defined everywhere, and partial permutations, acordingly, are not defined everywhere.
-For example, the partial permutation ...
-We can write this ...
+For example, the partial permutation $f : \{0,\ldots,15\} \rightarrow \{0,\ldots,15\}$ defined as $f(0) = 4, f(1) = 0, f(4) = 5, f(5) = 1$ is a rotation of the upper-left $2 \times 2$-mesh in the $4\times 4$-mesh, but is not defined on the rest of the architecure. This is a partial symmetry of the $4\times 4$-mesh. This partial permutation is dpeicted in Figure~\ref{fig:example_partial_permutation}. We can write it also as:
+\begin{equation*}
+\left(
+\begin{array}{llllllllllllllll}
+0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15\\
+4 & 0 & - & - & 5 & 1 & - & - & - & - &  - &  - &  - &  - &  - &  -
+\end{array}
+\right)
+\end{equation*}
+Because the set $\{0,\ldots,15\}$ is understood from context, we can also write it, shorter, as:
+\begin{equation*}
+\left(
+\begin{array}{llll}
+0 & 1 & 4 & 5 \\
+4 & 0 &  5 & 1
+\end{array}
+\right)
+\end{equation*}
+
+We also use a notation similar to the cycle notation of group theory, where we use a cicle with round brackets to denote a full cycle, where the last element maps to the first.
+Square brackets to denote when this is not the case, i.e. the function is not defined on the last element of that cycle. In this notation, singleton cycles cannot be omitted as in the case of groups.
+In other words, fixed points have to be represented as one-element cycles.
+The partial permutation from Figure~\ref{fig:example_partial_permutation} can thus be written much more compactly as: $(0,4,5,1)$.
+This is a full cycle, but it is only defined on the subset $\{0,1,4,5\}$.
+In the group context, the cycle $(0,4,5,1)$ as an element of the symmetric group on 15 points, would instead mean the (complete) permutation that fixes $\{2,3,6,7,8,9,10,11,12,13,14,15\}$.
+As a partial permutation in cycle notation we would write this as: \[(0,4,5,1)(2)(3)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15) \]
+A different example of a partial permutation is the partial permutation that moves the first row to the right (and is not defined on the rest), as a cycle: $[0,1][4,5][8,9][12,13]$.
+On the other hand, the partial permutation that is a diagonal reflection on the upper-left $2 \times 2$ (sub)mesh is, in cycle notation, $(1,4)(0)(5)$.
+These two partial permutations can also be written in the matrix notation from above as:
+
+\begin{equation*}
+\left(
+\begin{array}{llll}
+0 & 4 & 8 & 12 \\
+1 & 5 & 9 & 13 
+\end{array}
+\right)
+\quad
+\left(
+\begin{array}{llll}
+0 & 1 & 4 & 5 \\
+0 & 4 & 1 & 5
+\end{array}
+\right)
+\end{equation*}
+
+For computations~\cite{standrews}, the three notations can be interpreted to make different data structures that make different opperations more efficient, like application of the partial function (as an array look-up), for sparse partial permutations (as lookups in key-value pairs), or cycles for efficient multiplication (as concatenation). They have different benefits and drawbacks. For readability though, the cycle notation is the most compact one, and the one we will use for the rest of this thesis.
+
+Just as for groups, we can define the (left) action of a semigroup:
+\begin{defn}
+Let $S$ be a semigroup and $X$ be a set. We say that $S$ \emph{acts} on $X$ (on the left) if there is a function $\cdot : S \times X \rightarrow X$ such that $(ab) \cdot x = a \cdot (b \cdot x)$. If $S$ is a monoid with identity $1$ and the function $\cdot$ satisfies the condition $1 \cdot x = x$ for all $x \in X$, we say that the action is a monoid action.
+\end{defn}
+
+The action of a semigroup of partial permutations to an architecture works the same as with groups, except it does not work on the whole architecture.
+Let $f$ be a partial permutation on an architecture $A$, and $m : T \rightarrow A$ be a mapping on that arcticeture.
+If the partial permutation is defined on all cores mappend on by $m$, i.e., $im(m) \subseteq \dom(f)$, then we can use the action of the semigroup of partial permutations of $A$ to define another mapping $fm$ by $fm(t) = f \cdot m(t)$
+for all $t$ in $T$. If $f$ is not defined on some of the cores of $m$, i.e., $im(m) \not \subseteq \dom(f)$, then we cannot define $fm$. In this way, $f$ also defines a partial permutation $\hat f$ on the set of mappings $\{ m : T \rightarrow A \}$.
+\todo{check that notation is consistent}
+
+Consider for example the mapping of an application with three tasks to the $4 \times 4$-mesh defined by $m_0(t_0) = m_0(t_2) = \PE_0$ and $m_0(t_1) = \PE_1$, which we can also write as the vector $m_0 = (0,1,0)$.
+Then the partial permutation $(0,4,5,1)$ from Figure~\ref{fig:exapmle_partial_permutation} above defines the mapping $(0,4,5,1)m = (4,0,4)$.
+Similarly, the action of the partial permutation $(1,4)(0)(5)$ yields a new mapping, $(1,4)(0)(5)m_0 = (0,4,0)$.
+However, since the translation $[0,1][4,5][8,9][12,13]$ is not defined on $1 = m_0(t_1)$, we cannot define $[0,1][4,5][8,9][12,13]$ as a mapping.
+Formally we can say that the partial permutations $\widehat{(0,4,5,1)}$ and $\widehat{(1,4)(0)(5)}$ are defined on $m_0$, but $\widehat{[0,1][4,5][8,9][12,13]}$ is not defined on $m_0$.
+
+What happens with application symmetries? Consider ...
+
+Define orbits for inverse semigroups and s.c.c.
+
+We are now ready to formally define the set of partial symmetries of architectures, applications in mappings as in the case of groups.
+\begin{defn}
+$\AutSemi$
+\end{defn}
+
+There is a different way of intperpreting these notions of symmetry, using graph isomorphisms.
+Recall that a mapping $m: T \rightarrow A$ can be seen as a morphism of graphs from $T$ to $A$.
+In particular, every mapping $m$ defines a subgraph $m(T) \leq A$.
+This subraph has a node $m(t) \in V_A$ for every $PE$ in the architecture $A$ that is used in a mapping, and similarly an endge $(m(t_1),m(t_2)) \in E_A$ for every communication primitive where a channel is mapped to.
+Figure~\ref{fig:example_graph_isomorphism} shows this graph for two of the mappings discussed above, $m_0 = (0,1,0)$ and $m_1 := (0,4,5,1)m_0 = (4,0,4)$. 
+You can see that the architecture subgraphs of the mappings are identical. In fact, if there is a partial symmetry, these two graphs will always be identical:
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.55\textwidth}{!}{\input{figures/placeholder.tex}}
+	\caption{Some partial symmetries of a 4x4 mesh.}
+	\label{fig:partial_symmetries_4x4}
+\end{figure}
+It is a sort of trace of the mapping. This mapping does not describe 
+\todo{check that notation is consistent}
+
+\begin{lem}
+\label{lem:symmetry_to_iso}
+Let $m : T \rightarrow A$ be a mapping and let $f \in \AutSemi(A)$ be a partial automorphism of the archtitecture such that $\im(m) \subseteq \dom(f)$. Then, the two graphs $m(T)$ and $(fm)(T)$ are isomoprhic and the function $\varphi: m(T) \rightarrow (fm)(T), m(t) \mapsto f \cdot m(t)$ for all $t \in T$ is an isomorphism of labeled graphs.
+\begin{proof}
+First note that $\vaprhi$ is well-defined. Indeed, since $\im(m) \subseteq \dom(f)$ it means that $f \cdot m(t)$ is defined for all $t \in T$. Since $f \in \AutSemi(A)$, we know that the type of $m(t)$ and $f \cdot m(t)$ is equal for all $t \in T$, as well as the type of all edges $(m(t_0),m(t_1))$ and  $(f \cdot m(t_0), f \cdot m(t_1))$ is equal. Thus, $\varphi$ is a morphism of labeled graphs. Finally, since $f \in \AutSemi(A)$, we know that $f$ is a partial permutation, and in particular, a bijection between $\dom(f)$ and $\cod(f)$. In particular, $\varphi$ is bijective, and as a bijective morphism of labeled graphs, an isomorphism. 
+\end{proof}
+\end{lem}
+
+What about the converse, if the subgraphs generated by the mappings are isomorphic, does this mean that there is a (partial) isomorphism of the mappings too? Can we use this to characterize equivalent mappings? 
+In general, no.
+Consider the subgraph of the mappings $m_2 := (4,4,0)$ and $m_3 := (4,0,0)$. Both these mappings project into isomorphic subgraphs $m_2(T) \cong m_3(T) \cong m_0(T)$, but obviously the mappings are not equivalent.
+Even if the subgraphs are isomorphic, the crucial difference is, however, that the mapping $\varphi$ as defined in Lemma~\ref{lem:symmetry_to_iso} is \textbf{not} an isomorphism of (labeled) graphs. 
+What if tasks $t_1$ and $t_2$ are equivalent?
+In other words,  what if $g = (0)(1,2)$ is a (full) automorphism of the application graph?
+Then the mappings $m_0$ and $m_2$ are equivalent (via $g$), but the function $\varphi$ of Lemma~\ref{lem:symmetry_to_iso} is still not an isomoprhism of the subgraphs.
+However, we can generalize the function by applying $g$ first, as $\vaprhi \circ g : m(T) \rightarrow fm(T), m(t) \mapsto (fm \circ g)(t) = (fm)(g(t))$.
+This generalization, in fact, yields a full characterization of equvialent mappings through isomorphy of subgraphs.
+\begin{thm}
+Let $A$ be an architecture with inverse semigroup of automorphisms $S = \AutSemi(A)$ and let $T$ be an application graph with group of automorphsims $G = \Aut(T)$.
+For mappings $m,m' : T \rigtharrow A$, the following statements are equvialent:
+\begin{enumerate}
+\item There exists a partial permutation $f \in S$ and a perumtation $g \in G$, such that $\varphi \circ g$ is an isomorphism of labeled graphs.
+\item There two mappings are equivalent by symmetries in the orbit of $S \times G$.
+\end{enumerate}
+\begin{proof}
+The implication $(1) \Rightarrow (2)$ follows directly from the definition of $\vaprhi$ and the action of $S \times G$. For the implication $(2) \Rightarrow (1)$, since $m$ and $m'$ are in the same s.c.c. of the orbit of $S \times G$, there exists an $x \in S \times G$ such that $m = x \cdot m'$. We can use the direct product structure of $S \times G$ to decompose $ x = fg$ for $f \in S, g \in G$. This means that m = fg \cdot m' = f \cdot (g \cdot m')$.
+Applying Lemma~\ref{lem:symmetry_to_iso} on $m$ and $g \cdot m'$ shows that $\varphi \circ g$ is an isomorphism.
+\end{proof}
+\end{thm}
+
+\subsection{Calculating Semigroups of Symmetries}
+
+Now that we have seen how to describe partial symmetries, we can proceed to explain how to calculate them.
+This subsection is a simplification of the methods of~\cite{standrews}, and our applications of it in joint work with S. Siccha and J. Castrillon~\cite{taco_symmetries}.
