@@ -9,3 +9,22 @@
 	\caption{Relationships between different dataflow models of computation.}
 	\label{fig:dataflow_mocs}
 \end{figure}
+
+\subsection{Kahn Process Networks}
+
+In 1970, Dana Scott proposed a mathematical theory of computation~\cite{scott1970} based on what are now called (Scott) domains\footnote{sometimes also called algebraic semilattice} and the Scott-topology. 
+Two ideas are central in Scott's formalization. The first is a method for capturing \emph{partial} computations, i.e. computations that have advanced but not finished yet.
+The second idea is that of modeling a computation as a continuous function between such domains, where a properly notion of continuity (in the Scott topology) models causality in the computation.
+Scott's semantics allowed to capture the process of a computation, but not the internals, which are abstracted away by the function. 
+
+A Domain is a particular type of \ac{poset} ... 
+
+For example ...
+
+
+Scott's computation model implicitly assumed a sequential computation and Scott-continuous functions are a powerful method for describing partial sequential computations.
+Can we also use this model to describe parallel computation?
+Gilles Kahn did precisely this, four years after Scott published his mathematical theory of computation. 
+He used the formalism of Scott to define a model of parallel computation, based on what he coined as process networks, now known as Kahn Process Networks.
+
+The basic idea to generalize the Scott theory of computation is simple
