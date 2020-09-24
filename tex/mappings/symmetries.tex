@@ -203,6 +203,18 @@ Applying Lemma~\ref{lem:symmetry_to_iso} on $m$ and $g \cdot m'$ shows that $\va
 \end{proof}
 \end{thm}
 
+How do partial symmetries with inverse semigroups compare to (global) symmetries, in the sense of group theory?
+We can start with a simple example, of a $2\times 2$ mesh, which we will call $M_2$. The group of symmetries of this architecture, as we have seen, is $D_4$ with $|D_4| = 8$ symmetries.
+What about the partial symmetries? It is easy to check that $|\AutSemi(M_2)| = 45$, which is a lot more partial symmetries than global ones! But in fact, comparing the size of the group and the semigroup is misleading.
+We can't compare them, as they deal with different objects, functions vs partial functions. For this case of $M_2$, in a sense, we do not get any more symmetries by going to the partial symmetry world.
+We can see it through the following argument: the group $\Aut(M_2) \cong D_4$ acts canonically on the power set of $M_2$, $\operatorname{Pow}(M_2)$, simply by acting element-wise:
+For $M \subseteq M_2$ and $g \in \Aut(M_2)$, the (canonical) action is defined as follows: $g \cdot M := \{ g \cdot m \mid m \in M \}$.
+In this action, the orbits $G \\ \operatorname{Pow}(M_2)$ are in obvious bijection to the s.c.c. of the orbit of $\AutSemi(M_2) \\ \operatorname{M_2}$.
+Concretely
+
+
+
+
 \subsection{Calculating Semigroups of Symmetries}
 
 Now that we have seen how to describe partial symmetries, we can proceed to explain how to calculate them.
