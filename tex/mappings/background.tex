@@ -15,10 +15,10 @@ He was modeling computation.
 Two additional such models of computation existed at the time, the $\lambda$-calculus as proposed by Alonzo Church that same year~\cite{church1936unsolvable}, and the concept of general recursive functions due to Herbrand and Gödel, developed by Kleene~\cite{kleene1936recursive}.
 These three equivalent models~\cite{turing1937comuptability} were the original models of computation.
 They are equivalent in the sense that they define the same notion of what is computable.
-However, they are not equivalent in the number of steps necessary for computing something.
-To an extent these models were not concerned with how to (efficiently) compute something, but rather, \emph{what} we can compute and what not.
+To an extent these models were not concerned with \emph{how} to (efficiently) compute something, but rather, \emph{what} we can compute and what not.
+Since then, with the revolution of digital computers, the interest increasingly shifted to care about \emph{how} we can compute.
+This spawned a much larger amount of models of computation at different levels of abstraction.
 
-With the revolution of digital computers, the interest increasingly shifted to care about \emph{how} we can compute.
 In 1972 Karp\cite{karp1972reducibility} kickstarted the field of computational complexity by identifying many problems that were equivalently difficult to compute, the class of NP-complete problems.
 Computational complexity relies on the fact that the asymptotic behavior of the number of steps of an algorithm, as a function of the input (size), is invariant when changing between these models of computation.
 Around the same time, in 1970, Dana Scott proposed a mathematical theory of computation~\cite{scott1970} based on what are now called (Scott) domains\footnote{sometimes also called algebraic semilattice} and the Scott-topology. 
@@ -47,6 +47,17 @@ The rest of this section will survey some of the most important concurrent model
 
 \subsection{Partial Computation: Scott Domains}
 
+When Dana Scott proposed his mathematical theory of computation~\cite{scott1970}, he used the term mathematical to contrast it with operational computation.
+In practice, the steps of a computation are defined by the \ac{ISA} of the machine executing them.
+Most people don't write programs directly for the \ac{ISA}, however. They write them in an abstract programming language, which is translated by a compiler into machine instructions.
+Thus, in practice, the implementation of a compiler is what defines the (operational) semantics of programs.
+Scott's theory had the ambitious goal of being an abstraction that sat between these operational semantics and the abstract notions of computability of e.g. Church or Turing.
+He intended to abstract away the arbitrary implementation choices that were necessary but did not change the essence of the execution.
+While today his model is not the single established abstract model of semantics he sought out to define, it introduced several important ideas and mathematical structures to models of computation.
+In particular, a crucial abstraction introduced by his theory is that of partial computation.
+His theory makes it possible to express a computation as a series of partial results, without regarding the actual implementation of these.
+We will now introduce the basics of Scott's mathematical theory of computation.
+
 
 A Domain is a particular type of \ac{poset} ... 
 
@@ -63,21 +74,95 @@ The basic idea to generalize the Scott theory of computation is simple
 
 
 \subsection{Concurrent Computation: Kahn Process Networks}
-\Blindtext[10]
-
+Discuss related: Hewitt-Agha actor model\index{actor model}~\cite{DBLP:conf/ijcai/HewittBS73,Agha:86:Actors}, Petri Nets\index{Petri nets}~\cite{petri1962nets}, Process Calculi\index{Process Calculi} (\index{Process Calculi ! Pi-Calculus}$\Pi$-calculus, \index{Process Calculi ! CSP}\ac{CSP})
+\Blindtext[10]\index{Kahn Process Networks}\ac{KPN}~\cite{kahn74}
 
 \subsection{Dataflow Models of Computation}
-Dennis~\cite{dennis1974first,dennis1986data}
+Dennis dataflow \index{Dataflow ! Dennis}~\cite{dennis1974first,dennis1986data}
 \cite{Parks:M95/105}
 Dataflow process networks~\cite{lee1995dataflow,lee_matsikoudis_semantics}
-CSDF~\cite{bilsen1996cycle}
-SADF~\cite{theelen2006scenario}
-\cite{lee1987sdf}
+\ac{CSDF}\index{Dataflow ! CSDF}~\cite{bilsen1996cycle}
+\ac{SADF}\index{Dataflow ! SADF}~\cite{theelen2006scenario}
+\ac{SDF}\index{Dataflow ! SDF}~\cite{lee1987sdf}
 \Blindtext[10]
 
 \subsection{Execution Traces}
-See~\cite{mazurkiewicz1995introduction} in~\cite{diekert1995book}
-\Blindtext[10]
+Models of Computation with mathematical semantics, in the sense of Scott, abstract away the concrete implementation of individual steps in a computation.
+This is also the case for Kahn Process Networks or even Dataflow models, when considered as mathematical semantics of computation. 
+Even so, the execution of a computation can be thought of as a series of steps or partial computations that eventually yield the final result.
+These series, which is commonly referred to as execution trace, can be captured as a sequence of steps, e.g. as the element of a Scott Domain. 
+Abstract computations, modeled as Scott-continuous functions, can can make computations of arbitrary length.
+This is modeled by (countably) infinite sequences in $D^\omega \setminus D^*$.
+A concrete execution, on the other hand, always has a finite length.
+It always resides in $D^*$.
+For a (Scott-continuous) function, this sequence can be modeled as a finite string in the computation domain.
+
+In a concurrent execution, multiple entities concurrently execute steps.
+As modeled by Kahn, these entities all implement individual (Scott-continuous) functions.
+As such, there is not a unique series of steps that can be said to be the execution trace of the computation.
+To see this, consider the following example:
+\begin{ex}
+  Todo
+\end{ex}
+
+TODO: discuss example
+
+In the distributed case thus, the execution traces are in fact equivalence classes of strings.
+We define this more formally, following~\cite{mazurkiewicz1995introduction}, the first chapter of~\cite{diekert1995book}.
+Let $D$ be a finite set, like an alphabet $\Sigma$ or data type $D = \Cup_{i \in \mathcal{I}} D_i$ be a data type for a \ac{KPN}.
+Let $\Delta$ be a symmetric, reflexive relation on $D$, which we call a dependency\index{dependency}.
+This means that if $(a,b) \in \Delta$, we have $(b,a) \in \Delta$ and also $(a,a) \in Delta$ for all $a \in D$. 
+With $\Delta$ we define an additional relation in $D$, namely $I := (D \times D) \setminus \Delta$.
+We call $I$ the induced independency\index{independency}. 
+We define an equivalence relation $\sim_I$ on the monoid $D^*$ (with respect to concatenation) as follows:
+We require for $a,b \in I$ then $ab \sim_I ba$. The relation $\sim_I$ is defined as the least congruence that satisfies this requirement.
+Note that a congruence is an equivalence relation that respects the algebraic structure, in this case the monoid structure of the concatenation operation.
+We call the equivalence classes of $D^*/{\sim_I}$ traces. 
+By definition, the concatenation operation on $D^*$ factors over the equivalence relation $\sim_I$,
+and thus $D^*/{\sim_I}$ defines a monoid (with identity element $[\epsilon]_{\sim_i}$, where $\epsilon \in D^*$ is the empty string).
+We call this the Trace Monoid\index{trace monoid}, $T(D)$.
+We care about the algebraic structure of a monoid since it is central to the definition of Scott-continuity.
+
+\begin{ex}
+  Todo (based on example above)
+\end{ex}
+
+There are two additional equivalent definitions of this monoid as histories and dependence graphs.
+We present histories here, as they are easier for the intuition.
+Instead of a single alphabet (or set of types) $D$, we have a finite set of alphabets $D := (D_i), i \in \mathcal{I}$, where $\mathcal{I}$ is a finite index set.
+We can think of the indices as corresponding to the processes or actors in the system, and the alphabets $D_i$ to the alphabets of these individual entities.
+If we think of the individual entities as computing some (Scott-continuous) function, their execution trace will be a unique string $a_i \in D_i^*$ (recall that concrete executions are finite).
+Since, in general, these entities do not compute independently, they have common synchronization points.
+These synchronization points are abstractly modeled in the computation alphabet by mutual elements in $D_i \cap D_j$ for two entities $i,j \in \mathcal{I}$.
+We can define a monoid, the product monoid~\index{product monoid} $P(D)$, by component-wise concatenation of the strings: $(a_i)_i (b_i)_i = (a_ib_i)_i$ for all $i \in \mathcal{I}$.
+However, not every such a string product can be the history of a system.
+The synchronization points of different subsystems should be consistent with each other. Consider the following example:
+\begin{ex}
+  \label{ex:inconsistency_history}
+TODO: slight variation that shows an element of $P(D) \setminus H(D)$
+\end{ex}
+To avoid this, we want to ensure histories are consistent. For this, we define elementary histories~\index{elementary history} as follows:
+For any $a in \Cup_{i \in \mathbb{I}} D_i$, the elementary history of $a$ is the tuple $(a_i)_{i \in \mathbb{I}}$, with $a_i = \left{ \begin{array}{ll} a, & \text{ if } a \in D_i, \\ \epsilon, & \text{ otherwise. }\end{array}\right.$
+Again, $\epsilon$ represents the empty string.
+The monoid generated by all elementary histories for elements in $\Cup_{i \in \mathbb{I}} D_i$ is called the history monoid $H(D)$, and is a submonoid of $P(D)$.
+If we examine the definition, it is not difficult to convince ourselves that these are precisely the histories which avoid inconsistencies like those of Example~\ref{ex:inconsistency_history}.
+
+\begin{ex}
+  Todo (based on example above)
+\end{ex}
+
+We can go from a trace to a history by the morphism $\pi: T(\Cup_{i \in \mathcal{I}}) \rightarrow H(D), a \mapsto (\pi_i(a))_i, i \in \mathal{I}$, where $\pi_i$ is the projection $\Cup_{i \in \mathcal{I}}D_i \rightarrow D_i$.
+Here, for the trace monoid $T(D)$ we define the dependencies to be $\Cup_{i \in \mathcal{I}}\D_i \times D_i$. 
+This is not just a morphism, but in fact an isomorphism: See Theorem 1.5.4 of~\cite{mazurkiewicz1995introduction}.
+Thus, the two concepts are equivalent.
+For the rest of this thesis we will use the terms traces and histories interchangeably.
+
+
+Traces, and equivalently histories, can be used to describe the concrete computations in concurrent systems like those described by a \ac{KPN}.
+They are also well-suited (and well-suited) to model these systems in the context of process calculi, like \ac{CSP}.
+However, an important observation is the converse: a concrete execution of a \ac{KPN} is determined uniquely by its history.
+Moreover, any concrete implementation of the \ac{KPN} realizing the same execution will have the same history: the history is an invariant of the abstract execution model.
+It captures the concurrent essence of the concrete computation.
 
 \subsection{Architecture Models}
 \cite{pelcat2015models}.
