@@ -1,7 +1,42 @@
-\Blindtext[3]
+At the basis of software synthesis are concurrent models of computation. The process derives an efficient execution to a concrete architecture from a computation expressed in an abstract model.
+In order to understand software synthesis thus, we first need to understand the underlying models of computation.
+Closely related to these concurrent models of computation are execution traces, which capture a concrete execution for some input.
+However, going from such abstract models to a concrete execution also requires an understanding of the target hardware architecture.
+The relationship between the two can be captured in a mapping.
+This chapter considers all of these aspects with their corresponding models, and the relationship between them.
+It is the central piece of background theory required for the methods presented in this thesis.
 
-\section{A brief survey of models of Computation}
+\subsection{Models of Computation}
 \label{sec:mocs}
+
+In his seminal paper~\cite{turing1936computable} in 1936, Alan Turing proposed a ``computing machine''\footnote{now known as Turing machine}.   
+While his machine was motivated by a person doing computations, he intended to capture the very notion of compatibility by it: namely what it is possible to compute at all.
+He was modeling computation.
+Two additional such models of computation existed at the time, the $\lambda$-calculus as proposed by Alonzo Church that same year~\cite{church1936unsolvable}, and the concept of general recursive functions due to Herbrand and Gödel, developed by Kleene~\cite{kleene1936recursive}.
+These three equivalent models~\cite{turing1937comuptability} were the original models of computation.
+They are equivalent in the sense that they define the same notion of what is computable.
+However, they are not equivalent in the number of steps necessary for computing something.
+To an extent these models were not concerned with how to (efficiently) compute something, but rather, \emph{what} we can compute and what not.
+
+With the revolution of digital computers, the interest increasingly shifted to care about \emph{how} we can compute.
+In 1972 Karp\cite{karp1972reducibility} kickstarted the field of computational complexity by identifying many problems that were equivalently difficult to compute, the class of NP-complete problems.
+Computational complexity relies on the fact that the asymptotic behavior of the number of steps of an algorithm, as a function of the input (size), is invariant when changing between these models of computation.
+Around the same time, in 1970, Dana Scott proposed a mathematical theory of computation~\cite{scott1970} based on what are now called (Scott) domains\footnote{sometimes also called algebraic semilattice} and the Scott-topology. 
+Two ideas are central in Scott's formalization. The first is a method for capturing \emph{partial} computations, i.e. computations that have advanced but not finished yet.
+The second idea is that of modeling a computation as a continuous function between such domains, where a properly notion of continuity (in the Scott topology) models causality in the computation.
+Scott's semantics allowed to capture the process of a computation, but not the internals, which are abstracted away by the function. 
+
+The question of \emph{how} we compute can be modeled in different ways by complexity asymptotics or partial computations in the Scott formalism, but some aspects are still left unmodeled.
+A significant such aspect not taken into account by these models is \emph{where} we are computing.
+The theory of distributed computation was growing, with models like Petri Nets~\cite{petri1962nets} or seminal work like Lamport's on clocks and ordering of events~\cite{Lamport1978time}.
+These models deal with properties of a computing system that has physically separate parts which split and distribute the computational load.
+However, the focus of the models is the system doing the computation, not the computation itself.
+
+In this thesis we are mostly interested in concurrent models of computation. 
+Such models abstract away the (distributed) computing system and focus on the computation itself. 
+They consider and express concurrency in the computation, which can be exploited for parallel or asynchronous execution.
+The rest of this section will survey some of the most important concurrent models of computation, before moving on to architectures, traces and mappings.
+
 
 \begin{figure}[h]
 	\centering
@@ -10,12 +45,8 @@
 	\label{fig:dataflow_mocs}
 \end{figure}
 
-\subsection{Kahn Process Networks}
+\subsection{Partial Computation: Scott Domains}
 
-In 1970, Dana Scott proposed a mathematical theory of computation~\cite{scott1970} based on what are now called (Scott) domains\footnote{sometimes also called algebraic semilattice} and the Scott-topology. 
-Two ideas are central in Scott's formalization. The first is a method for capturing \emph{partial} computations, i.e. computations that have advanced but not finished yet.
-The second idea is that of modeling a computation as a continuous function between such domains, where a properly notion of continuity (in the Scott topology) models causality in the computation.
-Scott's semantics allowed to capture the process of a computation, but not the internals, which are abstracted away by the function. 
 
 A Domain is a particular type of \ac{poset} ... 
 
@@ -28,3 +59,34 @@ Gilles Kahn did precisely this, four years after Scott published his mathematica
 He used the formalism of Scott to define a model of parallel computation, based on what he coined as process networks, now known as Kahn Process Networks.
 
 The basic idea to generalize the Scott theory of computation is simple
+
+
+
+\subsection{Concurrent Computation: Kahn Process Networks}
+\Blindtext[10]
+
+
+\subsection{Dataflow Models of Computation}
+Dennis~\cite{dennis1974first,dennis1986data}
+\cite{Parks:M95/105}
+Dataflow process networks~\cite{lee1995dataflow,lee_matsikoudis_semantics}
+CSDF~\cite{bilsen1996cycle}
+SADF~\cite{theelen2006scenario}
+\cite{lee1987sdf}
+\Blindtext[10]
+
+\subsection{Execution Traces}
+See~\cite{mazurkiewicz1995introduction} in~\cite{diekert1995book}
+\Blindtext[10]
+
+\subsection{Architecture Models}
+\cite{pelcat2015models}.
+\Blindtext[10]
+
+\subsection{The Mapping Problem}
+\cite{singh2013mapping}
+A lot more...
+\Blindtext[10]
+\subsection{Limits of the Model}
+\Blindtext[10]
+
