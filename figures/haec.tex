@@ -1,0 +1,52 @@
+%Based on design by Marco Miani
+%https://texample.net/media/tikz/examples/TEX/swan-wave-model.tex
+
+\begin{tikzpicture}[scale=.9,every node/.style={minimum size=1cm},on grid]
+
+    %slanting: production of a set of n 'laminae' to be piled up. N=number of grids.
+    \begin{scope}[
+            yshift=-83,every node/.append style={
+            yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+            ]
+        \fill[white,fill opacity=0.6] (0,0) rectangle (5,5);
+        \draw[black,dashed] (0,0) rectangle (5,5);%marking borders
+        \pic [opacity=0.3] {fourmesh};
+    \end{scope}
+    	
+    \begin{scope}[
+    	yshift=0,every node/.append style={
+    	    yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+    	             ]
+        \fill[white,fill opacity=0.6] (0,0) rectangle (5,5);
+        \draw[black,very thick] (0,0) rectangle (5,5);%marking borders
+        \pic {fourmesh};
+    \end{scope}
+    	
+    \begin{scope}[
+    	yshift=90,every node/.append style={
+    	yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+    	             ]
+    	\fill[white,fill opacity=.9] (0,0) rectangle (5,5);
+    	\draw[black,dashed] (0,0) rectangle (5,5);
+        \pic [opacity=0.3] {fourmesh};
+    \end{scope}
+    	
+    \begin{scope}[
+    	yshift=170,every node/.append style={
+    	    yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+    	  ]
+        \fill[white,fill opacity=0.6] (0,0) rectangle (5,5);
+        \draw[black,dashed] (0,0) rectangle (5,5);
+        \pic [opacity=0.3] {fourmesh};
+    \end{scope}
+
+    %putting arrows and labels:
+    \draw[-latex,thick] (6.2,2.8) node[right]{Manycore}
+         to[out=180,in=90] (3.5,2.3);
+
+    \draw[-latex,thick](5.8,.3)node[right, align=center]{Optical \\ Interconnect}
+        to[out=180,in=90] (3.3,-0.8);
+
+    \draw[-latex,thick](5.9,7.5)node[right,align=center]{Wireless \\inter-board \\ links}
+        to[out=180,in=0] (3.6,7.0);
+\end{tikzpicture}
