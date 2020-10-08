@@ -15,7 +15,7 @@ In the last decade or two, however, with the multicore era, this challenge has i
 Now we have to use and coordinate multiple cores, commonly with different capabilities.
 The widespread programming language abstractions and compiler analyses of today are not well-suited to tackle this challenge.
 
-\subsection{The Multicore Era}
+\section{The Multicore Era}
 
 On the hardware side, the last two decades have firmly established what we call the multicore era.
 Modern computing systems are almost universally composed of multiple logical cores, and there is a clear trend of increasing both the number and the heterogeneity of these cores.
@@ -60,14 +60,14 @@ Systems based on \ac{NoC} technology become necessary, lest a single bus interco
 
 In fact, for a multitude of reasons, manycores are commonly designed in a hierarchical fashion.
 Smaller clusters of cores locally interconnected communicate between each other and off-chip via a larger \ac{NoC}.
-These clusters and systems are usually heterogeneous as well, like the Karlay MPPA3 Coolidge~\cite{kalray_coolidge}, with includes accelerators for cryptography and secure cores, alongside general purpose cores.
-Some systems even propose multiple layers of hierarchy, like the three layers of the HAEC topology~\cite{HAEC}, depicted in Figure~\cite{fig:haec}.
+These clusters and systems are usually heterogeneous as well, like the Karlay MPPA3 Coolidge, with includes accelerators for cryptography and secure cores, alongside general purpose cores.
+Some systems even propose multiple layers of hierarchy, like the three layers of the HAEC topology~\cite{HAEC}, depicted in Figure~\ref{fig:haec}.
 This is a proposed 3D stacked system with multiple boards each with multiple chips, not a single chip with this complex interconnect.
 However, this design could allow for very low latencies, such that challenges of programming it are comparable to those of programming such a topology in an on-chip memory subsystem.
 What happens if the mulicores in this system are similar to the Karlay MPPA3 Coolidge? This would yield more than $5000$ heterogeneous cores connected at five levels of hierarchy in different topologies.
 More generally, complex topologies with possibly multi-level hierachies, add an additional layer of complexity to modern manycore systems besides heterogeneity and concurrency.
 
-\subsection{Programming Multicores}
+\section{Programming Multicores}
 
 As already mentioned, programming is notoriously difficult since it translates from the level of abstraction of human interactions to the instructions of a computing system.
 The multicore era greatly aggravates this already difficult problem.
@@ -151,7 +151,7 @@ The \texttt{map} abstraction as implemented in Haskell is thus not well-suited t
 In general, we are faced with trade-offs between abstract expressability and translatability to an efficient execution.
 At its core, the challenge is about choosing the right models and corresponding abstractions for a particular domain.
 
-\subsection{Software Synthesis}
+\section{Software Synthesis}
 
 Models play different roles in science and engineering.
 E.A. Lee explains this well in~\cite{lee2017plato}.
@@ -165,7 +165,7 @@ There are different ways of finding and exploiting the right models for programm
 It is unlikely that there is a single right model for this.
 Different models are differently suitable for different use-cases. 
 For example, applicative functors in functional programming~\cite{marlow2014haxl} seem to be a great model for expressing \acs{I/O} concurrency in microservice-based systems.
-We will discuss this example in Chapter~\cite{chap}.
+%We will discuss this example in Chapter~\ref{chap}.
 As mentioned before, however, Haskell and its underlying model are not a great fit for \ac{CPS}.
 
 For \ac{CPS} and, embedded systems in general, there is a family of methods called software synthesis~\cite{ritz1992softwaresynthesis,abbott1993softwaresynthesis,lin1998softwaresynthesis,bhartacharyya2000softwaresynthesis,pino1995softwaresynthesis,bhattacharyya2012softwaresynthesis}\index{software synthesis}.
@@ -181,18 +181,18 @@ Depending on the flow, the target archicecture can be implicit in the methodolog
 This can be realized for example by finding efficient mappings, i.e. allocations of computational and communication resources to the different parts of an application.
 
 As mentioned above, the central principle behind software synthesis is the underlying model of computation. 
-Some approaches~\cite{lin1998softwaresynthesis} use very general models, like Petri Nets~\cite{petri}, while others~\cite{ritz1992softwaresynthesis} very constrained models like \acp{SDF}~\cite{lee1987sdf}.
+Some approaches~\cite{lin1998softwaresynthesis} use very general models, like Petri Nets~\cite{petri1962nets}, while others~\cite{ritz1992softwaresynthesis} very constrained models like \acp{SDF}~\cite{lee1987sdf}.
 Most allow for multiple models~\cite{bhartacharyya2000softwaresynthesis,pino1995softwaresynthesis,bhattacharyya2012softwaresynthesis}, generally dataflow models.
 Making the model explicit just makes it easier to see the trade-off between expressability and translatability to an efficient execution.
 The advantage of models like Petri-Nets is that they are very general and can express virtually any computation.
-On the other hand, very constrained models, like \ac{SDF} provide behavioral guarantees that permit several optimization, like static schedules and channel bounds~\cite{parks}.
+On the other hand, very constrained models, like \ac{SDF} provide behavioral guarantees that permit several optimization, like static schedules and channel bounds~\cite{Parks:M95/105}.
 
-A plethora of more modern flows~\cite{themodernkpnones} have settled at the \ac{KPN} model.
+Several more modern flows~\cite{thiele2007DOL,maps,pimentel2006systematic,kangas2006uml} have settled at the \ac{KPN} model.
 Originally meant as denotational semantics for parallelism~\cite{kahn74}, the model has been shown to be compatible with the dataflow~\cite{lee1995dataflow}.
 Kahn Process Networks are provably deterministic~\cite{kahn74}, which is not the case for other models, e.g. Petri Nets.
 In a canonical sense, \acp{KPN} are more general than most dataflow models, and represent the most general deterministic dataflow model of computation~\cite{lee_matsikoudis_semantics}.
 In this thesis we will focus on a software synthesis flow~\cite{maps,castrillon2014thesis} based on \ac{KPN}.
-Figure~\ref{fig:software_synthesis_flows} shows the general structure of the flow and the four main abstractions as we identify them for our analysis~\cite{goens_mcsoc2016}.
+Figure~\ref{fig:software_synthesis_flows} shows the general structure of the flow and the four main abstractions as we identify them for our analysis~\cite{goens_mcsoc16}.
 Chapter~\ref{chap} will review these abstractions, including the models of computation above, and their relationships.
 
 \begin{figure}[h]
@@ -202,7 +202,7 @@ Chapter~\ref{chap} will review these abstractions, including the models of compu
 	\label{fig:software_synthesis_flows}
 \end{figure}
 
-\subsection{Contribution}
+\section{Contribution}
 
 In this thesis we seek to improve the tools we use for understanding and tackling the problems we've introduced. 
 We work around in a model-based perspective and consider the trade-off we've introduced, between abstract expressability and translatability to an efficient execution
@@ -233,12 +233,10 @@ In this thesis we aim to identify and exploit these structures in different ways
 
 Chapter~\ref{chap:compile-time} explores compile-time applications of the identified structures.
 For example, it shows how we can use symmetries in \ac{DSE} for pruning the design space and discusses the role of locality in mapping algorithms.
-
 Chapter~\ref{chap:mapping_other_applications}, on the other hand, explores other applications of the structures.
 It shows how symmetries can also be leveraged at runtime in so-called hybrid mapping strategies.
 It also discusses memory, which is traditionally neglected in mapping approaches.
 \todo{The structure of the applications feels weird: can I change it?}
-
 In Chapter~\ref{chap:mapping_conclusions} we discuss the conclusions we can make from exploring this mapping flow,
 and we also discuss related work to this part in Chapter~\ref{chap:related_mappings}.
 
@@ -250,12 +248,9 @@ Thus, instead of exploiting the structure of the given abstractions, in the seco
 
 In Chapter~\ref{chap:mocs} we start with a more systematic overview of \acfp{MoC}.
 We see how understanding the models and their relationships pays off by finding and exploiting a gap in the semantics between \ac{KPN} and languages that usually implement this model using blocking-reads semantics.
-
 Expanding on the overview of \acp{MoC}, we consider the requirements of the domain of \acp{CPS}.
 From these considerations we discuss a novel model, Reactors, and how it can be used in different domains like automotive and telecommunications.
-
 In Chapter~\ref{chap:language} we go beyond the realm of \acp{CPS} and discuss how the principles of dataflow and language-based transformations can be exploited in a different domain, this time in a different domain of microservice-oriented systems. We discuss two distinct ways to exploit language-level abstractions in this domain.
-
 Finally, in Chapter~\ref{chap:benchmarknig} we turn our attention to a seemingly orthogonal aspect: Benchmarking.
 In order to asses the performance of any method or flow, we require benchmarks.
 However, benchmarks are scarce and of very diverse levels of quality.
@@ -266,7 +261,7 @@ We discuss related work to the different aspects of this second part in Chapter~
 We then expand our conclusions from the \ac{KPN} flow to consider these additional aspects, concluding the thesis in Chapter~\ref{chap:conlusion.}
 \todo{Add a discussion of the motivation to constraint in the right way. Do I have a good example? (GOTO?), cite~\cite{tasharofi2013scala}} 
 
-\subsection*{A Note on Originality}
+\subsection{A Note on Originality}
 
 This thesis presents the fruits of over half a decade of research on the subjects presented.
 Research, especially in an interdisciplinary approach like presented here, is much more fruitful when collaborative.
