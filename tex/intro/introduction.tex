@@ -67,6 +67,8 @@ However, this design could allow for very low latencies, such that challenges of
 What happens if the mulicores in this system are similar to the Karlay MPPA3 Coolidge? This would yield more than $5000$ heterogeneous cores connected at five levels of hierarchy in different topologies.
 More generally, complex topologies with possibly multi-level hierachies, add an additional layer of complexity to modern manycore systems besides heterogeneity and concurrency.
 
+\todo{add something about emerging memory technologies (like RTM)}
+\todo{cite orch somewhere, perhaps here}
 \section{Programming Multicores}
 
 As already mentioned, programming is notoriously difficult since it translates from the level of abstraction of human interactions to the instructions of a computing system.
@@ -87,7 +89,7 @@ LBB0_1:
 	cmp	dword ptr [rbp - 56], 10
 	jge	LBB0_4
 	mov	edi, dword ptr [rbp - 56]
-	call	_read_file
+	call	_read_picture
 	mov	qword ptr [rbp - 64], rax
 	mov	rdi, qword ptr [rbp - 64]
 	call	_contains_cats
@@ -118,7 +120,7 @@ In practice, however, almost no one would write this assembly code. Instead, the
 \begin{minted}{C}
 for(i = 0; i < N; i++){
     char *f;
-    f = read_file(i);
+    f = read_picture(i);
     results[i] = contains_cats(f); 
 }
 \end{minted}
@@ -129,16 +131,16 @@ We can certainly say this is at a level of abstraction between the human and mac
 However, the very widespread \texttt{for} instruction we used here also has the inherently sequential semantics exhibited by the machine code above.
 The semantics of the for loop are that the loop body will execute completely.
 After each iteration of the body, the increment expression is executed (usually incrementing the iteration variable), and the condition is evaluated, deciding wether to continue iterating.
-Indeed, in the two (equivalent) snippets above, we don't know how the functions\texttt{read\_file} and \texttt{contains\_cats} work.
+Indeed, in the two (equivalent) snippets above, we don't know how the functions\texttt{read\_picture} and \texttt{contains\_cats} work.
 Do they have an inner state, or side effects?
-We don't know if we can call \texttt{read\_file} in a different order, or multiple times in parallel.
+We don't know if we can call \texttt{read\_picture} in a different order, or multiple times in parallel.
 Perhaps it is internally keeping a single reference to the iterator of the image files and doing so would break the logic.
 The \texttt{for} instruction is very useful to abstract away the logic of registers and instruction jumps, but not a useful abstraction for expressing concurrency.
 A similar construct exists in functional programming, \texttt{map}\index{\texttt{map} function}, which generally does not have this implicit sequential semantics.
 The \texttt{map} instruction is what is called a higher-order function\index{higher-order function}, taking a function as an argument and applying it to a list or any iterable object, in general.
 The same cat-identifying snippet, in Haskell, can be written as follows:
 \begin{minted}{Haskell}
-result = map (contains_cats . read_file) pictures
+result = map (contains_cats . read_picture) pictures
 \end{minted}
 
 While the language separates statfull and stateless computation, allowing a great analysis of concurrency, there are reasons why Haskell is not the most widespread language for embedded systems.
