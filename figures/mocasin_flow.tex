@@ -1,0 +1,79 @@
+% Define block styles
+\tikzstyle{mio} = [rectangle, rounded corners, draw, fill=green!20, %legend: possible "IP leak"
+    text width=7em, text centered, minimum height=4em]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=7em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{required} = [draw, ->]
+\tikzstyle{possible} = [draw, dashed, ->]
+\tikzstyle{interaction} = [thick, <->, draw, color=red!70]
+\tikzstyle{data} = [rectangle, rounded corners, draw, fill=teal!20, text width=7em, text centered,  minimum height=4em]
+
+\begin{tikzpicture}[node distance = 4em]
+    % inputs/readers
+    \node [block ] (tgff) {tgff readers};
+    \node [block, below=of tgff] (slx) {SLX readers};
+
+    %data
+    \node [data, right=of tgff] (traces) {traces};
+    \node [data, below=of traces] (app) {application (e.g. KPN)};
+    \node [data, below=of app] (mapping) {mapping};
+    \node [data, below=of mapping] (platform) {platform model};
+
+    \node [block, left=of platform] (platformdes) {platform designer};
+
+    %modules
+    \node [mio, right=of mapping] (mappers) {mappers};
+    \node [block, right=of app] (simulate) {simulate};
+    \node [mio, above=of simulate] (tetris) {runtime managers (e.g. TETRiS)};
+    \node [mio, right=of mappers] (logic) {logic language manager};
+    \node [mio, below=of mappers] (representations) {representations (e.g. symmetries, metric spaces)};
+    \node [mio, above=of logic] (dc) {design centering (including perturbations)};
+
+
+    %edges
+    \path [possible] (slx) -- (traces);
+    \path [possible] (slx) -- (app);
+    \path [possible] (slx) -- (platform);
+    \path [possible] (slx) -- (mapping);
+
+    \path [possible] (tgff) -- (traces);
+    \path [possible] (tgff) -- (app);
+
+    \path [possible] (platformdes) -- (platform);
+
+    \path [required] (traces) -- (mappers);
+    \path [required] (app) -- (mappers);
+    \path [required] (platform) -- (mappers);
+    \path [required] (mappers) -- (mapping);
+
+
+
+    \path [required] (traces) -- (simulate);
+    \path [required] (app) -- (simulate);
+    \path [required] (platform) -- (simulate);
+    \path [required] (mapping) -- (simulate);
+
+    %interactions
+    \path [interaction] (mappers) -- (logic);
+    \path [interaction] (mappers) -- (representations);
+    \path [interaction] (simulate) -- (tetris);
+    \path [interaction] (simulate) -- (mappers);
+    \path [interaction] (simulate) -- (dc);
+
+    \matrix [draw=black,fill=gray!10,right=15em of tetris.north east, anchor=north west] {
+      \node[data, rounded corners=0, text width=1em, minimum height=1em] {}; & \node[] {data structure};\\
+      \node[block, rounded corners=0, text width=1em, minimum height=1em] {}; & \node[] {module};\\
+      \node[mio, rounded corners=0, text width=1em, minimum height=1em] {}; & \node[] {module with contributions from this thesis};\\
+      \draw[possible] (0,-0.2) -- (0.4,-0.2); & \node[] {optional input data};\\
+      \draw[required] (0,-0.2) -- (0.4,-0.2); & \node[] {internal data depencency};\\
+      \draw[interaction] (0,-0.2) -- (0.4,-0.2); & \node[] {interaction between modules};\\
+      % \node[fill=black,draw,circle,inner sep=2pt,outer sep=0pt] (m) at (0,0){};
+      % \draw (m) -- +(0,0.4); & \node[legendtext]{Mandatory}; & 
+ %   \filldraw[fill=white,draw=black] (0,0.2) -- ++(225:0.2) arc[start angle=225,end angle=315,radius=0.2]; 
+ % \draw (0,0.2) ++(225:0.5) -- (0,0.2) -- ++(315:0.5);& \node[legendtext]{Alternative}; \\
+ %  \node[fill=white,draw=black,circle,inner sep=2pt,outer sep=0pt] (o) at (0,0){}; \draw (m) -- +(0,0.4); & \node[legendtext]{Optional}; & 
+ %  \draw (0,0.2) ++(225:0.5) -- (0,0.2) -- ++(315:0.5);
+ %  \filldraw[black] (0,0.2) -- ++(225:0.2) arc[start angle=225,end angle=315,radius=0.2]; & \node[legendtext]{Or}; 
+\\
+};
+\end{tikzpicture}

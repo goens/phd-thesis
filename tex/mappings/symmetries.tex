@@ -40,7 +40,7 @@ Intuitively, thus, this four-by-four mesh has more symmetry.
 
 \begin{figure}[h]
 	\centering
-   \resizebox{0.55\textwidth}{!}{\input{figures/noc_comparison.tex}}
+   \resizebox{0.55\textwidth}{!}{\input{figures/placeholder.tex}}
 	\caption{A comparison of the symmetries of two meshes.}
 	\label{fig:motivation_partial_symmetries}
 \end{figure}
@@ -198,7 +198,10 @@ For mappings $m,m' : T \rigtharrow A$, the following statements are equvialent:
 \item There two mappings are equivalent by symmetries in the orbit of $S \times G$.
 \end{enumerate}
 \begin{proof}
-The implication $(1) \Rightarrow (2)$ follows directly from the definition of $\vaprhi$ and the action of $S \times G$. For the implication $(2) \Rightarrow (1)$, since $m$ and $m'$ are in the same s.c.c. of the orbit of $S \times G$, there exists an $x \in S \times G$ such that $m = x \cdot m'$. We can use the direct product structure of $S \times G$ to decompose $ x = fg$ for $f \in S, g \in G$. This means that m = fg \cdot m' = f \cdot (g \cdot m')$.
+The implication $(1) \Rightarrow (2)$ follows directly from the definition of $\vaprhi$ and the action of $S \times G$.
+For the implication $(2) \Rightarrow (1)$, since $m$ and $m'$ are in the same s.c.c. of the orbit of $S \times G$, there exists an $x \in S \times G$ such that $m = x \cdot m'$.
+We can use the direct product structure of $S \times G$ to decompose $ x = fg$ for $f \in S, g \in G$.
+This means that $m = fg \cdot m' = f \cdot (g \cdot m')$.
 Applying Lemma~\ref{lem:symmetry_to_iso} on $m$ and $g \cdot m'$ shows that $\varphi \circ g$ is an isomorphism.
 \end{proof}
 \end{thm}

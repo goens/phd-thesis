@@ -1,0 +1,20 @@
+% Define block styles
+\tikzstyle{flow} = [rectangle, rounded corners, draw, fill=green!20, %legend: possible "IP leak"
+    text width=7em, text centered, minimum height=4em]
+\tikzstyle{abstract} = [rectangle, draw, fill=blue!20, 
+    text width=7em, text centered, rounded corners, minimum height=4em]
+
+\begin{tikzpicture}[node distance = 4em]
+    %nodes
+    \node [abstract ] (moc) {Application (Model of Computation)};
+    \node [abstract, below=of moc] (exec) {Execution};
+    \node [flow, right=of moc ] (kpn) {Kahn Process Networks (KPN)};
+    \node [flow, right=of exec] (traces) {KPN Traces (Histories)};
+    \node [abstract, right=of kpn ] (arch) {Architecture};
+    \node [abstract, right=of traces] (decisions) {Decisions};
+    \node [flow, right=of arch] (archgraph) {Architecture graphs, ad-hoc models};
+    \node [flow, right=of decisions] (mappings) {Mappings};
+    \node [below=of traces] (todo) {TODO: improve this figure! (based on MCSOC'16)};
+
+
+\end{tikzpicture}

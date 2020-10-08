@@ -1,39 +1,44 @@
-\usetikzlibrary{positioning,arrows}
+\usetikzlibrary{positioning,arrows,automata,topaths,shapes,backgrounds,snakes,meta.positioning}
 
-\tikzset{processingelement/.pic={
+%4x4 (actually 3.5 x 3.5)
+\tikzset{processingelement/.pic={ 
   \draw ({0}, {0}) rectangle ++(2,2);
   \draw ({2},{2}) -- ++(0.5,0.5);
-  \draw ({2.5},{2.5}) rectangle ++(1,1) ++(-0.5,-0.5) node[font=\large] {R};
+  \draw ({2.5},{2.5}) rectangle ++(1,1) ++(-0.5,-0.5) node[font=\Large] {R};
   }
-} 
+}  
 
+%16x16 (actually 15.5x15.5)
 \tikzset{fourmesh/.pic={
-\foreach \x in {0,...,3}{
-       \foreach \y in {0,...,3}{
-         \pgfmathsetmacro{\xn}{0+\x*1.25}
-         \pgfmathsetmacro{\yn}{0+\y*1.25} 
-         \pic (pe\x\y) [scale=0.25] at (\xn,\yn) {processingelement};
-       }
-     }
-     \foreach \x in {0,...,2}{
-     \foreach \y in {0,...,2}{
-       \pgfmathsetmacro{\xs}{\x*1.25+0.95}
-       \pgfmathsetmacro{\ys}{\y*1.25+0.95}
-       \pgfmathsetmacro{\xn}{\xs+0.94}
-       \pgfmathsetmacro{\yn}{\ys+0.94}
-     \path[<->,very thick] (\xs,\ys) edge (\xn,\ys);
-     \path[<->,very thick] (\xs,\ys) edge (\xs,\yn);
-     }
-     }
+  \foreach \x in {0,...,3}{
+    \foreach \y in {0,...,3}{
+       \pgfmathsetmacro{\xn}{\x*4}
+       \pgfmathsetmacro{\yn}{\y*4} 
+       %inlining the processing element since it wont scale properly otherwise
+       %\pic (pe\x\y) at (\xn,\yn) {processingelement};
+       \draw ({\xn + 0}, {\yn + 0}) rectangle ++(2,2);
+       \draw ({\xn + 2}, {\yn + 2}) -- ++(0.5,0.5);
+       \draw ({\xn + 2.5},{\yn + 2.5}) rectangle ++(1,1) ++(-0.5,-0.5) node[font=\Large] {R};
+      }
+    }
+  \foreach \x in {0,...,3}{
+    \foreach \y in {0,...,3}{
+      \pgfmathsetmacro{\xs}{\x*4+3}
+      \pgfmathsetmacro{\ys}{\y*4+3}
+      \pgfmathsetmacro{\xn}{\xs+3}
+      \pgfmathsetmacro{\yn}{\ys+3}
+      \pgfmathsetmacro{\xsm}{\x*4+3.5}
+      \pgfmathsetmacro{\ysm}{\y*4+3.5}
+      \pgfmathsetmacro{\xnm}{\xsm+3}
+      \pgfmathsetmacro{\ynm}{\ysm+3}
+      \ifnum\x<3
+      \path[<->,very thick] (\xsm,\ys) edge (\xnm,\ys);
+      \fi
+      \ifnum\y<3
+      \path[<->,very thick] (\xs,\ysm) edge (\xs,\ynm);
+      \fi
+      }
+    }
+  }
+
 }
-}
-%\newcommand{\drawmesh}[1] {
-%  \foreach \x in {0,...,{#1 - 1}}{
-%    \foreach \y in {0,...,{#1 - 1}}{
-%         \pgfmathtruncatemacro{0+\x*4}{#3+\x*4}
-%         \pgfmathtruncatemacro{\yn}{#4+\y*4} 
-%         \pic
-%    }
-%  }
-%}
-  
