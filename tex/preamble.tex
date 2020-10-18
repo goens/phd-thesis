@@ -26,5 +26,14 @@
 \newtheorem{rem}[Satz]{Remark}
 \newtheorem{defn}[Satz]{Definition}
 \newtheorem{lem}[Satz]{Lemma}
+
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\addbibresource{aux/references.bib}
+\addbibresource{aux/mios.bib}
+
 \include{figures/tikz_commands}
 \include{aux/commands.tex}

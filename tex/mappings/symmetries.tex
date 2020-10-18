@@ -177,7 +177,7 @@ It is a sort of trace of the mapping. This mapping does not describe
 \label{lem:symmetry_to_iso}
 Let $m : T \rightarrow A$ be a mapping and let $f \in \AutSemi(A)$ be a partial automorphism of the archtitecture such that $\im(m) \subseteq \dom(f)$. Then, the two graphs $m(T)$ and $(fm)(T)$ are isomoprhic and the function $\varphi: m(T) \rightarrow (fm)(T), m(t) \mapsto f \cdot m(t)$ for all $t \in T$ is an isomorphism of labeled graphs.
 \begin{proof}
-First note that $\vaprhi$ is well-defined. Indeed, since $\im(m) \subseteq \dom(f)$ it means that $f \cdot m(t)$ is defined for all $t \in T$. Since $f \in \AutSemi(A)$, we know that the type of $m(t)$ and $f \cdot m(t)$ is equal for all $t \in T$, as well as the type of all edges $(m(t_0),m(t_1))$ and  $(f \cdot m(t_0), f \cdot m(t_1))$ is equal. Thus, $\varphi$ is a morphism of labeled graphs. Finally, since $f \in \AutSemi(A)$, we know that $f$ is a partial permutation, and in particular, a bijection between $\dom(f)$ and $\cod(f)$. In particular, $\varphi$ is bijective, and as a bijective morphism of labeled graphs, an isomorphism. 
+First note that $\varphi$ is well-defined. Indeed, since $\im(m) \subseteq \dom(f)$ it means that $f \cdot m(t)$ is defined for all $t \in T$. Since $f \in \AutSemi(A)$, we know that the type of $m(t)$ and $f \cdot m(t)$ is equal for all $t \in T$, as well as the type of all edges $(m(t_0),m(t_1))$ and  $(f \cdot m(t_0), f \cdot m(t_1))$ is equal. Thus, $\varphi$ is a morphism of labeled graphs. Finally, since $f \in \AutSemi(A)$, we know that $f$ is a partial permutation, and in particular, a bijection between $\dom(f)$ and $\cod(f)$. In particular, $\varphi$ is bijective, and as a bijective morphism of labeled graphs, an isomorphism. 
 \end{proof}
 \end{lem}
 
@@ -188,17 +188,17 @@ Even if the subgraphs are isomorphic, the crucial difference is, however, that t
 What if tasks $t_1$ and $t_2$ are equivalent?
 In other words,  what if $g = (0)(1,2)$ is a (full) automorphism of the application graph?
 Then the mappings $m_0$ and $m_2$ are equivalent (via $g$), but the function $\varphi$ of Lemma~\ref{lem:symmetry_to_iso} is still not an isomoprhism of the subgraphs.
-However, we can generalize the function by applying $g$ first, as $\vaprhi \circ g : m(T) \rightarrow fm(T), m(t) \mapsto (fm \circ g)(t) = (fm)(g(t))$.
+However, we can generalize the function by applying $g$ first, as $\varphi \circ g : m(T) \rightarrow fm(T), m(t) \mapsto (fm \circ g)(t) = (fm)(g(t))$.
 This generalization, in fact, yields a full characterization of equvialent mappings through isomorphy of subgraphs.
 \begin{thm}
 Let $A$ be an architecture with inverse semigroup of automorphisms $S = \AutSemi(A)$ and let $T$ be an application graph with group of automorphsims $G = \Aut(T)$.
-For mappings $m,m' : T \rigtharrow A$, the following statements are equvialent:
+For mappings $m,m' : T \rightarrow A$, the following statements are equvialent:
 \begin{enumerate}
 \item There exists a partial permutation $f \in S$ and a perumtation $g \in G$, such that $\varphi \circ g$ is an isomorphism of labeled graphs.
 \item There two mappings are equivalent by symmetries in the orbit of $S \times G$.
 \end{enumerate}
 \begin{proof}
-The implication $(1) \Rightarrow (2)$ follows directly from the definition of $\vaprhi$ and the action of $S \times G$.
+The implication $(1) \Rightarrow (2)$ follows directly from the definition of $\varphi$ and the action of $S \times G$.
 For the implication $(2) \Rightarrow (1)$, since $m$ and $m'$ are in the same s.c.c. of the orbit of $S \times G$, there exists an $x \in S \times G$ such that $m = x \cdot m'$.
 We can use the direct product structure of $S \times G$ to decompose $ x = fg$ for $f \in S, g \in G$.
 This means that $m = fg \cdot m' = f \cdot (g \cdot m')$.
