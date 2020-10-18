@@ -11,6 +11,7 @@ Thus, their behavior can be captured by a (Mazurkiewicz) trace.
 In particular, this permits to recrate their behavior in a fashion that is independent of the mapping~\cite{find_proper_references}.
 By ``replaying'' the trace, i.e. simulating the execution of a process for every input in the trace, a discrete-event simulator can sucesfully simulate the execution of a KPN, since the tooken sequence is guaranteed to be identical given identical inputs. In particular, this allows us to do design-space exploration.
 
+\todo{discuss KPN simulation and mention~\cite{menard_norcas16}}
 \subsection{Mocasin}
 
 In this thesis we will use \textbf{MoCASin}, a tool for the \textbf{M}odel-\textbf{o}f-\textbf{C}omputation-based \textbf{A}nalysis and \textbf{Si}mulatio\textbf{n} of applications. This tool, formerly known as pykpn~\cite{goens_mcsoc18}, has been developed as part of a collaborative effort between multiple researchers at the Chair for Compiler Construction at TU Dresden. Many concepts introduced in this thesis have been implemented and tested using MoCASin. A central part of MoCASin is a discrete-event simulator that uses the principles outlined above to simulate KPN applications based on their traces (as well as other models of computation). This simulation core is necessary to design and test many of the concepts of this thesis. The rest of this section will explain the basics of the simulation and the concepts of MoCASin required for the rest of this thesis.

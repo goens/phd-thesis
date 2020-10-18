@@ -45,12 +45,14 @@ At least not without fundamentally restructuring her code to exploit parallelism
 Contemportary systems aimed at performance almost ubiqutiously consist of multicore chips, in many cases heterogeneous, which tremendously increases the system complexity.
 The trend is clear, the number of cores, heterogeneity and overall system complexity will only continue to increase.
 
+\todo{cite~\cite{voelp16_pmes,}}
 %something about network-on-chip, emerging memories, and hierarchical topologies
 As the number of cores in a chip keeps increasing, the importance of coordination and communication between the cores raises as well.
 Memory latency and bandwidth has been a bottleneck for many clasess of applications for a while.
 In the case of manycores, which are multicores where the number of cores goes over several dozens, even to hunderds or thousands, the on-chip memory subsystem becomes a central design point of the chip.
 Systems based on \ac{NoC} technology become necessary, lest a single bus interconnect becomes the bottleneck of the system when thousands of cores want to communicate simmultaneously through it.
 
+%be more explicit about emerging memories.
 \begin{figure}[h]
 	\centering
    \resizebox{0.5\textwidth}{!}{\input{figures/haec.tex}}
