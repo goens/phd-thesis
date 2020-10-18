@@ -20,7 +20,7 @@ address = {Foz do Igua{\c{c}}u, Brazil},
 month = nov,
 publisher = {Springer International Publishing},
 doi = {10.1007/978-3-319-90023-0_10},
-url = {https://link.springer.com/chapter/10.1007%2F978-3-319-90023-0_10},
+url = {https://link.springer.com/chapter/10.1007\%2F978-3-319-90023-0_10},
 isbn={978-3-319-90023-0},
 abstract = {Current approaches for mapping Kahn Process Networks (KPN) and Dynamic Data Flow (DDF) applications rely on assumptions on the program behavior specific to an execution. Thus, a near-optimal mapping, computed for a given input data set, may become sub-optimal at run-time. This happens when a different data set induces a significantly different behavior. We address this problem by leveraging inherent mathematical structures of the dataflow models and the hardware architectures. On the side of the dataflow models, we rely on the monoid structure of histories and traces. This structure help us formalize the behavior of multiple executions of a given dynamic application. By defining metrics we have a formal framework for comparing the executions. On the side of the hardware, we take advantage of symmetries in the architecture to reduce the search space for the mapping problem. We evaluate our implementation on execution variations of a randomly-generated KPN application and on a low-variation JPEG encoder benchmark. Using the described methods we show that trace differences are not sufficient for characterizing performance losses. Additionally, using platform symmetries we manage to reduce the design space in the experiments by two orders of magnitude.},
 }
@@ -139,7 +139,7 @@ publisher = {ACM},
 keywords={contribution},
 address = {New York, NY, USA}
 }
-@article{goens_taco17symmetry,
+@article{goens_taco17,
 author = {\Goens{Andr{\'e}s Goens} and Sergio Siccha and Jeronimo Castrillon},
 title = {Symmetry in Software Synthesis},
 journal = {ACM Transactions on Architecture and Code Optimization (TACO),},
@@ -171,7 +171,7 @@ keywords={contribution},
 month = jan,
 location = {Manchester, United Kingdom}
 }
-@InProceedings{khasanov_parma18,
+@InProceedings{khasanov_parmaditam18,
 author = {Robert Khasanov and \Goens{Andr\'{e}s Goens} and Jeronimo Castrillon},
 title = {Implicit Data-Parallelism in Kahn Process Networks: Bridging the MacQueen Gap},
 booktitle = {Proceedings of the 9th Workshop and 7th Workshop on Parallel Programming and RunTime Management Techniques for Manycore Architectures and Design Tools and Architectures for Multicore Embedded Computing Platforms (PARMA-DITAM'18), co-located with 13th International Conference on High-Performance and Embedded Architectures and Compilers (HiPEAC)},
@@ -189,7 +189,7 @@ publisher = {ACM},
 address = {New York, NY, USA},
 location = {Manchester, United Kingdom},
 abstract = {Modern embedded systems are rapidly increasing their complexity, both in terms of numbers of cores, as well as heterogeneity. To generate efficient code for these systems, it is common to leverage formal models of computation.
-Among these, the dataflow model of Kahn Process Networks (KPN) is widespread because it is expressive but guarantees a deterministic execution. However, the KPN model is ill-suited to expose data-level parallelism, since this has to be made explicit in the process network. This is aggravated by the fact that its most common execution model, Kahn-MacQueen, poses restrictive conditions on the scheduling of data-parallel processes, leading to an inefficient execution. In this paper we present a novel extension to the KPN model and a relaxed execution strategy that addresses this problem, while keeping the deterministic KPN semantics. It improves run-time adaptivity in malleable way and provides implicit parallelism. We evaluate our approach on two architectures, improving the performance of a benchmark by up to 25.6% on an Intel chip with hyper-threading, and by up to 78.0% on a heterogeneous embedded ARM big.LITTLE architecture.},
+Among these, the dataflow model of Kahn Process Networks (KPN) is widespread because it is expressive but guarantees a deterministic execution. However, the KPN model is ill-suited to expose data-level parallelism, since this has to be made explicit in the process network. This is aggravated by the fact that its most common execution model, Kahn-MacQueen, poses restrictive conditions on the scheduling of data-parallel processes, leading to an inefficient execution. In this paper we present a novel extension to the KPN model and a relaxed execution strategy that addresses this problem, while keeping the deterministic KPN semantics. It improves run-time adaptivity in malleable way and provides implicit parallelism. We evaluate our approach on two architectures, improving the performance of a benchmark by up to 25.6\% on an Intel chip with hyper-threading, and by up to 78.0\% on a heterogeneous embedded ARM big.LITTLE architecture.},
 }
 @InProceedings{ertel_cc18,
 author = {Sebastian Ertel and \Goens{Andr\'{e}s Goens} and Justus Adam and Jeronimo Castrillon},
@@ -224,7 +224,7 @@ doi = {10.1109/TMSCS.2017.2771750},
 issn = {2332-7766},
 url = {http://ieeexplore.ieee.org/document/8103042/}
 }
-@InProceedings{goen_mcsoc18,
+@InProceedings{goens_mcsoc18,
 author = {\Goens{Andr\'{e}s Goens} and Christian Menard and Jeronimo Castrillon},
 title = {On the Representation of Mappings to Multicores},
 booktitle = {Proceedings of the IEEE 12th International Symposium on Embedded Multicore/Many-core Systems-on-Chip (MCSoC-18)},
@@ -238,6 +238,7 @@ url = {https://ieeexplore.ieee.org/document/8540232},
 isbn = {978-1-5386-6689-0/18/},
 abstract = {Application requirements for embedded systems are growing rapidly, as is the complexity of systems designed to execute them. A common abstraction used to tame this growing complexity is that of a mapping, which assigns parts of an application to different hardware resources. Modern flows need to explore an intractably large design space of mappings, and be able to quickly find near-optimal mappings for different objectives, sometimes at runtime. With systems featuring thousands of cores in the near horizon, we need methods to make this exploration step truly scalable. In this paper we argue that the mathematical representation of a mapping is central to achieve this. We present different representations and how these could be applied to different contexts and objectives, like complex design- space exploration meta-heuristics or efficient runtime systems.},
 }
+
 @Article{ertel_haskellsup19,
 author = {Sebastian Ertel and Justus Adam and Norman A. Rink and \Goens{Andr{\'{e}}s Goens} and Jeronimo Castrillon},
 title = {Category-Theoretic Foundations of ``STCLang: State Thread Composition as a Foundation for Monadic Dataflow Parallelism''},
@@ -378,7 +379,7 @@ pages = {1502--1507},
 doi = {10.23919/DATE48585.2020.9116245},
 url = {https://ieeexplore.ieee.org/document/9116245},
 keywords={contribution},
-abstract = {Ultra-dense non-volatile racetrack memories (RTMs) have been investigated at various levels in the memory hierarchy for improved performance and reduced energy consumption. However, the innate shift operations in RTMs hinder their applicability to replace low-latency on-chip memories. Recent research has demonstrated that intelligent placement of memory objects in RTMs can significantly reduce the amount of shifts with no hardware overhead, albeit for specific system setups. However, existing placement strategies may lead to sub-optimal performance when applied to different architectures. In this paper we look at generalized data placement mechanisms that improve upon existing ones by taking into account the underlying memory architecture and the timing and liveliness information of memory objects. We propose a novel heuristic and a formulation using genetic algorithms that optimize key performance parameters. We show that, on average, our generalized approach improves the number of shifts, performance and energy consumption by 4.3x, 46% and 55% respectively compared to the state-of-the-art.},
+abstract = {Ultra-dense non-volatile racetrack memories (RTMs) have been investigated at various levels in the memory hierarchy for improved performance and reduced energy consumption. However, the innate shift operations in RTMs hinder their applicability to replace low-latency on-chip memories. Recent research has demonstrated that intelligent placement of memory objects in RTMs can significantly reduce the amount of shifts with no hardware overhead, albeit for specific system setups. However, existing placement strategies may lead to sub-optimal performance when applied to different architectures. In this paper we look at generalized data placement mechanisms that improve upon existing ones by taking into account the underlying memory architecture and the timing and liveliness information of memory objects. We propose a novel heuristic and a formulation using genetic algorithms that optimize key performance parameters. We show that, on average, our generalized approach improves the number of shifts, performance and energy consumption by 4.3x, 46\% and 55\% respectively compared to the state-of-the-art.},
 }
 
 @InProceedings{menard_date20,

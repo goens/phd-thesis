@@ -1,4 +1,4 @@
-In this chapter we will explore the mathematical structure of symmetry in the software synthesis process, mostly the work published in ~\cite{goens_iess15,taco_symmetries,scopes17_tetris}.
+In this chapter we will explore the mathematical structure of symmetry in the software synthesis process, mostly the work published in ~\cite{goens_iess15,goens_taco17,goens_scopes17}.
 \blindtext[2]
 
 The material in this section makes use of concepts in group theory. We assume the basic concepts as seen in any undergraduate course on group theory, with the definitions of groups, actions and orbits. A brief introduction, to the level required by this chapter, can be fonud in Appendix~\ref{appendix:groups}. 
@@ -14,7 +14,7 @@ The material in this section makes use of concepts in group theory. We assume th
 
 \subsection{Calculating Symmetries}
 There branch of mathematics known as computational group theory deals with computational aspects of the theory of groups, which we have used here for formalizing the symmetries of applications, architectures and mappings. 
-An overview of the methods of computational group theory can be found in~\cite{serres} covering beyond the basics presented in this subsection.
+An overview of the methods of computational group theory can be found in~\cite{seress2003permutation} covering beyond the basics presented in this subsection.
 Here we will present only the methods necessary for the calculations required of applications to software synthesis.
 
 To leverage the symmetries explained in this theses for software synthesis, we need to methods to calculate the following:
@@ -129,7 +129,7 @@ These two partial permutations can also be written in the matrix notation from a
 \right)
 \end{equation*}
 
-For computations~\cite{standrews}, the three notations can be interpreted to make different data structures that make different opperations more efficient, like application of the partial function (as an array look-up), for sparse partial permutations (as lookups in key-value pairs), or cycles for efficient multiplication (as concatenation). They have different benefits and drawbacks. For readability though, the cycle notation is the most compact one, and the one we will use for the rest of this thesis.
+For computations~\cite{east2019semigroups}, the three notations can be interpreted to make different data structures that make different opperations more efficient, like application of the partial function (as an array look-up), for sparse partial permutations (as lookups in key-value pairs), or cycles for efficient multiplication (as concatenation). They have different benefits and drawbacks. For readability though, the cycle notation is the most compact one, and the one we will use for the rest of this thesis.
 
 Just as for groups, we can define the (left) action of a semigroup:
 \begin{defn}
@@ -221,4 +221,4 @@ Concretely
 \subsection{Calculating Semigroups of Symmetries}
 
 Now that we have seen how to describe partial symmetries, we can proceed to explain how to calculate them.
-This subsection is a simplification of the methods of~\cite{standrews}, and our applications of it in joint work with S. Siccha and J. Castrillon~\cite{taco_symmetries}.
+This subsection is a simplification of the methods of~\cite{east2019semigroups}, and our applications of it in joint work with S. Siccha and J. Castrillon~\cite{goens_taco17}.

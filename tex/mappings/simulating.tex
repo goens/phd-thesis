@@ -1,4 +1,9 @@
-The behavior of systems is commonly captured in execution traces, which simply record the behavior of different entities (e.g. processes or actors) at different timepoints. This can be formally captured in a monoid structure of (Mazurkiewicz) traces or, equivalently, histories~\cite{bookoftraces}. Traces are useful to understand the behavior of systems~\cite{vampir} and are common in many domains. However, for systems that are non-deterministic, (by definition) the behavior of the system does not only depend on the input. This can make designing~\cite{lee_problem_with_threads} and debugging~\cite{murillo}. In cyber-physical-sytems or, more generally, reactive systems in the sense of Harel and Pnueli~\cite{harel_pnueli_reactive}, input from the physical world might come in a non-deterministic fashion. The problem of capturing the behavior of such a system is even more complex when the system is distributed~\cite{shaver_phdthesis}. 
+The behavior of systems is commonly captured in execution traces, which simply record the behavior of different entities (e.g. processes or actors) at different timepoints.
+This can be formally captured in a monoid structure of (Mazurkiewicz) traces or, equivalently, histories~\cite{diekert1995book}.
+Traces are useful to understand the behavior of systems~\cite{vampir} and are common in many domains. However, for systems that are non-deterministic, (by definition) the behavior of the system does not only depend on the input.
+This can make designing~\cite{lee2006problem} and debugging~\cite{murillo_debugging}.
+In cyber-physical-sytems or, more generally, reactive systems in the sense of Harel and Pnueli~\cite{harel_pnueli_reactive}, input from the physical world might come in a non-deterministic fashion.
+The problem of capturing the behavior of such a system is even more complex when the system is distributed~\cite{shaver_phdthesis}. 
 
 Kahn Process Networks are deterministic, as are all the dataflow models that can be embedded as KPNs.
 This means that the behavior of a KPN application depends only on the input to the network, not on the mapping and scheduling or related execution details.

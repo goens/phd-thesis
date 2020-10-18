@@ -1,7 +1,79 @@
-The formal concept of computation is at the center of computer science.
-By the Church-Turing (hypo)thesis, the computational models of Lambda Calculus and Turing Machines represent anything that is computable in the physical world, and form the basis of computability.
-These models are, however, best suited to describe what should be computed, not how.
-A long tradition of research has delved deeper into the question of how to compute, spawning several different models of computation. 
+In his seminal paper~\cite{turing1936computable} in 1936, Alan Turing proposed a ``computing machine''\footnote{now known as Turing machine}.   
+While his machine was motivated by a person doing computations, he intended to capture the very notion of compatibility by it: namely what it is possible to compute at all.
+He was modeling computation.
+Two additional such models of computation existed at the time, the $\lambda$-calculus as proposed by Alonzo Church that same year~\cite{church1936unsolvable}, and the concept of general recursive functions due to Herbrand and Gödel, developed by Kleene~\cite{kleene1936recursive}.
+These three equivalent models~\cite{turing1937computability} were the original models of computation.
+They are equivalent in the sense that they define the same notion of what is computable.
+To an extent these models were not concerned with \emph{how} to (efficiently) compute something, but rather, \emph{what} we can compute and what not.
+Since then, with the revolution of digital computers, the interest increasingly shifted to care about \emph{how} we can compute.
+This spawned a much larger amount of models of computation at different levels of abstraction.
+
+In 1972 Karp\cite{karp1972reducibility} kickstarted the field of computational complexity by identifying many problems that were equivalently difficult to compute, the class of NP-complete problems.
+Computational complexity relies on the fact that the asymptotic behavior of the number of steps of an algorithm, as a function of the input (size), is invariant when changing between these models of computation.
+Around the same time, in 1970, Dana Scott proposed a mathematical theory of computation~\cite{scott1970} based on what are now called (Scott) domains\footnote{sometimes also called algebraic semilattice} and the Scott-topology. 
+Two ideas are central in Scott's formalization. The first is a method for capturing \emph{partial} computations, i.e. computations that have advanced but not finished yet.
+The second idea is that of modeling a computation as a continuous function between such domains, where a properly notion of continuity (in the Scott topology) models causality in the computation.
+Scott's semantics allowed to capture the process of a computation, but not the internals, which are abstracted away by the function. 
+
+The question of \emph{how} we compute can be modeled in different ways by complexity asymptotics or partial computations in the Scott formalism, but some aspects are still left unmodeled.
+A significant such aspect not taken into account by these models is \emph{where} we are computing.
+The theory of distributed computation was growing, with models like Petri Nets~\cite{petri1962nets} or seminal work like Lamport's on clocks and ordering of events~\cite{Lamport78time}.
+These models deal with properties of a computing system that has physically separate parts which split and distribute the computational load.
+However, the focus of the models is the system doing the computation, not the computation itself.
+
+In this thesis we are mostly interested in concurrent models of computation. 
+Such models abstract away the (distributed) computing system and focus on the computation itself. 
+They consider and express concurrency in the computation, which can be exploited for parallel or asynchronous execution.
+The rest of this section will survey some of the most important concurrent models of computation, before moving on to architectures, traces and mappings.
+
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.55\textwidth}{!}{\input{figures/dataflow_mocs.tex}}
+	\caption{Relationships between different dataflow models of computation.}
+	\label{fig:dataflow_mocs}
+\end{figure}
+
+\subsection{Partial Computation: Scott Domains}
+
+When Dana Scott proposed his mathematical theory of computation~\cite{scott1970}, he used the term mathematical to contrast it with operational computation.
+In practice, the steps of a computation are defined by the \ac{ISA} of the machine executing them.
+Most people don't write programs directly for the \ac{ISA}, however. They write them in an abstract programming language, which is translated by a compiler into machine instructions.
+Thus, in practice, the implementation of a compiler is what defines the (operational) semantics of programs.
+Scott's theory had the ambitious goal of being an abstraction that sat between these operational semantics and the abstract notions of computability of e.g. Church or Turing.
+He intended to abstract away the arbitrary implementation choices that were necessary but did not change the essence of the execution.
+While today his model is not the single established abstract model of semantics he sought out to define, it introduced several important ideas and mathematical structures to models of computation.
+In particular, a crucial abstraction introduced by his theory is that of partial computation.
+His theory makes it possible to express a computation as a series of partial results, without regarding the actual implementation of these.
+We will now introduce the basics of Scott's mathematical theory of computation.
+
+
+A Domain is a particular type of \ac{poset} ... 
+
+For example ...
+
+
+Scott's computation model implicitly assumed a sequential computation and Scott-continuous functions are a powerful method for describing partial sequential computations.
+Can we also use this model to describe parallel computation?
+Gilles Kahn did precisely this, four years after Scott published his mathematical theory of computation. 
+He used the formalism of Scott to define a model of parallel computation, based on what he coined as process networks, now known as Kahn Process Networks.
+
+The basic idea to generalize the Scott theory of computation is simple
+
+
+
+\subsection{Concurrent Computation: Kahn Process Networks}
+Discuss related: Hewitt-Agha actor model\index{actor model}~\cite{DBLP:conf/ijcai/HewittBS73,Agha:86:Actors}, Petri Nets\index{Petri nets}~\cite{petri1962nets}, Process Calculi\index{Process Calculi} (\index{Process Calculi ! Pi-Calculus}$\Pi$-calculus, \index{Process Calculi ! CSP}\ac{CSP})
+\Blindtext[10]\index{Kahn Process Networks}\ac{KPN}~\cite{kahn74}
+
+\subsection{Dataflow Models of Computation}
+Dennis dataflow \index{Dataflow ! Dennis}~\cite{dennis1974first,dennis1986data}
+\cite{Parks:M95/105}
+Dataflow process networks~\cite{lee1995dataflow,lee_matsikoudis_semantics}
+\ac{CSDF}\index{Dataflow ! CSDF}~\cite{bilsen1996cycle}
+\ac{SADF}\index{Dataflow ! SADF}~\cite{theelen2006scenario}
+\ac{SDF}\index{Dataflow ! SDF}~\cite{lee1987sdf}
+\Blindtext[10]
 
 
 
