@@ -1,31 +1,4 @@
-In his seminal paper~\cite{turing1936computable} in 1936, Alan Turing proposed a ``computing machine''\footnote{now known as Turing machine}.   
-While his machine was motivated by a person doing computations, he intended to capture the very notion of compatibility by it: namely what it is possible to compute at all.
-He was modeling computation.
-Two additional such models of computation existed at the time, the $\lambda$-calculus as proposed by Alonzo Church that same year~\cite{church1936unsolvable}, and the concept of general recursive functions due to Herbrand and Gödel, developed by Kleene~\cite{kleene1936recursive}.
-These three equivalent models~\cite{turing1937computability} were the original models of computation.
-They are equivalent in the sense that they define the same notion of what is computable.
-To an extent these models were not concerned with \emph{how} to (efficiently) compute something, but rather, \emph{what} we can compute and what not.
-Since then, with the revolution of digital computers, the interest increasingly shifted to care about \emph{how} we can compute.
-This spawned a much larger amount of models of computation at different levels of abstraction.
-
-In 1972 Karp\cite{karp1972reducibility} kickstarted the field of computational complexity by identifying many problems that were equivalently difficult to compute, the class of NP-complete problems.
-Computational complexity relies on the fact that the asymptotic behavior of the number of steps of an algorithm, as a function of the input (size), is invariant when changing between these models of computation.
-Around the same time, in 1970, Dana Scott proposed a mathematical theory of computation~\cite{scott1970} based on what are now called (Scott) domains\footnote{sometimes also called algebraic semilattice} and the Scott-topology. 
-Two ideas are central in Scott's formalization. The first is a method for capturing \emph{partial} computations, i.e. computations that have advanced but not finished yet.
-The second idea is that of modeling a computation as a continuous function between such domains, where a properly notion of continuity (in the Scott topology) models causality in the computation.
-Scott's semantics allowed to capture the process of a computation, but not the internals, which are abstracted away by the function. 
-
-The question of \emph{how} we compute can be modeled in different ways by complexity asymptotics or partial computations in the Scott formalism, but some aspects are still left unmodeled.
-A significant such aspect not taken into account by these models is \emph{where} we are computing.
-The theory of distributed computation was growing, with models like Petri Nets~\cite{petri1962nets} or seminal work like Lamport's on clocks and ordering of events~\cite{Lamport78time}.
-These models deal with properties of a computing system that has physically separate parts which split and distribute the computational load.
-However, the focus of the models is the system doing the computation, not the computation itself.
-
-In this thesis we are mostly interested in concurrent models of computation. 
-Such models abstract away the (distributed) computing system and focus on the computation itself. 
-They consider and express concurrency in the computation, which can be exploited for parallel or asynchronous execution.
-The rest of this section will survey some of the most important concurrent models of computation, before moving on to architectures, traces and mappings.
-
+This section will survey some of the most important concurrent models of computation. Before diving into the models, we will first discuss the mathematical semantics\footnote{Nowadays we call these semantics denotational} of computation by Scott.
 
 \begin{figure}[h]
 	\centering
