@@ -218,10 +218,53 @@ Chapter~\ref{chap} will review these abstractions, including the models of compu
 	\label{fig:software_synthesis_flows}
 \end{figure}
 
+\section{Problems}
+
+The methods of software synthesis are a promising avenue for programming multicores, but they still have multiple problems that make them impractical.
+
+%Mapping structure (Part I)
+The flow depicted in Figure~\ref{fig:software_synthesis_flows} is based on a well-defined model of computation (\ac{KPN}) for specifying and reasoning about applications.
+However, the architecture or the execution, which are comparably important, are commonly modeled in an ad-hoc fashion.
+With a specific architecture or topology in mind, the flows encode the architecture model with a series of performance metrics or similar numbers characterizing a specific hardware, while the structural properties are implicit in the problem formulations and algorithms.
+For example, researches might encode a heterogeneous architecture as a list of numbers of cores of different types, or perhaps use a grid system to encode \acp{PE} as they assume a \ac{NoC} with a regular-mesh topology.
+These models break down as soon as the complexities of the architecture transcend the fixed model, for example by having multiple clusters or levels of hierarchy, or star-mesh topologies instead of regular meshes.
+
+Execution traces reflect directly the structure of the application, as they are bound by the semantics of it.
+This is even more so the case for mappings, encode the resource allocation for the application to an architecture.
+As such, they inherit structural properties of both the application and its semantics, as well as of the underlying architecture.
+Yet mappings are commonly treated as simple lists of assignment, disregarding this structure, like which tasks depend on which, or if they are mapped to cores with a large communication latency between them.
+
+%Memory
+The aspects mentioned permeate the design of the internal algorithms in software synthesis flows, which effectively constraints them to a small class of models or disregards opportunities for reasoning about the structure of the problem. 
+While memory has been identified as a first-class citizen for achieving efficient implementations, many methods also consider it just as an afterthought.
+For example, when discussing heterogeneity in architectures, the heterogeneity implied by the memory subsystem is seldom considered, nor are emerging memory technologies like \acp{NVM}.
+
+%Limits of the model (KPN)
+The issues raised above are not inherent issues with the flow, but rather with the state of practice.
+However, the flow itself does has some inherent limitations as well.
+The model of computation, \ac{KPN}, for example, falls short on certain use-cases.
+For example, the blocking-read semantics common in \ac{KPN} implementations are ill-suited for certain cases of data-level parallelism.
+Also, perhaps more importantly, \acp{KPN} do not model time in the physical world, which plays a central role for the execution of \acp{CPS}.
+In general, a model-based design approach needs to evolve models according to the use-cases.
+
+%Linear flow (transformations)
+Another inherent problem with the flow as formulated is the structure of the flow itself.
+Concretely, an application is described using a concrete model of computation and then this is used to reason about an implementation.
+However, the flow as depicted in Figure~\ref{fig:software_synthesis_flows} (and implemented in practice) disregrads transformations at the level of the application.
+This could mean a feedback loop back to the application, or perhaps semantics-preserving code transformations at the model level, as part of the exploration.
+
+%Benchmarking
+If methods like software synthesis are to be used in practice, we should also make sure they work in practice. 
+Strong results on a varied benchmark suite from real-world applications are usually a much better indicator for practical applications than, say, a good asymptotic worst-case behavior.
+In order to get such results, however, we need such a varied realistic, up-to-date benchmark suite.
+In reality, however, increasingly branching subdomains and concerns of intellectual property mostly yield a scarce landscape of outdated benchmarks instead.
+
+Finally, there are multiple issues with these flows that depend more on the industry itself than the methods directly.
+Tool support and maturity, degree of adoption and knowledge of the models are all beyond the realm of the academic contribution of this thesis.
+
 \section{Contribution}
 
-In this thesis we seek to improve the tools we use for understanding and tackling the problems we've introduced:
-how to program heterogeneous multicore architectures with increasing complexity. 
+In this thesis we seek to improve the tools we use for understanding and tackling these problems with software synthesis. 
 We work in a model-based perspective and consider the trade-off we've introduced, between abstract expressability and translatability to an efficient execution
 To consider this we tackle the problem from both sides: the models and the compilers, in a very general sense, that translate to an efficient execution.
 The main idea behind this thesis is that the underlying models endow the problem with structure.
@@ -233,18 +276,15 @@ Again there are two ways of doing this:
 \end{enumerate}
 These make the two parts of this thesis.
 
-
-The first part focuses on software synthesis in the domain of \acp{CPS} and generally embedded systems.
-While some of the difficulties are general of all computing systems, the largest challenges are usually specific to an application domain.
-This thesis focuses on one such domain, of \acp{CPS} and other high-performance embedded systems running on \acp{MPSoC}.
-In particular, we focus on a concrete software synthesis flow~\cite{maps,castrillon2014thesis} based on \acp{KPN} (cf. Fig.~\ref{fig:software_synthesis_flows}). Chapter~\ref{chap:background} introduces this flow and the corresponding background.
-
+The first part focuses on software synthesis in the domain of \acp{CPS} and generally high-performance embedded systems running on \acp{MPSoC}.
+In particular, we focus on a concrete software synthesis flow~\cite{maps,castrillon2014thesis} based on \acp{KPN} (cf. Fig.~\ref{fig:software_synthesis_flows}).
+Chapter~\ref{chap:background} introduces this flow and the corresponding background.
 
 % Exploiting Structure in Dataflow Software Synthesis: Part I
 As described in Figure~\ref{fig:software_synthesis_flows}, the software synthesis process is centered around multiple abstractions.
 These can be seen as formal constructs modeling the application and architectures, as well as decisions of the execution of the former on the latter, like mappings.
 They are all rich in (mathematical) structure.
-Architectures for example, even heterogeneous ones, exhibit a great deal of symmetry.
+Architectures for example, even heterogeneous ones, exhibit a great deal of symmetry.\todo{make this perhaps more intuitive}
 Similarly, the space of mappings has locality properties, where some mappings are similar whereas others are to others . Chapter~\ref{chap:structures} describes these structures.
 In this thesis we aim to identify and exploit these structures in different ways.
 
@@ -267,7 +307,9 @@ In Chapter~\ref{chap:mocs} we start with a more systematic overview of \acfp{MoC
 We see how understanding the models and their relationships pays off by finding and exploiting a gap in the semantics between \ac{KPN} and languages that usually implement this model using blocking-reads semantics.
 Expanding on the overview of \acp{MoC}, we consider the requirements of the domain of \acp{CPS}.
 From these considerations we discuss a novel model, Reactors, and how it can be used in different domains like automotive and telecommunications.
-In Chapter~\ref{chap:language} we go beyond the realm of \acp{CPS} and discuss how the principles of dataflow and language-based transformations can be exploited in a different domain, this time in a different domain of microservice-oriented systems. We discuss two distinct ways to exploit language-level abstractions in this domain.
+In Chapter~\ref{chap:language} we go beyond the realm of \acp{CPS} and discuss how the principles of dataflow and language-based transformations can be exploited in a different domain, namely that of microservice-oriented systems.
+We discuss two distinct ways to exploit language-level abstractions in this domain.
+
 Finally, in Chapter~\ref{chap:benchmarknig} we turn our attention to a seemingly orthogonal aspect: Benchmarking.
 In order to asses the performance of any method or flow, we require benchmarks.
 However, benchmarks are scarce and of very diverse levels of quality.
