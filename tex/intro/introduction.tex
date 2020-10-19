@@ -13,12 +13,18 @@ Traditionally, we have put the resarch and effort into optimizing the execution 
 Most of the progress of decades of research in programming language and compilers revolves around this single-core model.
 In the last decade or two, however, with the multicore era, this challenge has increased dramatically.
 Now we have to use and coordinate multiple cores, commonly with different capabilities.
-The widespread programming language abstractions and compiler analyses of today are not well-suited to tackle this challenge.
+The widespread programming language abstractions and compiler analyses of today are ill-suited to tackle this challenge.
+
+There is probably no universal solution to these emerging problems, as different domains have different requirements.
+This thesis thus focuses mostly a particular domain, that of \acfp{CPS} or generally, embedded systems.
+In this domain, a family of methods called software synthesis seeks to enable efficient programming of complex multicore systems.
+Central to these methods is a focus on using models for describing computation.
+Following the idea of letting theory inform practice, we strive to improve methods of software synthesis to new problems by identifying and exploiting mathematical structures in those problems.
 
 \section{The Multicore Era}
 
 On the hardware side, the last two decades have firmly established what we call the multicore era.
-Modern computing systems are almost universally composed of multiple logical cores, and there is a clear trend of increasing both the number and the heterogeneity of these cores.
+Modern computing systems are almost universally composed of multiple logical cores, and there is a clear trend of increasing both the number and the degree of heterogeneity of these cores.
 This increasing complexity brings about an increasing challenge in taming it.
 
 \begin{figure}[h]
@@ -31,10 +37,10 @@ This increasing complexity brings about an increasing challenge in taming it.
 
 %Multicore Era
 Both the execution frequency and the closely intertwined single-core processing speed of computing systems increased exponentially up until the early 2000s (cf. Figure~\ref{fig:multicore_era}), an empirical fact observed by Gordon Moore in 1965~\cite{moore}.
-Since the early 2000s, however, while tranistor size continue to decrease, the exponential frequency scaling has stopped (cf. Figure~\ref{fig:multicore_era}).
+Since the early 2000s, however, while transistor sizes continue to decrease, the exponential frequency scaling has stopped (cf. Figure~\ref{fig:multicore_era}).
 Individual and clever designs have continued to improve single-processor speed, albeit at a significantly slower rate.
 Instead, most improvements in microchips in raw processing power have come from a paradigm switch.
-Hardware designers resorted to develop multicores, microchips composed of multiple logical cores that can execute in parallel.
+Hardware designers resorted to develop multicores, microchips composed of multiple cores that can execute in parallel.
 Additionally, since different use-cases benefit from different computing core architectures, the inclusion of multiple chips has paved the way for heterogeneity.
 This has resulted in a multicore era of computing.
 
@@ -42,17 +48,17 @@ A programmer writing a piece of C code in the early 1970s would automatically be
 By recompiling her code for a processor $10 \times$ faster, she could very roughly expect her code also to run about $10 \times$ as fast.% Do I want to make this concrete (with Processor names?)
 Nowadays thus, a programmer writing a piece of (sequential) C code in the early 2000s cannot expect anywhere near a $100$-fold increase in performance today when she uses a microchip with $100 \times$ the number of transistors.
 At least not without fundamentally restructuring her code to exploit parallelism.
-Contemportary systems aimed at performance almost ubiqutiously consist of multicore chips, in many cases heterogeneous, which tremendously increases the system complexity.
-The trend is clear, the number of cores, heterogeneity and overall system complexity will only continue to increase.
+Contemporary systems aimed at performance almost ubiqutiously consist of multicore chips, in many cases heterogeneous, which tremendously increases the system complexity.
+It is a clear trend that the complexity and heterogeneity will continue to increase~\cite{voelp16_pmes}.
+%The trend is clear, the number of cores, heterogeneity and overall system complexity will only continue to increase.
 
-\todo{cite~\cite{voelp16_pmes,}}
 %something about network-on-chip, emerging memories, and hierarchical topologies
 As the number of cores in a chip keeps increasing, the importance of coordination and communication between the cores raises as well.
-Memory latency and bandwidth has been a bottleneck for many clasess of applications for a while.
+Memory latency and bandwidth has been a bottleneck for many classes of applications for a while.
 In the case of manycores, which are multicores where the number of cores goes over several dozens, even to hunderds or thousands, the on-chip memory subsystem becomes a central design point of the chip.
 Systems based on \ac{NoC} technology become necessary, lest a single bus interconnect becomes the bottleneck of the system when thousands of cores want to communicate simmultaneously through it.
 
-%be more explicit about emerging memories.
+
 \begin{figure}[h]
 	\centering
    \resizebox{0.5\textwidth}{!}{\input{figures/haec.tex}}
@@ -62,26 +68,32 @@ Systems based on \ac{NoC} technology become necessary, lest a single bus interco
 
 In fact, for a multitude of reasons, manycores are commonly designed in a hierarchical fashion.
 Smaller clusters of cores locally interconnected communicate between each other and off-chip via a larger \ac{NoC}.
-These clusters and systems are usually heterogeneous as well, like the Karlay MPPA3 Coolidge, with includes accelerators for cryptography and secure cores, alongside general purpose cores.
+These clusters and systems are usually heterogeneous as well, like the Karlay MPPA3 Coolidge~\cite{coolidge}, with includes accelerators for cryptography and secure cores, alongside general purpose cores.
 Some systems even propose multiple layers of hierarchy, like the three layers of the HAEC topology~\cite{HAEC}, depicted in Figure~\ref{fig:haec}.
-This is a proposed 3D stacked system with multiple boards each with multiple chips, not a single chip with this complex interconnect.
+This is a proposed 3D stacked system with multiple \acp{PCB} each with multiple manycore chips, not a single chip with this complex interconnect.
 However, this design could allow for very low latencies, such that challenges of programming it are comparable to those of programming such a topology in an on-chip memory subsystem.
 What happens if the mulicores in this system are similar to the Karlay MPPA3 Coolidge? This would yield more than $5000$ heterogeneous cores connected at five levels of hierarchy in different topologies.
 More generally, complex topologies with possibly multi-level hierachies, add an additional layer of complexity to modern manycore systems besides heterogeneity and concurrency.
+\todo{JC: great segway to complexity of topologies: be more explicit! (not sure about what?)}
 
-\todo{add something about emerging memory technologies (like RTM)}
-\todo{cite orch somewhere, perhaps here}
+As part of the shift towards memory-centered systems, emerging memory technologies play a significant role.
+In general, upcoming technologies like \acp{NVM} where data is not lost when power is turned off, have significant implications e.g. for energy efficient systems~\cite{meena2014nvm,mittal2014survey}\index{non-volatile memory}.
+Some concrete \acp{NVM}, however, have further unique implications that increase the complexity of the system.
+For example, in \acp{RTM} information is stored in a so-called racetrack that can store multiple data addresses~\cite{rtm}\index{racetrack memory}.
+An address can only be accessed for reading or writing by shifting the head of a reader to the correct location, which has costs in terms of energy and latency.
+Thus, considerations of memory layout change when targeting \acp{RTM}.
+In general, these emerging technologies increase the complexity of the system and with it, the difficulty of programming it.
+
 \section{Programming Multicores}
 
 As already mentioned, programming is notoriously difficult since it translates from the level of abstraction of human interactions to the instructions of a computing system.
 The multicore era greatly aggravates this already difficult problem.
+Reasoning about concurrency, parallelism and heterogeneity on top of the correct functionality of software is significantly more difficult for a programmer.
+In general, the productivity of developers cannot keep up with the pace of developments in hardware.
 We speak of a software productivity gap~\cite{castrillon2014thesis,ecker2009hardware}\index{software productivity gap}. 
-The productivity of developers cannot keep up with the pace of developments in hardware.
 
 When programming multicore systems, abstractions that proved very useful for programming single-cores become inadaquate.
 An universal concept in programming is that of repeating an action multiple times, or looping. 
-This perfectly exemplifies the differences in abstractions and how they become inadequate for multicore systems.
-
 For example, consider the task of iterating through a bunch of pictures and determining which of them contain cats.
 For instructing a human, we can probably say something like ``look through those pictures and sort out the ones have cats''.
 A modern x86 chip, on the other hand, would understand something closer to this:
@@ -113,11 +125,11 @@ LBB0_4:
 
 This snippet is a very oversimplified version of the task, but it serves to make the point.
 Where we abstractly tell a human to look through the pictures and they undestand them as a whole set, interpreting themselves how to go through the set.
-On the other hand, we instruct the machine to iterate through them by a series of very fine grained commands.
+On the other hand, we instruct the machine to iterate through them by a series of very fine-grained commands.
 We need to set certain registers to contain the right memory addresses, before calling an instruction to operate on them.
-Here we then call external functions that do the reading and cat identification.
+We then call external functions that do the reading and cat identification.
 To then loop through the pictures here, simplified, we repeat this reading and indetifying by jumping to a previous point in the sequence of instructions.
-Even this x86 assembly snippet is already an abstraction, not only because it uses human-readable mnemonics for the instructions, but more so because it also abstracts away the concrete memory addresses.
+Even this x86 assembly snippet is already an abstraction, not only because it uses human-readable mnemonics for the instructions, but more so because it also abstracts away the concrete memory addresses and the microarchitecture.
 In practice, however, almost no one would write this assembly code. Instead, they could write something closer to this (equivalent) C snippet:
 \begin{minted}{C}
 for(i = 0; i < N; i++){
@@ -133,7 +145,7 @@ We can certainly say this is at a level of abstraction between the human and mac
 However, the very widespread \texttt{for} instruction we used here also has the inherently sequential semantics exhibited by the machine code above.
 The semantics of the for loop are that the loop body will execute completely.
 After each iteration of the body, the increment expression is executed (usually incrementing the iteration variable), and the condition is evaluated, deciding wether to continue iterating.
-Indeed, in the two (equivalent) snippets above, we don't know how the functions\texttt{read\_picture} and \texttt{contains\_cats} work.
+Indeed, in the two (equivalent) snippets above, we don't know how the functions \texttt{read\_picture} and \texttt{contains\_cats} work.
 Do they have an inner state, or side effects?
 We don't know if we can call \texttt{read\_picture} in a different order, or multiple times in parallel.
 Perhaps it is internally keeping a single reference to the iterator of the image files and doing so would break the logic.
@@ -145,12 +157,12 @@ The same cat-identifying snippet, in Haskell, can be written as follows:
 result = map (contains_cats . read_picture) pictures
 \end{minted}
 
-While the language separates statfull and stateless computation, allowing a great analysis of concurrency, there are reasons why Haskell is not the most widespread language for embedded systems.
+While the language separates statefull and stateless computation, allowing a great analysis of concurrency, there are reasons why Haskell is not the most widespread language for embedded systems.
 For example, garbage collection makes execution times very unpredictable.
 Similarly, the lazyness of the language adds a performance penalty to large complex computations.
 Compiling Haskell code to an efficient single-core execution is significantly more challenging than with the C code.
 The lazyness also makes it difficult to reason about time in the computation.
-This is crucial in some application domains, like \ac{CPS}, where the systems interact with their environment.
+This is crucial in application domains like \ac{CPS}, where the systems interact with their environment.
 The \texttt{map} abstraction as implemented in Haskell is thus not well-suited to the domain of \ac{CPS}.
 In general, we are faced with trade-offs between abstract expressability and translatability to an efficient execution.
 At its core, the challenge is about choosing the right models and corresponding abstractions for a particular domain.
@@ -159,8 +171,8 @@ At its core, the challenge is about choosing the right models and corresponding 
 
 Models play different roles in science and engineering.
 E.A. Lee explains this well in~\cite{lee2017plato}.
-He argues that scientist adapt their models to fit experiments in the world, while engineers adapt designs in the world to fit their models.
-Indeed, for some fundamental principles of computation, like $\lambda$-calculus, are discovered instead of invented~\cite{wadler2015propositions}.
+He argues that scientists adapt their models to fit experiments in the world, while engineers adapt designs in the world to fit their models.
+Indeed, for some fundamental principles of computation, like $\lambda$-calculus, are discovered instead of invented, as Wadler argues~\cite{wadler2015propositions}.
 Those might fit in the first paradigm, giving computer science a justification for its name.
 In the case of programming multicore systems, however, the problem is clearly in the second realm: we need to engineer good models~\cite{lee2006problem}.
 No serious argument can be made for languages like C or Haskell, nor the x86 instruction-set; They were invented, not discovered.
@@ -172,7 +184,7 @@ For example, applicative functors in functional programming~\cite{marlow2014haxl
 %We will discuss this example in Chapter~\ref{chap}.
 As mentioned before, however, Haskell and its underlying model are not a great fit for \ac{CPS}.
 
-For \ac{CPS} and, embedded systems in general, there is a family of methods called software synthesis~\cite{ritz1992softwaresynthesis,abbott1993softwaresynthesis,lin1998softwaresynthesis,bhartacharyya2000softwaresynthesis,pino1995softwaresynthesis,bhattacharyya2012softwaresynthesis}\index{software synthesis}.
+For \ac{CPS} and, embedded systems in general, there is a family of methods called software synthesis~\cite{ritz1992softwaresynthesis,abbott1993softwaresynthesis,lin1998softwaresynthesis,bhartacharyya2000softwaresynthesis,pino1995softwaresynthesis,castrillon2011trends,bhattacharyya2012softwaresynthesis}\index{software synthesis}.
 It is a family of methods devised precisely to help with the burden of fully exploiting the capabilities of modern multicores.
 Inspired by hardware design flows, it aims to bridge the ensuing (software) productivity gap by integrating knowledge of the application and target multicore architecture into the compilation process.
 At the core of these methods lies a shift in the programming model.
@@ -185,14 +197,14 @@ Depending on the flow, the target archicecture can be implicit in the methodolog
 This can be realized for example by finding efficient mappings, i.e. allocations of computational and communication resources to the different parts of an application.
 
 As mentioned above, the central principle behind software synthesis is the underlying model of computation. 
-Some approaches~\cite{lin1998softwaresynthesis} use very general models, like Petri Nets~\cite{petri1962nets}, while others~\cite{ritz1992softwaresynthesis} very constrained models like \acp{SDF}~\cite{lee1987sdf}.
+Some approaches~\cite{lin1998softwaresynthesis} use general models, like Petri Nets~\cite{petri1962nets}, while others~\cite{ritz1992softwaresynthesis} more constrained models like \acp{SDF}~\cite{lee1987sdf}.
 Most allow for multiple models~\cite{bhartacharyya2000softwaresynthesis,pino1995softwaresynthesis,bhattacharyya2012softwaresynthesis}, generally dataflow models.
 Making the model explicit just makes it easier to see the trade-off between expressability and translatability to an efficient execution.
-The advantage of models like Petri-Nets is that they are very general and can express virtually any computation.
+The advantage of models like Petri-Nets is that they can express virtually any computation.
 On the other hand, very constrained models, like \ac{SDF} provide behavioral guarantees that permit several optimization, like static schedules and channel bounds~\cite{Parks:M95/105}.
 
 Several more modern flows~\cite{thiele2007DOL,maps,pimentel2006systematic,kangas2006uml} have settled at the \ac{KPN} model.
-Originally meant as denotational semantics for parallelism~\cite{kahn74}, the model has been shown to be compatible with the dataflow~\cite{lee1995dataflow}.
+Originally meant as denotational semantics for parallelism~\cite{kahn74}, the model has been shown to be compatible with dataflow~\cite{lee1995dataflow}.
 Kahn Process Networks are provably deterministic~\cite{kahn74}, which is not the case for other models, e.g. Petri Nets.
 In a canonical sense, \acp{KPN} are more general than most dataflow models, and represent the most general deterministic dataflow model of computation~\cite{lee_matsikoudis_semantics}.
 In this thesis we will focus on a software synthesis flow~\cite{maps,castrillon2014thesis} based on \ac{KPN}.
@@ -202,21 +214,22 @@ Chapter~\ref{chap} will review these abstractions, including the models of compu
 \begin{figure}[h]
 	\centering
    \resizebox{0.75\textwidth}{!}{\input{figures/software_synthesis_flow.tex}}
-   \caption{The four main abstractions in Software Synthesis in the Example of a \acs{KPN}-based flow.} 
+   \caption{The four main abstractions in Software Synthesis in the Example of a \acs{KPN}-based flow.\todo{improve figure: add a flow}} 
 	\label{fig:software_synthesis_flows}
 \end{figure}
 
 \section{Contribution}
 
-In this thesis we seek to improve the tools we use for understanding and tackling the problems we've introduced. 
-We work around in a model-based perspective and consider the trade-off we've introduced, between abstract expressability and translatability to an efficient execution
+In this thesis we seek to improve the tools we use for understanding and tackling the problems we've introduced:
+how to program heterogeneous multicore architectures with increasing complexity. 
+We work in a model-based perspective and consider the trade-off we've introduced, between abstract expressability and translatability to an efficient execution
 To consider this we tackle the problem from both sides: the models and the compilers, in a very general sense, that translate to an efficient execution.
 The main idea behind this thesis is that the underlying models endow the problem with structure.
 We can then identify this structure (mathematically) and leverage it to improve our solutions.
 Again there are two ways of doing this: 
 \begin{enumerate}
 \item by taking a concrete flow and improving it leveraging its own structure, or
-\item by changing the underlying model in a way that improves the balance in some way in the trade-off above.
+\item by changing the underlying models in a way that improves the balance in some way in the trade-off above.
 \end{enumerate}
 These make the two parts of this thesis.
 
@@ -245,7 +258,7 @@ In Chapter~\ref{chap:mapping_conclusions} we discuss the conclusions we can make
 and we also discuss related work to this part in Chapter~\ref{chap:related_mappings}.
 
 The second part of this thesis goes beyond the discussed \ac{KPN}-based flow.
-Instead of the structure emerging from a concrete model, i considers the underlying models themselves.
+Instead of the structure emerging from a concrete model, we consider the underlying models themselves.
 While Software Synthesis refers to a family of methods, each concrete method has a corresponding choice of abstractions it uses.
 This translates to the programming language abstractions and semantics striving for expressive idioms for programmers that permit the compiler to analyze them and execute them efficiently.
 Thus, instead of exploiting the structure of the given abstractions, in the second part of this thesis we explore ways in which we can improve upon software synthesis methods by changing the structure we use: be it the semantics of the model of computation, implicit language structures or even the benchmarks we evaluate to asses our methods.
@@ -271,7 +284,7 @@ This thesis presents the fruits of over half a decade of research on the subject
 Research, especially in an interdisciplinary approach like presented here, is much more fruitful when collaborative.
 In the case of joint work, I have made an effort to focus only on my own contributions in this thesis, whenever possible.
 I have also taken care to describe the work of my colleagues as theirs, when I have included it as an indispensable requirement to understand my own work.
-However,  many if not most of these ideas in these thesis are the result of joint work and cannot be credited to a single person.
+However,  some of these ideas in these thesis are the result of joint work and cannot be credited to a single person.
 In those cases I have also taken care to describe the work as joint and mention other co-authors.
 If in doubt, any idea or result that I have included here which has already been published elsewhere is also due to my coauthors.
 
