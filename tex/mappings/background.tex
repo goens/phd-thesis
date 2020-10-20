@@ -1,5 +1,5 @@
-At the basis of software synthesis are concurrent models of computation. The process derives an efficient execution to a concrete architecture from a computation expressed in an abstract model.
-In order to understand software synthesis thus, we first need to understand the underlying models of computation.
+In software synthesis we strive to derive an efficient execution from a computation expressed in an abstract model to a concrete architecture.
+In order to understand software synthesis, thus, we first need to understand the underlying models of computation.
 Closely related to these concurrent models of computation are execution traces, which capture a concrete execution for some input.
 However, going from such abstract models to a concrete execution also requires an understanding of the target hardware architecture.
 The relationship between the two can be captured in a mapping.
@@ -8,12 +8,106 @@ It is the central piece of background theory required for the methods presented 
 
 \subsection{Kahn Process Networks}
 
-Models of computation exist at basically every level of abstraction and usefulness. In this first part of the thesis, we will focus on a single model, Kahn Process Networks.
-In Part II, specifically in Chapter~\ref{chap:mocs} we will discuss other models and how they relate to each other.
+The flow we investigate in Part I is based on the \ac{MoC} of \acfp{KPN}.
+In this section we introduce this model, or rather, its most common implementation with blocking-read semantics~\cite{kahn_macqueen} .
+In Part II, specifically in Chapter~\ref{chap:mocs} we will discuss the original formal semantics~\cite{kahn74} and how they differ to those introduce here.
+We also discuss other models of computation and how they relate to each other.
+
+We can think of a \ac{KPN} as a computation distributed among different \emph{processes}\index{KPN ! process} (originally derived from coroutines).
+Each of these processes executes sequentially and is Turing complete. However, the processes share no memory, they have memories local only to themselves.
+They communicate between each other using \emph{channels}\index{KPN ! channel}, which work as unbounded \acs{FIFO} buffers. 
+Processes have sets of outgoing and incoming channels.
+As an instruction, any process can write to one of its outgoing channels or read from one of its incoming channels.
+They do so in discrete tokens of data.
+
+The original language~\cite{kahn_macqueen} was proposed as an extension of POP-2, which is pretty dated and has fallen out of use today.
+Instead of this language, we will consider a more modern incarnation, \ac{CPN}, which extends the C programming language~\cite{cpn}\index{CPN}.
+We do so by looking at the example from Listing~\ref{listing:fft_cpn}. 
+The listing shows a very simplified process that applies an \acs{FFT} it the data in its incoming channel and outputs it to an outgoing channel.
+Processes in \ac{CPN} are instantiated from process templates, similar to classes and objects in object-oriented languages.
 
 
-In this chapter we will introduce Kahn Process Networks only superficially. We will 
+\begin{listing}
+\begin{minted}{C}
+__PNkpn fft_templ
+    __PNin(param_t param, time_coef[N])
+    __PNout(fp_complex freq_coef[N]){
+  int i, loop_count;
+  __PNin(param){
+    loop_count = param.loop_count;
+  }
+  for (i = 0; i < loop_cnt; i++)
+    __PNin(time_coef) __PNout(freq_coef){
+      fft(time_coef, freq_coef);
+    }
+}
+\end{minted}
+\caption{An \ac{FFT} implemented as a \ac{KPN} process in \ac{CPN}}
+\label{listing:fft_cpn}
+\end{listing}
+
+
+The communication is asynchronous: 
+When a process writes to an outgoing channel, the data is buffered in the channel until it is read, and the process continuous to execute.
+If a process reads from a channel, it receives the oldest token buffered in the channel.
+If there are no tokens, execution blocks until such a token is written to a channel - hence the name, blocking-read semantics.
+A channels can be the outgoing channel of at most one process (it should also be so for at least one process, otherwise the channel is useless).
+On the other hand, if a channel is an incoming channel to multiple processes, all tokens are copied for each of those processes.
+Hence, all processes will see the exact same incoming stream of tokens from a shared channel, instead of splitting them up.
+
+Let us consider the \acs{FFT} process from Listing~\ref{listing:fft_cpn} and combine it with other processes into a full application.
+Listing~\ref{listing:audio_filter} describes a simplified algorithm for a low-pass filter on a stereo sound file, using this \acs{FFT} process.
+We also omit the templates and channel declarations in this simplified listing.
+The \texttt{src} process reads the stereo file, splits it into two channels and sends the sound in blocks of a determined length as tokens.
+These files are then transformed from the time domain to the frequency domain using a \acf{FFT}, filtered and transformed back to the time domain.
+A sink channel gathers the filtered blocks from both channels, left and right, and combines them again into a stereo sound file that it can store.
+
+\begin{listing}
+\begin{minted}{C}
+__PNprocess src = src_templ
+  __PNout(param_chan, src_l, src_r);
+__PNprocess fft_l = fft_templ
+  __PNin(param_chan, src_l)
+  __PNout(fft_coef_l);
+__PNprocess filter_l = filter_templ
+  __PNin(param_chan, fft_coef_l)
+  __PNout(filtered_coef_l);
+__PNprocess ifft_l = ifft_templ
+  __PNin(param_chan, filtered_coef_l)
+  __PNout(sink_l);
+__PNprocess fft_r = fft_templ
+  __PNin(param_chan, src_r)
+  __PNout(fft_coef_r);
+__PNprocess filter_r = filter_templ
+  __PNin(param_chan, fft_coef_r)
+  __PNout(filtered_coef_r);
+__PNprocess ifft_r = ifft_templ
+  __PNin(param_chan, filtered_coef_r)
+  __PNout(sink_r);
+__PNprocess sink = sink_templ
+  __PNin(param_chan, sink_l, sink_r);
+\end{minted}
+\caption{An audio filter \ac{KPN} application in \ac{CPN}}
+\label{listing:audio_filter}
+\end{listing}
+
+The data flow in the example of Listing~\ref{listing:audio_filter} is very structured: it goes from the source, split over both channels, through the filter, back to the sink.
+This structure can easily be visualized in a graph, like in Figure~\ref{fig:audio_filter_graph}.
+More generally, we can think of any \ac{KPN} application as a directed graph $K = (T,C)$, where the nodes $T$ represent the processes\footnote{the notation comes from $T$ for tasks}, and the edges $C$, the channels.
+This works even when a channel is an incoming channel for multiple processes.
+In that case, we can split it into multiple edges from the process it is going from, to each of the target channels.
+We can do so without loss of generality since these are the semantics of such channels. 
+We call this graph the \emph{\ac{KPN} graph}\index{KPN ! graph}.
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.9\textwidth}{!}{\input{figures/placeholder}}
+   \caption{The audio filter application as a \ac{KPN} graph}
+	\label{fig:audio_filter_graph}
+\end{figure}
+
 \subsection{Execution Traces}
+
 Kahn Process Networks with mathematical semantics~\cite{kahn74}, in the sense of Scott~\cite{scott1970}, abstract away the concrete implementation of individual steps in a computation.
 Even so, the execution of a computation can be thought of as a series of steps or partial computations that eventually yield the final result.
 These series, which is commonly referred to as execution trace, can be captured as a sequence of steps, e.g. as the element of a Scott Domain\footnote{this will be discuss more in-depth in Chapter~\ref{chap:mocs}}. 
