@@ -1,0 +1,87 @@
+\small
+\tikzstyle{terminal}=[rectangle,draw,fill=black!10,minimum height=0.5cm]
+\tikzstyle{edge}=[->,align=center]
+\newcommand{\mktwithoutedge}[1]{
+  \node[terminal,right=of tnode] (tnode) {#1};
+}
+\newcommand{\mkt}[1]{
+  \mktwithoutedge{#1}
+  \draw[edge] (tnode.east) -- ($(tnode.east)+(0.13,0)$);
+}
+\newcommand{\connect}[2]{
+  \draw[edge] (#1) -- (#2);
+}
+\begin{tikzpicture}
+  % Tokens
+  \begin{scope}[node distance=0.5cm and 0.13cm]
+    \begin{scope}[node distance=0.4]
+      \node[] (a1) {};
+      \node[below=of a1] (a2) {};
+      \node[below=of a2] (a3) {};
+      \node[below=of a3] (a4) {};
+      \node[below=of a4] (a5) {};
+    \end{scope}
+
+    \begin{scope}[opacity=1]
+    \node[left=of a1] (tnode) {};
+      \mkt{src}
+      \mkt{fft\_l}
+      \mkt{fft\_r}
+      \mkt{filter\_l}
+      \mkt{filter\_r}
+      \mkt{ifft\_l}
+      \mkt{ifft\_r}
+      \mktwithoutedge{sink}
+    \end{scope}
+
+    \begin{scope}[opacity=1]
+      \node[left=of a2] (tnode) {};
+      \mkt{src}
+      \mkt{fft\_l}
+      \mkt{filter\_l}
+      \mkt{ifft\_l}
+      \mkt{fft\_r}
+      \mkt{filter\_r}
+      \mkt{ifft\_r}
+      \mktwithoutedge{sink}
+    \end{scope}
+
+    \begin{scope}[opacity=1]
+      \node[left=of a3] (tnode) {};
+      \mkt{src}
+      \mkt{fft\_l}
+      \mkt{filter\_l}
+      \mkt{fft\_r}
+      \mkt{ifft\_l}
+      \mkt{filter\_r}
+      \mkt{ifft\_r}
+      \mktwithoutedge{sink}
+    \end{scope}
+
+    \begin{scope}[opacity=1]
+      \node[left=of a4] (tnode) {};
+      \mkt{src}
+      \mkt{fft\_r}
+      \mkt{filter\_r}
+      \mkt{fft\_l}
+      \mkt{filter\_l}
+      \mkt{ifft\_l}
+      \mkt{ifft\_r}
+      \mktwithoutedge{sink}
+    \end{scope}
+
+    \begin{scope}[opacity=1]
+      \node[left=of a5] (tnode) {};
+      \mkt{src}
+      \mkt{fft\_l}
+      \mkt{filter\_l}
+      \mkt{fft\_r}
+      \mkt{filter\_r}
+      \mkt{ifft\_l}
+      \mkt{ifft\_r}
+      \mktwithoutedge{sink}
+    \end{scope}
+
+  \end{scope}
+
+\end{tikzpicture}
