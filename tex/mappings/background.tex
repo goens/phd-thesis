@@ -26,31 +26,30 @@ We do so by looking at the example from Listing~\ref{listing:fft_cpn}.
 Processes in \ac{CPN} are instantiated from process templates, similar to classes and objects in object-oriented languages.
 The listing shows a very simplified process template for an \acs{FFT} process. 
 Lines 2 and 3 declare the incoming and outgoing channels for the process.
-In Line 5, the \texttt{param} channel is read and the \texttt{loop\_count} parameter extracted.
-Inside the scope from Lines 5-7, the \texttt{param} variable has the value of the token read.
-Then in Lines 9-11 the process applies an \acs{FFT} to the data in its incoming channel \texttt{time\_coeff} and outputs it to an outgoing channel, \texttt{freq\_coef}. 
+In Line 5, the \texttt{cnt} channel is read and its value is stored in the local variable \texttt{loop_cnt} in Line 6.
+Then in Lines 7-10 the process applies an \acs{FFT} to the data in its incoming channel \texttt{src\_data} and outputs it to an outgoing channel, \texttt{freq}. 
+Similar to the read operation in Lines 5-6, the values of the input channel data are available in the identifier \texttt{src_data} in the scope of the \texttt{__PNin}.
+In an analogous fashion, the values written to the \texttt{freq} variable in the scope of the \texttt{__PNout} are written to the corresponding output channel.
 
 \begin{listing}
 \begin{minted}[linenos]{C}
-__PNkpn fft_templ
-    __PNin(param_t param, time_coef[N])
-    __PNout(fp_complex freq_coef[N]){
-  int i, loop_count;
-  __PNin(param){
-    loop_count = param.loop_count;
-  }
-  for (i = 0; i < loop_cnt; i++)
-    __PNin(time_coef) __PNout(freq_coef){
-      fft(time_coef, freq_coef);
-    }
+__PNkpn fft_process
+    __PNin(int cnt, short src_data[N])
+    __PNout(complex freq[N]){
+  int i, loop_cnt;
+  __PNin(cnt)
+     loop_cnt = cnt;
+  for(i = 0; i < cnt; ++i)
+    __PNin(src_data) __PNout(freq)
+      fft(src_data, freq);
 }
 \end{minted}
-\caption{An \ac{FFT} implemented as a \ac{KPN} process in \ac{CPN}}
+\caption{An \ac{FFT} implemented as a \ac{KPN} process in \ac{CPN}, based on Appendix A.1.3 of \cite{castrillon2014thesis}}
 \label{listing:fft_cpn}
 \end{listing}
 
 
-The communication is asynchronous: 
+In general, the communication in \acp{KPN} is asynchronous: 
 When a process writes to an outgoing channel, the data is buffered in the channel until it is read, and the process continuous to execute.
 If a process reads from a channel, it receives the oldest token buffered in the channel.
 If there are no tokens, execution blocks until such a token is written to a channel - hence the name, blocking-read semantics.
@@ -67,30 +66,24 @@ A sink channel gathers the filtered blocks from both channels, left and right, a
 
 \begin{listing}
 \begin{minted}{C}
-__PNprocess src = src_templ
-  __PNout(param_chan, src_l, src_r);
-__PNprocess fft_l = fft_templ
-  __PNin(param_chan, src_l)
-  __PNout(fft_coef_l);
-__PNprocess filter_l = filter_templ
-  __PNin(param_chan, fft_coef_l)
-  __PNout(filtered_coef_l);
-__PNprocess ifft_l = ifft_templ
-  __PNin(param_chan, filtered_coef_l)
-  __PNout(sink_l);
-__PNprocess fft_r = fft_templ
-  __PNin(param_chan, src_r)
-  __PNout(fft_coef_r);
-__PNprocess filter_r = filter_templ
-  __PNin(param_chan, fft_coef_r)
-  __PNout(filtered_coef_r);
-__PNprocess ifft_r = ifft_templ
-  __PNin(param_chan, filtered_coef_r)
-  __PNout(sink_r);
-__PNprocess sink = sink_templ
-  __PNin(param_chan, sink_l, sink_r);
+__PNprocess src = src_process
+  __PNout(cnt, src_l_out, src_r_out);
+__PNprocess fft_l = fft_process
+  __PNin(count, src_l_out) __PNout(fft_l_out);
+__PNprocess fft_r = fft_process
+  __PNin(count, src_r_out) __PNout(fft_r_out);
+__PNprocess filter_l = filter_process
+  __PNin(count, fft_l_out) __PNout(filter_l_out);
+__PNprocess filter_r = filter_process
+  __PNin(count, fft_r_out) __PNout(filter_r_out);
+__PNprocess ifft_l = ifft_process
+  __PNin(count, filter_l_out) __PNout(ifft_l_out);
+__PNprocess ifft_r = ifft_process
+  __PNin(count, filter_r_out) __PNout(ifft_r_out);
+__PNprocess sink = sink_process
+  __PNin(count, ifft_l_out, ifft_r_out);
 \end{minted}
-\caption{An audio filter \ac{KPN} application in \ac{CPN}}
+\caption{An audio filter \ac{KPN} application in \ac{CPN}, based on Figure 7a in \cite{cpn}}
 \label{listing:audio_filter}
 \end{listing}
 
