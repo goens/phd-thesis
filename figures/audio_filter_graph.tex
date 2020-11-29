@@ -1,0 +1,17 @@
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm] (src) {src};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, below right = 1cm of src] (fft_l) {\texttt{fft\_l}};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, above right = 1cm of src] (fft_r) {\texttt{fft\_r}};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, right = 1 cm of fft_l] (filter_l) {\texttt{filter\_l}};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, right = 1 cm of fft_r] (filter_r) {\texttt{filter\_r}};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, right = 1 cm of filter_l] (ifft_l) {\texttt{ifft\_l}};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, right = 1 cm of filter_r] (ifft_r) {\texttt{ifft\_r}};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, below right = 1cm of ifft_r] (sink) {\texttt{sink}};
+
+\draw[-latex] (src) -- (fft_l);
+\draw[-latex] (src) -- (fft_r);
+\draw[-latex] (fft_l) -- (filter_l);
+\draw[-latex] (fft_r) -- (filter_r);
+\draw[-latex] (filter_l) -- (ifft_l);
+\draw[-latex] (filter_r) -- (ifft_r);
+\draw[-latex] (ifft_l) -- (sink);
+\draw[-latex] (ifft_r) -- (sink);

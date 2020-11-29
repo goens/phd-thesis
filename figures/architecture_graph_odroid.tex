@@ -1,0 +1,68 @@
+  %cores big
+  \node[ellipse,fill=green!30] (pe1) {PE$_1$};
+  \node[ellipse,fill=green!30, below right = of pe1] (pe2) {PE$_2$};
+  \node[ellipse,fill=green!30, below left = of pe1] (pe3) {PE$_3$};
+  \node[ellipse,fill=green!30, below right = of pe3] (pe4) {PE$_4$};
+
+  %cores little
+  \node[ellipse,fill=green!60, right = 6 cm of pe1] (pe5) {PE$_5$};
+  \node[ellipse,fill=green!60, below right = of pe5] (pe6) {PE$_6$};
+  \node[ellipse,fill=green!60, below left = of pe5] (pe7) {PE$_7$};
+  \node[ellipse,fill=green!60, below right = of pe7] (pe8) {PE$_8$};
+\foreach \c\i in {blue!55/-0.4,blue!85/0.4}{
+  %connections big
+  \draw[latex-latex,color=\c] ([xshift=\i * 0.1cm,yshift=\i * 0.1cm]pe1.south east) -- ([xshift=\i * 0.1cm,yshift=\i * 0.1cm]pe2.north west);
+  \draw[latex-latex,color=\c] ([xshift=\i * -0.1cm,yshift=\i * 0.1cm]pe1.south west) -- ([xshift=\i * -0.1cm,yshift=\i * 0.1cm]pe3.north east);
+  \draw[latex-latex,color=\c] ([xshift=\i * 0.1cm,yshift=\i * 0.0cm]pe1.south) -- ([xshift=\i * 0.1cm,yshift=\i * 0.0cm]pe4.north);
+  \draw[latex-latex,color=\c] ([xshift=\i * 0.0cm,yshift=\i * 0.1cm]pe2.west) -- ([xshift=\i * 0.0cm,yshift=\i * 0.1cm]pe3.east);
+  \draw[latex-latex,color=\c] ([xshift=\i * 0.1cm,yshift=\i * -0.1cm]pe2.south west) -- ([xshift=\i * 0.1cm,yshift=\i * -0.1cm]pe4.north east);
+  \draw[latex-latex,color=\c] ([xshift=\i * 0.1cm,yshift=\i * 0.1cm]pe3.south east) -- ([xshift=\i * 0.1cm,yshift=\i * 0.1cm]pe4.north west);
+
+  %connections little
+  \draw[latex-latex,color=\c] ([xshift=\i * 0.1cm,yshift=\i * 0.1cm]pe5.south east) -- ([xshift=\i * 0.1cm,yshift=\i * 0.1cm]pe6.north west);
+  \draw[latex-latex,color=\c] ([xshift=\i * -0.1cm,yshift=\i * 0.1cm]pe5.south west) -- ([xshift=\i * -0.1cm,yshift=\i * 0.1cm]pe7.north east);
+  \draw[latex-latex,color=\c] ([xshift=\i * 0.1cm,yshift=\i * 0.0cm]pe5.south) -- ([xshift=\i * 0.1cm,yshift=\i * 0.0cm]pe8.north);
+  \draw[latex-latex,color=\c] ([xshift=\i * 0.0cm,yshift=\i * 0.1cm]pe6.west) -- ([xshift=\i * 0.0cm,yshift=\i * 0.1cm]pe7.east);
+  \draw[latex-latex,color=\c] ([xshift=\i * 0.1cm,yshift=\i * -0.1cm]pe6.south west) -- ([xshift=\i * 0.1cm,yshift=\i * -0.1cm]pe8.north east);
+  \draw[latex-latex,color=\c] ([xshift=\i * 0.1cm,yshift=\i * 0.1cm]pe7.south east) -- ([xshift=\i * 0.1cm,yshift=\i * 0.1cm]pe8.north west);
+  }
+\foreach \c\i in {blue!30/-1,blue!55/0,blue!85/1}{
+  % loops big
+  \draw[color=\c] ([xshift=\i * 0.1cm]pe1.north) edge [loop above] ();
+  \draw[color=\c] ([xshift=\i * 0.1cm]pe2.south) edge [loop below] ();
+  \draw[color=\c] ([yshift=\i * 0.1cm]pe3.west) edge [loop left] ();
+  \draw[color=\c] ([xshift=\i * 0.1cm]pe4.south) edge [loop below] ();
+
+  %loops little
+  \draw[color=\c] ([xshift=\i * 0.1cm]pe5.north) edge [loop above] ();
+  \draw[color=\c] ([yshift=\i * 0.1cm]pe6.east) edge [loop right] ();
+  \draw[color=\c] ([xshift=\i * 0.1cm]pe7.south) edge [loop below] ();
+  \draw[color=\c] ([xshift=\i * 0.1cm]pe8.south) edge [loop below] ();
+  }
+
+  %connections between both
+  \draw[latex-latex,color=blue!85] (pe1) to[in=150,out=20] (pe5);
+  \draw[latex-latex,color=blue!85] (pe1) to[in=160,out=10] (pe6);
+  \draw[latex-latex,color=blue!85] (pe1) to[in=135,out=0] (pe7);
+  \draw[latex-latex,color=blue!85] (pe1) to[in=180,out=350] (pe8);
+  \draw[latex-latex,color=blue!85] (pe2) to[in=195,out=20] (pe5);
+  \draw[latex-latex,color=blue!85] (pe2) to[in=170,out=10] (pe6);
+  \draw[latex-latex,color=blue!85] (pe2) to[in=180,out=0] (pe7);
+  \draw[latex-latex,color=blue!85] (pe2) to[in=165,out=350] (pe8);
+  \draw[latex-latex,color=blue!85] (pe3) to[in=150,out=15] (pe5);
+  \draw[latex-latex,color=blue!85] (pe3) to[in=200,out=345] (pe6);
+  \draw[latex-latex,color=blue!85] (pe3) to[in=165,out=30] (pe7);
+  \draw[latex-latex,color=blue!85] (pe3) to[in=195,out=340] (pe8);
+  \draw[latex-latex,color=blue!85] (pe4) to[in=180,out=10] (pe5);
+  \draw[latex-latex,color=blue!85] (pe4) to[in=210,out=0] (pe6);
+  \draw[latex-latex,color=blue!85] (pe4) to[in=225,out=350] (pe7);
+  \draw[latex-latex,color=blue!85] (pe4) to[in=210,out=340] (pe8);
+
+  %label
+    \matrix [draw=black,fill=gray!10,above=3cm of pe5.north east, anchor=north west] {
+      \node[minimum height=1em,fill=green!30] () {}; & \node[] {ARM Cortex A7};\\
+      \node[minimum height=1em,fill=green!60] () {}; & \node[] {ARM Cortex A15};\\
+      \draw[-latex,color=blue!30] (0,-0.2) -- (0.4,-0.2); & \node[] {L1\$};\\
+      \draw[-latex,color=blue!55] (0,-0.2) -- (0.4,-0.2); & \node[] {L2\$};\\
+      \draw[-latex,color=blue!85] (0,-0.2) -- (0.4,-0.2); & \node[] {DRAM};\\
+    };

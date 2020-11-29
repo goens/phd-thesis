@@ -1,0 +1,16 @@
+%layers:
+\begin{scope}[scale=1]
+  \input{figures/hourglass}
+\end{scope}
+
+\begin{scope}[xshift = 280,yshift=-90]
+\node (physics) at (2,0) [draw,thick,minimum width=12cm,align=center,minimum height=0.5cm, fill=gray!30] {Materials, Atoms, Sub-Atomic Particles $\ldots$};
+\node (semiconductors) [draw,above of=physics,thick,minimum width=11cm,align=center,minimum height=0.5cm, fill=gray!30] {Semiconductors};
+\node (digital) [draw,above of=semiconductors, thick,minimum width=10cm,align=center,minimum height=0.5cm, fill=gray!30] {Digital Switches};
+\node (logic) [draw,above of=digital,thick,minimum width=9cm,align=center,minimum height=0.5cm, fill=gray!30] {Logic Gates};
+\node (diagrams) [draw,above of=logic,thick,minimum width=8cm,align=center,minimum height=0.5cm, fill=gray!30] {Logic Diagrams};
+\node (isa) [draw,above of=diagrams,thick,minimum width=7cm,align=center,minimum height=0.5cm, fill=gray!30] {Instruction-Set Architectures};
+\node (mpsoc) [draw,above of=isa,thick,minimum width=6cm,align=center,minimum height=0.5cm, fill=gray!30] {Multi-Processor Systems on Chip};
+\end{scope}
+
+\draw  [-latex] (diagrams.west) -- (interface.east);

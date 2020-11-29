@@ -1,0 +1,46 @@
+
+%https://tex.stackexchange.com/questions/343354/tikz-rectangle-with-diagonal-fill-two-colors
+\tikzset{
+diagonal fill/.style 2 args={fill=#2, path picture={
+\fill[#1, sharp corners] (path picture bounding box.south west) -|
+                         (path picture bounding box.north east) -- cycle;}},
+reversed diagonal fill/.style 2 args={fill=#2, path picture={
+\fill[#1, sharp corners] (path picture bounding box.north west) |- 
+                         (path picture bounding box.south east) -- cycle;}}
+}
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=7em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{moa} = [rectangle, draw, fill=green!20, 
+    text width=7em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{both} = [rectangle, draw,diagonal fill={blue!20}{green!20}, 
+    text width=7em, text centered, rounded corners, minimum height=4em]
+
+\node[block] (mapping1) {Mapping};
+\node[both, above left = of mapping1] (estimation-models) {Estimation \\ Models};
+\node[block, above right = of mapping1] (apps1) {Applications};
+\node[moa, below = of mapping1] (high-level) {High-level \\ Model \\ (e.g. Matlab/ \\ Mathematica)};
+\node[block, below = of high-level] (numbers1) {Performance \\ Numbers};
+\draw[-latex,gray] (estimation-models) -- (mapping1);
+\draw[-latex,gray] (estimation-models) -- (high-level);
+\draw[-latex,gray] (apps1) -- (mapping1);
+\draw[-latex,gray] (mapping1) -- (high-level);
+\draw[-latex,gray] (high-level) -- (numbers1);
+
+
+ \node[block, right = 8cm of high-level] (mapping2) {Mapping};
+\node[both, above left = of mapping2] (accurate-models) {Accurate \\ Models};
+\node[block, above right = of mapping2] (apps2) {Applications};
+\node[moa, below = of mapping2] (low-level) {Low-level \\ Simulator \\ (e.g. VHDL/ \\ Cycle-Accurate)};
+\node[block, below = of low-level] (numbers2) {Performance \\ Numbers};
+\draw[-latex,gray] (accurate-models) -- (mapping2);
+\draw[-latex,gray] (accurate-models) -- (low-level);
+\draw[-latex,gray] (apps2) -- (mapping2);
+\draw[-latex,gray] (mapping2) -- (low-level);
+\draw[-latex,gray] (low-level) -- (numbers2);
+
+\draw[-latex,very thick,black] (mapping1) -- (mapping2) node[midway, below ,align=center] {\\ \\ (moving down in the \\ Abstraction Pyramid)};
+
+    \matrix [draw=black,fill=gray!10,above=7em of apps2.north east, anchor=north east] {
+      \node[moa, rounded corners=0, text width=1em, minimum height=1em] {}; & \node[] {architecture model}; \\
+      \node[block, rounded corners=0, text width=1em, minimum height=1em] {}; & \node[] {other models};\\
+      };

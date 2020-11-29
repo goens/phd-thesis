@@ -1,3 +1,4 @@
+Software synthesis can be seen as embedded in a spectrum of design approaches going from hardware design (and classical \ac{EDA}) through hardware-software co-design up to software synthesis on the other end. 
 In software synthesis we strive to derive an efficient execution from a computation expressed in an abstract model to a concrete architecture.
 In order to understand software synthesis, thus, we first need to understand the underlying models of computation.
 Closely related to these concurrent models of computation are execution traces, which capture a concrete execution for some input.
@@ -26,10 +27,10 @@ We do so by looking at the example from Listing~\ref{listing:fft_cpn}.
 Processes in \ac{CPN} are instantiated from process templates, similar to classes and objects in object-oriented languages.
 The listing shows a very simplified process template for an \acs{FFT} process. 
 Lines 2 and 3 declare the incoming and outgoing channels for the process.
-In Line 5, the \texttt{cnt} channel is read and its value is stored in the local variable \texttt{loop_cnt} in Line 6.
+In Line 5, the \texttt{cnt} channel is read and its value is stored in the local variable \texttt{loop\_cnt} in Line 6.
 Then in Lines 7-10 the process applies an \acs{FFT} to the data in its incoming channel \texttt{src\_data} and outputs it to an outgoing channel, \texttt{freq}. 
-Similar to the read operation in Lines 5-6, the values of the input channel data are available in the identifier \texttt{src_data} in the scope of the \texttt{__PNin}.
-In an analogous fashion, the values written to the \texttt{freq} variable in the scope of the \texttt{__PNout} are written to the corresponding output channel.
+Similar to the read operation in Lines 5-6, the values of the input channel data are available in the identifier \texttt{src\_data} in the scope of the \texttt{\_\_PNin}.
+In an analogous fashion, the values written to the \texttt{freq} variable in the scope of the \texttt{\_\_PNout} are written to the corresponding output channel.
 
 \begin{listing}
 \begin{minted}[linenos]{C}
@@ -97,7 +98,11 @@ We call this graph the \emph{\ac{KPN} graph}\index{KPN ! graph}.
 
 \begin{figure}[h]
 	\centering
-   \resizebox{0.9\textwidth}{!}{\input{figures/placeholder}}
+\resizebox{0.9\textwidth}{!}{
+\begin{tikzpicture}
+   \input{figures/audio_filter_graph}
+ \end{tikzpicture}
+}
    \caption{The audio filter application as a \ac{KPN} graph}
 	\label{fig:audio_filter_graph}
 \end{figure}
@@ -186,7 +191,146 @@ Moreover, any concrete implementation of the \ac{KPN} realizing the same executi
 It captures the concurrent essence of the concrete computation.
 
 \subsection{Architecture Models}
-Discuss ad-hoc models, \cite{pelcat2015models}. Go in-depth on architecture graph (and topology graph).
+Hardware architectures are in significant contrast to applications from the point of view of modeling.
+Abstraction boundaries are more clearly defined in the hardware world: semiconductor components like transistors are organized into digital switches, which are used to form logic gates (like a NAND gate) in logic diagrams for components, like an \ac{ALU}.
+These components are combined into digital machines in a microarchitecture to expose a well-defined \acf{ISA} in a \ac{PE}~\cite{lee2017plato}.
+\acp{PE} can then be connected via on-chip interconnects to on-chip memory and other controllers to make an \ac{MPSoC}.
+The boundaries between these levels of abstraction or \emph{platforms}, as A. Sangiovanni-Vincentelli calls them~\cite{sangiovanni2007quo}, are clear.
+Designers at each level expose a small amount of complexity through these established abstractions, in what is commonly referred to an hourglass design~\cite{10.1145/3274770}.
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.8\textwidth}{!}{
+   \begin{tikzpicture}
+     \input{figures/architecture_abstractions}
+   \end{tikzpicture}
+ }
+   \caption{Different levels of abstraction in architectures}
+   \label{fig:architecture_abstractions}
+\end{figure}
+
+Figure~\ref{fig:achitecture_abstractions} summarizes different models used at different levels in achitecture.
+The layer between hardware and software is, in a sense, also just such a layer of abstraction.
+Since these layers are very clear in the hardware world, so are the corresponding models at those levels of abstraction.
+If we want to reason about the execution of complex applications on \acp{MPSoC}, we certainly should not focus on modeling individual logic gates in the architecture.
+The challenge is to model architectures at the right level of abstraction.
+
+In the modeling of the computation in applications, we care about the semantics of the model.
+It should be expressive enough to capture the application while being rigid enough to allow a compiler and system to reason about its execution and optimize it as much as possible.
+Hardware, on the other hand, is fixed: in software synthesis (and in this thesis) we're not concerned with hardware design.
+As such, we take a more scientific role to modeling hardware, as opposed to the engineering role we take for applications: We fit the model to the hardware, not the hardware to the model (cf.~\cite{lee2017plato}).
+
+Architectures models for software synthesis have two main requirements: specification and simulation.
+In order to derive an efficient implementation of an application to an architecture, the model of that architecture needs to at least include the possible decisions required for that software implementation.
+Different \acp{PE} and their types in the architecture, scratchpad memories or \ac{DMA} controllers, when present, are certainly necessary parts of the models.
+If actual physical memory addresses or concrete instructions in the \ac{ISA} should also be included depends on the flow: an end-to-end compiler that produces binaries might benefit from modeling these,
+whereas a higher-level, source-to-source compiler might do without them if it only makes abstract decisions about resource allocation and leaves code generation to a separate compiler.
+
+
+Similarly, in many cases a simulation is part of the software synthesis flow.
+In this case, a model of the architecture needs to allow such a simulation.
+Obviously, a simple analytic model requires a different level of abstraction for the architecture model than a cycle-accurate simulator.
+A very concrete way of considering this is the Y-chart approach proposed in~\cite{kienhuis2001methodology}, as depicted in Figure~\ref{fig:y-charts}, which is based on Figure~6 from~\cite{kienhuis2001methodology}. 
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.8\textwidth}{!}{
+   \begin{tikzpicture}
+     \input{figures/y_chart}
+   \end{tikzpicture}
+ }
+   \caption{Multiple Levels of Abstraction in the Y-Chart Approach (Adapted from Figure~6 in ~\cite{kienhuis2001methodology}).}
+   \label{fig:y_chart_abstractions}
+\end{figure}
+
+The Y-charts approach is closer to a co-design methodology: architectures are part of the design space, albeit only as parametrized families.
+As such, they model an architecture as an abstract set of parameters (e.g. number of cores of specified core types) for specification (mapping), with an ad-hoc model for simulation (in matlab/mathematica) or well-defined models from a lower level of abstraction (cycle-accurate models or VHDL).
+Thus, the approach described in Figure~\ref{fig:architecture_abstractions} shows well how different models of architectures at different levels of abstraction can co-exist and be used.
+While accurate simulation is pivotal for effective software synthesis, simulation methods and accuracy are beyond the scope of this thesis.
+We will thus focus only on models of architecture for the sake of \ac{DSE} and the specification of decisions (concretely, here, mappings).
+
+The general situation described in the Y-charts approach is very common in practice: A parametrized family of hardware architectures is assumed as part of the flow, and architectures are described in terms of this family.
+With newer developments in hardware, like the proliferation of \ac{NoC}-based architectures, many modern approaches apply the same principle to these modern architectures.
+For example, the models used by~\cite{weichslgartner2014daarm,singh2010communication,richthammer2018search} all assume a regular mesh ($N \times M$)\ac{NoC}-based topology and parametrize the architecture by the size of the mesh, $N,M$ as well as the core types and communication and memory parameters like worst-case latency values.
+TODO: multi-level (pimentel)
+
+In the DOL approach~\cite{thiele2007DOL}, architectures are modeled in an XML specification that implicitly models the architectures as graphs with specific annotations e.g. for memory sizes or resource sharing methods like \ac{FIFO}. 
+While this is an ad-hoc model, its graph-based nature is general enough to describe arbitrary architectures.
+This is common of the most general models at this level of abstraction: they are graph-based models.
+In Sesame, architectures are modeled with bi-partite graphs~\cite{erbas2006multiobjective} with cores and memories.
+This is bi-partite structure is actually similar to the constraint graphs defined in~\cite{weichslgartner2014daarm,richthammer2018search}, which basically describe the subset of the architecture used by a mapping. 
+In MAPS~\cite{maps}, on the other hand, for the purposes of mapping, architectures are described by labeled graphs where only the cores are nodes and the edges represent communication.
+There are subtle differences between all these models, which makes comparing approaches difficult~\cite{goens_mcsoc16}.
+
+In practice, however, the different graph-based architecture models are mostly equivalent.
+For this thesis we use a model based on the the MAPS model for defining \emph{architecture graphs}\index{architecture graph}.
+An architecture graph $A = (V_A,E_A,l_A)$ is a labeled directed multigraph where the nodes $V_A$ represent \acp{PE} in the architecture. These \acp{PE} are labeled with core types $l_A(V_A) \subset \{\text{core types}\}$. 
+Communication in the achitecture graph is represented by the edges $E_A$. Since $A$ is a multigraph, $E_A$ is a multiset: there can be multiple edges $e_1,\ldots,e_n \in E_A$ between two cores $\text{PE},\text{PE}' \in V_A$.
+These edges are different by their label $l_A(e_i), i = 1,\ldots,n$. The labels of edges identify them as \emph{communication primitives}\index{communication primitive}.
+Communication primitives are an abstraction that encompasses communication via multiple methods: shared memories, \ac{DMA} or even specialized hardware like hardware \ac{FIFO} buffers.
+Communication primitives can also be used to model different software libraries/\acp{API} for communication that can use the same hardware~\cite{odendahl2013split}.
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.3\textwidth}{!}{
+   \begin{tikzpicture}
+     \input{figures/odroid}
+   \end{tikzpicture}
+ }
+   \caption{The Odroid-XU4 Architecture.}
+   \label{fig:odroid}
+\end{figure}
+
+Consider the architecture depicted in Figure~\ref{fig:odroid},the Exynos Odroid-XU4 with a Samsung Exynos 5422 chip, which has an octocore ARM big.LITTLE (4+4) architecture. 
+This architecture has two types of cores, the ARM Cortex A7/A15 , little and  big, respectively. Similarly, there are three types of communication primitives in the architecture:
+communication via the L1 and L2 caches, or over the shared DRAM memory.
+This architecture can be modeled in an architecture graph by having $8$ nodes, one for each core ($4$ of each of the two core types), and connecting the nodes by with all the primitives that can be used to communicate between them.
+Figure~\ref{fig:architecture_graph_odroid} the architecture graph for this example.
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.8\textwidth}{!}{
+   \begin{tikzpicture}
+     \input{figures/architecture_graph_odroid}
+   \end{tikzpicture}
+ }
+   \caption{An Example of an Architecture Graph for the Odroid-XU4 Architecture.}
+   \label{fig:architecture_graph_odroid}
+\end{figure}
+
+In \ac{NoC}-based architectures, the communication depends on the routing over the on-chip network.
+In particular, the communication latency changes depending on the number of hops required to communicate between two \acp{PE}.
+Our model of architecture graphs (among others, like the DOL architecture model) has the advantage of having a different communication primitive for each of these connections with different numbers of hops, thus being able to model \ac{NoC}-topologies as well as others (e.g. BUS-based).
+However, for simplicity of reasoning, we can sometimes benefit of a related graph, which we call the \emph{topology graph}\index{topology graph}\cite{goens_mcsoc18}.
+A topology graph $T = (V_T,E_T,l_T)$ is also a directed multigraph with the same vertex set $V_T = V_A$ as that of the architecture graph $A$, namely the set of cores.
+Thus, the labels are also identical $l_{A}\restriction{V_A} = l_T\restriction{V_T}$.
+The edges are different: we only add an edge for a communication primitive $e \in E_A$ if it allows \textbf{direct} communication between two cores. Thus, $E_T \subseteq E_A$.
+For a BUS-based architecture like the ODROID-XU4, this topology graph corresponds to the architecture graph. However, for a \ac{NoC}-based architecture, the topology graph captures the network topology.
+Figure~\ref{fig:arch_graph_vs_topology} shows the difference of the architecture graph $A$ and the topology graph $T$ for a $4 \times 4$ regular mesh NoC topology.
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.8\textwidth}{!}{
+   \begin{tikzpicture}
+     \input{figures/arch_graph_vs_topology}
+   \end{tikzpicture}
+ }
+   \caption{Comparison of the Architecture and Topology Graphs for a $4 \times 4$-Mesh NoC-based Architecture.}
+   \label{fig:arch_graph_vs_topology}
+\end{figure}
+
+As mentioned above, the subtle differences in different models make comparison between them difficult~\cite{goens_mcsoc16}.
+The main reason for this is the two distinct roles that architecture models play in software synthesis as we have discussed in this section.
+Having a common model for specification is beneficial for defining software synthesis approaches, and thus, desirable.
+Having common models of architecture, while beneficial for comparison, is not necessarily desirable: there are good reasons for having simulations at different levels of accuracy.
+Nevertheless, Pelcat and others have \cite{pelcat2015models} make an attempt to define such common models of architecture.
+Their definition is abstract: they require a unique, reproducible cost of computation.
+This solves the problem of comparability, at the cost of the simulation.
+In a sense, their definition of a model of architecture is tantamount to defining a specification for a simulation.
+We believe this is a great idea, but unfortunately not yet mature enough in terms of the models that exist and their integration to simulators.
+The Linear System-Level Architecture model they propose is also a graph-based model and is similar to the graph-based models discussed above.
+However, we believe that it is better to separate both concerns conceptually, namely simulation and the specification of mappings.
+As such, we will focus only on the graphs defined in this section for mapping specification and leave the simulation level open to the multiple levels of accuracy, as required by the use-case.
 
 \subsection{The Mapping Problem}
 A lot more...\cite{singh2013mapping} \cite{marwedel2011mapping}
