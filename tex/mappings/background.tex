@@ -306,7 +306,9 @@ A topology graph $T = (V_T,E_T,l_T)$ is also a directed multigraph with the same
 Thus, the labels are also identical $l_{A}\restriction{V_A} = l_T\restriction{V_T}$.
 The edges are different: we only add an edge for a communication primitive $e \in E_A$ if it allows \textbf{direct} communication between two cores. Thus, $E_T \subseteq E_A$.
 For a BUS-based architecture like the ODROID-XU4, this topology graph corresponds to the architecture graph. However, for a \ac{NoC}-based architecture, the topology graph captures the network topology.
-Figure~\ref{fig:arch_graph_vs_topology} shows the difference of the architecture graph $A$ and the topology graph $T$ for a $4 \times 4$ regular mesh NoC topology.
+Figure~\ref{fig:arch_graph_vs_topology} shows the difference of the architecture graph $A$ and the topology graph $T$ for a $2 \times 2$ regular mesh NoC topology.
+The difference between the two graphs in this case is that the topology graph has no nodes for multiple hops, whereas the architecture graph has them.
+As such, the topology graph reflects the topology of the on-chip network better, as can be seen by comparing them in the figure.
 
 \begin{figure}[h]
 	\centering
