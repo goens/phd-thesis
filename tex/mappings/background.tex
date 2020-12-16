@@ -90,7 +90,7 @@ __PNprocess sink = sink_process
 
 The data flow in the example of Listing~\ref{listing:audio_filter} is very structured: it goes from the source, split over both channels, through the filter, back to the sink.
 This structure can easily be visualized in a graph, like in Figure~\ref{fig:audio_filter_graph}.
-More generally, we can think of any \ac{KPN} application as a directed graph $K = (T,C)$, where the nodes $T$ represent the processes\footnote{the notation comes from $T$ for tasks}, and the edges $C$, the channels.
+More generally, we can think of any \ac{KPN} application as a directed graph $K = (V_K,E_K)$, where the nodes $V_K$ represent the processes, and the edges $E_K$, the channels.
 This works even when a channel is an incoming channel for multiple processes.
 In that case, we can split it into multiple edges from the process it is going from, to each of the target channels.
 We can do so without loss of generality since these are the semantics of such channels. 
@@ -312,7 +312,7 @@ As such, the topology graph reflects the topology of the on-chip network better,
 
 \begin{figure}[h]
 	\centering
-\resizebox{0.8\textwidth}{!}{
+\resizebox{0.95\textwidth}{!}{
    \begin{tikzpicture}
      \input{figures/arch_graph_vs_topology}
    \end{tikzpicture}
@@ -335,6 +335,66 @@ However, we believe that it is better to separate both concerns conceptually, na
 As such, we will focus only on the graphs defined in this section for mapping specification and leave the simulation level open to the multiple levels of accuracy, as required by the use-case.
 
 \subsection{The Mapping Problem}
+
+The main problem we address in the first part of this thesis is the \emph{mapping problem}.
+The mapping problem is the decision problem of assigning physical resources (hardware) to the logical tasks and data (software) of an application.
+As can be seen from Figure~\ref{fig:sofware_synthesis_flow}, this is a central problem in software synthesis.
+
+Intuitively, we commonly think of assigning the tasks and communication channels (or data) to the physical resources, and not the other way around. 
+The reason we choose to do so has a again a mathematical background, as we will explain here.
+Such an assignment is a correspondence and can be interpreted as a relation $\mathcal{R} \subseteq A \times K$ that relates the architecture $A$ and the application $K$.
+By abuse of notation we refer to the graphs $A,K$ here to mean both one relation on their nodes $V_A,V_K$ and one on their edges $E_A,E_K$.
+
+A relation is the most general description of such a correspondence.
+However, in this thesis we do not consider mappings where a single task can be assigned to multiple hardware resources.
+The thread affinity mechanism in the POSIX standard, for example, assigns a POSIX process to multiple (hardware) threads.
+Then, the operating system scheduler decides in which of the specified threads to actually execute the process, possibly migrating it multiple times during its execution.
+We do not consider this kind of behavior.
+If we want to model it with the mathematical framework proposed here, however, we can.
+For this, we describe the final mapping as decided by the scheduler at run-time, and consider migrations as multiple spatial mappings at different time instances.
+
+We define a mapping to have exactly one physical resource for each logical one (i.e. for each task or data/communication channel).
+This kind of mathematical relation is precisely the definition of a function, which is why we model mappings as functions $m : K \rightarrow A$, i.e. assigning physical resources to the logical ones.
+A mapping also needs to be consistent. If it assigns two tasks $t_1,t_2 \in V_K$ to different \acp{PE}, when these tasks exchange data ($(t_1,t_2) \in E_K$), the data communication channel needs to be mapped to a physical channel that respects the task assignment: we require that $m((t_1,t_2)) = (m(t_1),m(t_2)) \in E_A$.
+This condition, mathematically, means precisely that a mapping respects the graph structure of $K,E$. In other words, a mapping is a \emph{morphism of graphs} $m : K \rightarrow A$\index{mapping ! definition}.
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.8\textwidth}{!}{
+   \begin{tikzpicture}
+     \input{figures/example_mapping}
+   \end{tikzpicture}
+ }
+   \caption{An example of a mapping as a diagram (left) and as a morphism of graphs (right).}
+   \label{fig:mapping_example}
+\end{figure}
+
+Consider the example of the mapping depicted in Figure~\ref{fig:mapping_example}. It shows the mapping
+\[ m : t_1 \mapsto \operatorname{PE}_1,t_2 \mapsto \operatorname{PE}_2, (t_1,t_2) \mapsto \operatorname{L2\$}.\]
+This mapping can be considered as the morphism of graphs depicted on the right, where the image $m(K) \leq A$ is a subgraph of the architecture graph $A$ (cf. Figure~\ref{fig:architecture_graph_odroid}).
+We could not map the communication edge $(t_1,t_2)$ to, say, the L1 cache of PE$_3$, $\operatorname{L1\$}$, since this cannot be used to communicate between PE$_1$ and PE$_2$.
+This is equivalent to saying that $\operatorname{L1\$}$ is not an edge of $m(t_1),m(t_2)$, or any L1 cache for that matter, since (more precisely) there is no edge $(m(t_1),m(t_2)) \in V_A$ with the label $l_A((m(t_1),m(t_2))) = \operatorname{L1\$}$.
+
+We call the a set $M \subseteq \{m : K \rightarrow A, m \text{ is a morphism} \}$ the set of (valid) mappings. A morphism of graphs $m : K \rightarrow A$ that is not in the set $M$ is an invalid mapping.
+This might be because different reasons, e.g. if a \ac{PE} $p \in V_A$ is not general purpose and cannot execute some tasks, or when modeling the sizes of data (channels), if a communication channel does not fit a physical resource.
+We model this by letting $M$ be a proper subset of $\operatorname{Mor}(K,A)$, the set of morphisms $K \rightarrow A$.
+
+Having formally defined a mapping, we can also define the mapping problem\index{mapping ! problem}. Let $\Theta : M \rightarrow \mathbb{R}_{\geq 0}^k$  be a function on the set of mappings. We call $\Theta$ an \emph{objective function}.
+For example, $\Theta: M \rightarrow \mathbb{R}_{\geq 0}$ (for $k = 1$) can be the execution time of the application $K$ when mapped via $m$ to the architecture $A$.
+This could similarly be another measure of the quality of a mapping, like throughput or total energy consumption. It can also be a combination of multiple metrics for $k > 1$.
+In this way, we can 
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.8\textwidth}{!}{
+   \begin{tikzpicture}
+     \input{figures/mapping_space_example}
+   \end{tikzpicture}
+ }
+   \caption{An example of the mapping space for a simple two-task application.}
+   \label{fig:mapping_space_example}
+\end{figure}
+
 A lot more...\cite{singh2013mapping} \cite{marwedel2011mapping}
 
 \subsection{Limits of the Model}

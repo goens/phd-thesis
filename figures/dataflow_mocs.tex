@@ -1,10 +1,18 @@
 \begin{tikzpicture}%[fill opacity=0.3]
-  \draw (0,0) circle (2.5cm) node[below] {DDF};
-  \draw (0.5cm:0.5cm) circle (1.5cm) node [above] {SDF};
-  \draw (1cm:1.5cm) circle (1cm) node [above] {HSDF};
-  \draw (45:2cm) circle (1.5cm) node [above] {KPN};
-  \draw (55:2cm) circle (1.0cm) node [above] {KMQ};
-  %\draw (0:2cm) circle (1.5cm) node [below] {SADF};
-  %I have to think about this. 
-    \node [below] (todo) {TODO: fix this figure! (it's all over the place atm)};
+%circles
+\node[ellipse, fill=green!20, minimum width = 9cm,minimum height = 5cm,draw] (ddf) at (0,3) {};
+\node[ellipse, fill=green!60, minimum width = 6.2cm,minimum height = 4.5cm,draw] (kpn) at (1,3) {};
+\node[ellipse, fill=green!50, minimum width = 5.5cm,minimum height = 4.0cm,draw] (kmq) at (1,2.8) {};
+\node[ellipse, fill=green!70, minimum width = 4.8cm,minimum height = 3.5cm,draw] (csdf) at (1,2.6) {};
+\node[ellipse, fill=green!30, minimum width = 3cm,minimum height = 3cm,draw] (sdf) at (1.5,2.5) {SDF};
+\node[ellipse, fill=green!40, minimum width = 1.0cm,minimum height = 1.0cm,draw] (hsdf) at (1.5,3.4) {HSDF};
+
+%labels
+\node (lbl-ddf) at (-3,3) {DDF};
+%\node (lbl-sdf) at (0,1.5) {SDF};
+%\node (lbl-hsdf) at (0,0) {HSDF};
+\node (lbl-kmq) at (1,4.5) {KMQ};
+\node (lbl-sadf) at (-0.6,2.5) {CSDF};
+\node (lbl-kpn) at (1,5.0) {KPN};
+  
 \end{tikzpicture}

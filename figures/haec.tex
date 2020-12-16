@@ -5,8 +5,8 @@
 
     %slanting: production of a set of n 'laminae' to be piled up. N=number of grids.
     \begin{scope}[
-            yshift=-30,every node/.append style={
-            yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+            xshift=-30,every node/.append style={
+            xslant=0.5,yslant=-1},xslant=0.5,yslant=-1
             ]
         \fill[white,fill opacity=0.9] (0,0) rectangle (5.5,5.5);
         \draw[black,dashed] (0,0) rectangle (5.5,5.5);%marking borders
@@ -14,8 +14,8 @@
     \end{scope}
     	
     \begin{scope}[
-    	yshift=20,every node/.append style={
-    	    yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+    	xshift=20,every node/.append style={
+    	    xslant=0.5,yslant=-1},xslant=0.5,yslant=-1
     	             ]
         \fill[white,fill opacity=0.9] (0,0) rectangle (5.5,5.5);
         \draw[black,very thick] (0,0) rectangle (5.5,5.5);%marking borders
@@ -23,8 +23,8 @@
     \end{scope}
     	
     \begin{scope}[
-    	yshift=150,every node/.append style={
-    	yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+    	xshift=150,every node/.append style={
+    	xslant=0.5,yslant=-1},xslant=0.5,yslant=-1
     	             ]
     	\fill[white,fill opacity=.9] (0,0) rectangle (5.5,5.5);
     	\draw[black,dashed] (0,0) rectangle (5.5,5.5);
@@ -32,18 +32,18 @@
     \end{scope}
     	
     \begin{scope}[
-    	yshift=200,every node/.append style={
-    	    yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+    	xshift=200,every node/.append style={
+    	    xslant=0.5,yslant=-1},xslant=0.5,yslant=-1
     	  ]
         \fill[white,fill opacity=0.6] (0,0) rectangle (5.5,5.5);
         \draw[black,dashed] (0,0) rectangle (5.5,5.5);
         \pic [opacity=0.5,scale=0.3125] {fourmesh};
       \end{scope}
-    \draw[snake=zigzag] (2.8,5) -- (2.8,6.4);
+    \draw[snake=zigzag] (5,2.8) -- (6.4,2.8);
 
-    %putting arrows and labels:
-    \draw[-latex,thick] (8.2,5.8) node[right]{\Large Manycore} to[out=180,in=90] (2.8,3.8);
-    \draw[-latex,thick](7.8,2.3) node[right, align=center]{\Large Optical \\ \Large Interconnect} to[out=180,in=280] (3.4,3.5);
-    \draw[-latex,thick](7.9,9.5) node[right,align=center]{\Large Wireless \\\Large inter-board \\\Large links} to[out=180,in=0] (3.3,6.0);
+    %%putting arrows and labels:
+    \draw[-{latex[length=8mm,width=8.5mm]},very thick,color=blue!84](-5.8,3.8) node[left,align=center]{\huge Wireless \\\huge inter-board \\\huge links} to[out=0,in=90] (5.7,3.1);
+    \draw[-{latex[length=8mm,width=8.5mm]},very thick,color=blue!84](-5.8,0.8) node[left, align=center]{\huge Manycore} to[out=0,in=135] (3.8,2.8);
+    \draw[-{latex[length=8mm,width=8.5mm]},very thick,color=blue!84](-5.8,-1.8) node[left, align=center]{\huge Optical \\ \huge Interconnect} to[out=0,in=250] (3.45,-3.42);
      
 \end{tikzpicture}

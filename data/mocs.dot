@@ -1,36 +1,45 @@
+#dot2tex data/mocs.dot --figonly -t raw --output figures/mocs.tex
 digraph G {
-       root [label = "Models of Computation"];
+       root [label = "Models of \n Computation"];
        seq [ label = "Sequential"];
        concurrent [ label = "Concurrent"];
        t [ label = "Timed"];
        ut [ label = "Untimed"];
+       det [ label = "Deterministic"];
        f [ label = "Functional"];
-       l [ label = "Call-by-need $\lambda$-Calculus"];
-       touring [ label = "Turing Machines"];
-       sm [ label = "State Machines"];
-       pc [ label = "Process Calculi"];
-       pic [ label = "$\Pi$-Calculus"];
-       csp [ label = "Communicating Sequential Processes"];
+       mu [ texlbl = "$\mu$-recursive Functions" label="mu-recursive Functions" ];
+       l [ texlbl = "$\lambda$-Calculus" label="l-Calculus"];
+       touring [ label = "Turing \n Machines"];
+       sm [ label = "State \n  Machines"];
+       pc [ label = "Process \n Calculi"];
+       pic [ texlbl = "$\Pi$-Calculus" label = "P-Calculus"];
+       csp [ label = "Communicating \n Sequential  \n Processes"];
        petri [ label = "Petri Nets"]; 
-       df [ label = "Dataflow"]; 
+       df [ label = "Data-flow"]; 
        threads [ label = "Threads"]; 
-       actors [ label = "Actor Model"]; 
-       sdf [ label = "Synchronous Dataflow"]; 
-       ddf [ label = "Dynamic Dataflow"];
-       kpn [ label = "Kahn Process Networks"];
-       sr [ label = "Synchronous/Reactive"];
-       de [ label = "Discrete Events"];
+       actors [ label = "Actor \n Model"]; 
+       sdf [ label = "Synchronous \n Data Flow"]; 
+       tg [ label = "Homogeneous \n SDF \n (task graphs)"]; 
+       ddf [ label = "Dynamic \n Data Flow"];
+       kpn [ label = "Kahn \n Process \n Networks"];
+       sr [ label = "Synchronous/\n Reactive"];
+       de [ label = "Discrete \n Events"];
        reactors [ label = "Reactors"];
 
-       root -> f;
-       root -> seq;
+       root -> det;
        root -> concurrent;
+       root -> t;
+       det -> f;
+       det -> seq;
+       det -> kpn;
+       det -> sdf;
        f -> l;
+       f -> mu;
        seq -> touring;
        seq -> sm;
-       concurrent -> t;
        concurrent -> ut;
        concurrent -> pc;
+       concurrent -> sr;
        pc -> pic;
        pc -> csp;
        ut -> petri;
@@ -41,10 +50,22 @@ digraph G {
        df -> sdf;
        df -> ddf;
        ddf -> sdf;
+       sdf -> tg;
        #actors ->[style = 'dashed'] reactors;
+       det -> reactors [ style = dashed ];
        t -> de;
        t -> reactors;
        t -> sr;
        sr -> de;
        de -> reactors;
+
+      #formatting
+      #pic -> t [ style = invis ];
+      t -> kpn [ style = invis ];
+      t -> seq [ style = invis ];
+      seq -> f [ style = invis ];
+      f ->  concurrent [ style = invis ];
+      sr -> df [ style = invis ];
+      pic -> ut [ style = invis ];
+      #concurrent -> seq [ style = invis ];
 }
