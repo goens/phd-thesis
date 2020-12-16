@@ -1,12 +1,29 @@
 \begin{scope}
 \input{figures/odroid.tex}
 %tasks
-\node[ellipse,fill=yellow!60] (t1) at (-1.5+3,4) {\Huge t$_1$};
-\node[ellipse,fill=yellow!60] (t2) at ({-1.5},{4}) {\Huge t$_2$};
-\draw (0,0) edge[-{latex},out=00,in=270,looseness=1,line width=1.2mm, color=yellow!80] (t1);
-\draw (0,0) edge[-{latex},out=180,in=270,looseness=1,line width=1.2mm, color=yellow!80] (t2);
+\node[ellipse,fill=red!60] (t1-1) at (pe2) {\Huge t$_1$};
+\node[ellipse,fill=red!60] (t2-1) at (pe1) {\Huge t$_2$};
+\draw (t1-1) edge[-{latex},line width=1.2mm, color=red!80] (t2-1);
+\node[ellipse, minimum width=7cm,minimum height=4cm,dashed,ultra thick,draw] (m1) at (0,4) {};
+
+
+\node[ellipse,fill=red!60] (t1-2) at (6.5-1.0+3,4.5) {\Huge t$_1$};
+\node[ellipse,fill=red!60] (t2-2) at (6.5-2.0+3,3.5) {\Huge t$_2$};
+\draw (t1-2) edge[-{latex},out=295,in=0,line width=1.2mm, looseness=2, color=red!80] (t2-2);
+\node[ellipse, minimum width=4cm,minimum height=4cm,dashed,thick,draw] (m2) at (pe6) {};
+
+\node[ellipse,fill=red!60] (t1-3) at (pe4) {\Huge t$_1$};
+\node[ellipse,fill=red!60] (t2-3) at  (pe7){\Huge t$_2$};
+\draw (t1-3) edge[-{latex},line width=1.2mm, color=red!80] (t2-3);
+\node[ellipse, minimum width=8cm,minimum height=4cm,dashed,thick,draw] (m3) at (3,8) {};
 \end{scope}
 
-\begin{scope}[x=1pt,y=1pt,scale=1.5,every node/.append style={scale=1.5},xshift=400]
+
+\begin{scope}[x=1pt,y=1pt,scale=1.5,every node/.append style={scale=1.5},xshift=400,yshift=-100]
 \input{figures/2d_mapping_heatmap.tex}
 \end{scope}
+
+
+\draw (m1.south east) edge[-latex,out=295,in=150,dashed,ultra thick] (25.7,-2.2);
+\draw (m2.east) edge[-latex,out=345,in=225,dashed,ultra thick] (34.1,5.6);
+\draw (m3.east) edge[-latex,out=15,in=150,dashed,ultra thick] (29.1,7.1);
