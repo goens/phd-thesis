@@ -27,14 +27,14 @@
 %tasks
 \node[ellipse,fill=yellow!60] (t1) at (-1.5+3,4) {\Huge t$_1$};
 \node[ellipse,fill=yellow!60] (t2) at ({-1.5},{4}) {\Huge t$_2$};
-\draw (0,0) edge[-{latex[length=4mm]},out=00,in=270,looseness=1,line width=1.2mm, color=yellow!80] (t1);
-\draw (0,0) edge[-{latex[length=4mm]},out=180,in=270,looseness=1,line width=1.2mm, color=yellow!80] (t2);
+\draw (0,0) edge[-{latex},out=00,in=270,looseness=1,line width=1.2mm, color=yellow!80] (t1);
+\draw (0,0) edge[-{latex},out=180,in=270,looseness=1,line width=1.2mm, color=yellow!80] (t2);
 \end{scope}
 
 \begin{scope}[xshift = 250,yshift=80]
 \node[ellipse,fill=yellow!60] (t1-m) {\Huge t$_1$};
 \node[ellipse,fill=yellow!60, below = of t1-m] (t2-m) {\Huge t$_2$};
-\draw[{latex[length=0.5mm]}-{latex[length=0.5mm]},line width=1mm, color=yellow!80] (t1-m) -- (t2-m) node [right] (l1) {};
+\draw[{latex}-{latex},line width=1mm, color=yellow!80] (t1-m) -- (t2-m) node [right] (l1) {};
 
 \node[ellipse,fill=green!30, right = 3cm of t1-m] (pe1) {PE$_1$};
 \node[ellipse,fill=green!30, right = 3cm of t2-m] (pe2) {PE$_2$};

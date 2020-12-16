@@ -1,7 +1,12 @@
 \begin{scope}
 \input{figures/odroid.tex}
+%tasks
+\node[ellipse,fill=yellow!60] (t1) at (-1.5+3,4) {\Huge t$_1$};
+\node[ellipse,fill=yellow!60] (t2) at ({-1.5},{4}) {\Huge t$_2$};
+\draw (0,0) edge[-{latex},out=00,in=270,looseness=1,line width=1.2mm, color=yellow!80] (t1);
+\draw (0,0) edge[-{latex},out=180,in=270,looseness=1,line width=1.2mm, color=yellow!80] (t2);
 \end{scope}
 
-\begin{scope}[scale=0.05,every node/.append style={scale=0.05},xshift=8200]
+\begin{scope}[x=1pt,y=1pt,scale=1.5,every node/.append style={scale=1.5},xshift=400]
 \input{figures/2d_mapping_heatmap.tex}
 \end{scope}
