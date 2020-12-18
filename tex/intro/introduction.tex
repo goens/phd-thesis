@@ -222,17 +222,45 @@ Chapter~\ref{chap} will review these abstractions, including the models of compu
 
 The methods of software synthesis are a promising avenue for programming multicores, but they still have multiple problems that make them impractical.
 
+
 %Mapping structure (Part I)
 The flow depicted in Figure~\ref{fig:software_synthesis_flows} is based on a well-defined model of computation (\ac{KPN}) for specifying and reasoning about applications.
 However, the architecture or the execution, which are comparably important, are commonly modeled in an ad-hoc fashion.
 With a specific architecture or topology in mind, the flows encode the architecture model with a series of performance metrics or similar numbers characterizing a specific hardware, while the structural properties are implicit in the problem formulations and algorithms.
-For example, researches might encode a heterogeneous architecture as a list of numbers of cores of different types, or perhaps use a grid system to encode \acp{PE} as they assume a \ac{NoC} with a regular-mesh topology.
-These models break down as soon as the complexities of the architecture transcend the fixed model, for example by having multiple clusters or levels of hierarchy, or star-mesh topologies instead of regular meshes.
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.95\textwidth}{!}{
+   \begin{tikzpicture}
+     \input{figures/mapping_space_example}
+   \end{tikzpicture}
+ }
+   \caption{An example of the mapping space for a simple two-task application.}
+   \label{fig:mapping_space_motivation}
+\end{figure}
+
+
+Consider the very simple example of mapping two processes $t_1,t_2$ where $t_2 depends on t_1$ onto an off-the-shelf multicore like the Exynos 5 chip with an octa-core (4+4) ARM big.LITTLE\texttrademark, as depicted in Figure~\ref{fig:mapping_space_motivation}.
+The mappings are plotted by encoding the mapping of each of the two tasks as the $x$ and $y$ coordinates of the grid, and the color of the squares in the grid encodes the execution time of the application with that mapping.
+The example is very simple and has deliberately been chosen such that it can be easily visualized. In particular, The actual values of the execution time are irrelevant and have been omitted.
+Still, many of the problems are clear with this simple example already.
+
+There are exactly $2^8 = 64$ mappings in the mapping space, yet only 6 distinct execution times (colors).
+This is because, at least a priori, mapping both tasks to $\PE_6$, as shown in the figure, or mapping them both to $\PE_7$, will obviously result in the same execution time since the two cores are identical (Cortex-A15\texttrademark).
+This can be generally understood as a property of the \emph{symmetries} of the architecture, and should be exploited when exploring this mapping space.
+
+Similarly, researchers often use heuristics based on geometric properties of the design space to explore it.
+Yet they often disregard the encoding they use for the design space.
+If we consider the point $(4,4)$ on Figure~\ref{fig:mapping_space_example}, there are four points adjacent to it, yet they are vastly different in terms of their execution time.
+We can compare the geometry of the space with the geometry of the architecture itself, and see why this is the case: the distances in this space do not reflect the architecture with its heterogeneity and its memory subsystem.
+In general, the geometry of this space does not reflect the geometry of the problem. 
 
 Execution traces reflect directly the structure of the application, as they are bound by the semantics of it.
 This is even more so the case for mappings, encode the resource allocation for the application to an architecture.
 As such, they inherit structural properties of both the application and its semantics, as well as of the underlying architecture.
 Yet mappings are commonly treated as simple lists of assignment, disregarding this structure, like which tasks depend on which, or if they are mapped to cores with a large communication latency between them.
+Mapping algorithms commonly encode a heterogeneous architecture as a list of numbers of cores of different types, or perhaps use a grid system to encode \acp{PE} as they assume a \ac{NoC} with a regular-mesh topology.
+These models break down as soon as the complexities of the architecture transcend the fixed model, for example by having multiple clusters or levels of hierarchy, or star-mesh topologies instead of regular meshes.
 
 %Memory
 The aspects mentioned permeate the design of the internal algorithms in software synthesis flows, which effectively constraints them to a small class of models or disregards opportunities for reasoning about the structure of the problem. 

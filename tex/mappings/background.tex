@@ -8,6 +8,7 @@ This chapter considers all of these aspects with their corresponding models, and
 It is the central piece of background theory required for the methods presented in this thesis.
 
 \subsection{Kahn Process Networks}
+\label{sec:kpn_basic}
 
 The flow we investigate in Part I is based on the \ac{MoC} of \acfp{KPN}.
 In this section we introduce this model, or rather, its most common implementation with blocking-read semantics~\cite{kahn_macqueen} .
@@ -191,6 +192,7 @@ Moreover, any concrete implementation of the \ac{KPN} realizing the same executi
 It captures the concurrent essence of the concrete computation.
 
 \subsection{Architecture Models}
+\label{sec:arch_models}
 Hardware architectures are in significant contrast to applications from the point of view of modeling.
 Abstraction boundaries are more clearly defined in the hardware world: semiconductor components like transistors are organized into digital switches, which are used to form logic gates (like a NAND gate) in logic diagrams for components, like an \ac{ALU}.
 These components are combined into digital machines in a microarchitecture to expose a well-defined \acf{ISA} in a \ac{PE}~\cite{lee2017plato}.
@@ -239,7 +241,7 @@ A very concrete way of considering this is the Y-chart approach proposed in~\cit
      \input{figures/y_chart}
    \end{tikzpicture}
  }
-   \caption{Multiple Levels of Abstraction in the Y-Chart Approach (Adapted from Figure~6 in ~\cite{kienhuis2001methodology}).}
+   \caption{Multiple Levels of Abstraction in the Y-Chart Approach (Inspired by Figure~6 in ~\cite{kienhuis2001methodology}).}
    \label{fig:y_chart_abstractions}
 \end{figure}
 
@@ -336,7 +338,7 @@ As such, we will focus only on the graphs defined in this section for mapping sp
 
 \subsection{The Mapping Problem}
 
-The main problem we address in the first part of this thesis is the \emph{mapping problem}.
+The main problem we address in the first part of this thesis is the \emph{mapping problem}\cite{marwedel2011mapping}.
 The mapping problem is the decision problem of assigning physical resources (hardware) to the logical tasks and data (software) of an application.
 As can be seen from Figure~\ref{fig:sofware_synthesis_flow}, this is a central problem in software synthesis.
 
@@ -382,7 +384,23 @@ We model this by letting $M$ be a proper subset of $\operatorname{Mor}(K,A)$, th
 Having formally defined a mapping, we can also define the mapping problem\index{mapping ! problem}. Let $\Theta : M \rightarrow \mathbb{R}_{\geq 0}^k$  be a function on the set of mappings. We call $\Theta$ an \emph{objective function}.
 For example, $\Theta: M \rightarrow \mathbb{R}_{\geq 0}$ (for $k = 1$) can be the execution time of the application $K$ when mapped via $m$ to the architecture $A$.
 This could similarly be another measure of the quality of a mapping, like throughput or total energy consumption. It can also be a combination of multiple metrics for $k > 1$.
-In this way, we can 
+Additionally, depending on the use-case, the results of the software synthesis process might need to respect some constraints.
+For example, we might want to minimize the energy consumption while maintaining the execution time under some real-time threshold.
+Let $C : M \rightarrow \mathbb{B}$ be the (boolean) function that decides if a mapping satisfies the required constraints.
+Thus, in the example, $\Theta$ would be the energy consumption and $C(m)$ would be true if and only if the mapping's execution respects the real-time constraint.
+We can generally define the mapping problem as the following multi-objective optimization problem:
+
+\begin{align}
+  \label{eqn:mapping_min_problem}
+  \min_{m \in M, C(m) = \operatorname{True}} \Theta(m)
+\end{align}
+
+Here, the minimum of the vector $\Theta(m) \in \mathbb{R}_{\geq 0}^k$ for $k > 1$ can be understood as an element-wise minimum. In particular, some points are incomparable: if $\Theta(m_1)_1 > \Theta(m_2)_1$ and $\Theta(m_1)_2 < \Theta(m_2)_2$, then $\Theta(m_1), \Theta(m_2)$ are incomparable.
+This element-wise comparison of vectors gives us a partial order on $\mathbb{R}_{\geq 0}^k$.
+Equation~\ref{eqn:mapping_min_problem} can be then understood as finding Pareto-minimal points, i.e. points that are not dominated by any other point in the set.
+Concretely, we say that $\hat m$ is not dominated by any point (is Pareto minimal), if $m \nless \hat m$ for all $m \in M$. 
+A variant of this same problem can be encoded as an integer optimization problem, e.g. as is done in~\cite{erbas2006multiobjective}.
+However as a problem formulation, we believe the treatment given here defining the conditions as a morphism of graphs is much simpler to read and understand and just as expressive.
 
 \begin{figure}[h]
 	\centering
@@ -395,7 +413,36 @@ In this way, we can
    \label{fig:mapping_space_example}
 \end{figure}
 
-A lot more...\cite{singh2013mapping} \cite{marwedel2011mapping}
+Figure~\ref{fig:mapping_space_example} is a reproduction of Figure~\ref{fig:mapping_space_motivation}. It depicts the optimization problem of Equation~\ref{eqn:mapping_min_problem} on a very simple example.
+The example is based on a telecom application of the E3S benchmark suite, chosen specifically because it consists of exactly two tasks, which allows the mapping space to be visualized in a two-dimensional plot.
+The mappings are plotted by encoding the mapping of each of the two tasks as the $x$ and $y$ coordinates of the grid, and the color of the squares in the grid encodes the (simulated) execution time on the Odroid-XU4 architecture.
+The actual values of the execution time are irrelevant here and have been deliberately omitted. In the figure it is clear that the minimal execution time is obtained by mapping the two tasks two distinct $Cortex-A15$ (big) cores,
+i.e. the set of $m$ with $t_1 \mapsto p_1, t_2 \mapsto p_2$ where $p_1,p_2 \in \{\PE_5,\PE_6,\PE_7,\PE_8\}$ and $p_1 \neq p_2$ are precisely the minimizers of Equation~\ref{eqn:mapping_min_problem}.
 
-\subsection{Limits of the Model}
-Only discuss briefly here.
+The example in Figure~\ref{fig:mapping_space_example} is chosen deliberately to be so simple that it can be depicted in a figure.
+There are exactly $2^8 = 64$ mappings in the mapping space.
+For the audio filter application from Section~\ref{sec:kpn_basic} (cf. Figure~\ref{fig:audio_filter_graph}), this space has already $8^8 = 16777216$ mappings and finding the minimal execution time is much more intractable.
+In general, the mapping space has cardinality $|V_A|^{|V_K|}$, and thus grows exponentially with the number of tasks $|V_K|$.
+For the $1024$-core Epiphany-V-based Parallella architecture~\cite{parallella}, the mapping space of a moderately-large application with $28$ tasks has more than $10^{84}$ possible mappings, considerably more than there are atoms in the observable universe.
+
+The $28$-task example is by no means unrealistically large. The mapping problem is already intractable for problem sizes in practice. As such, multiple clever algorithms and heuristics have been designed with different settings, objectives, and assumptions.
+A survey of these mapping approaches can be found in \cite{singh2013mapping}.
+The focus of this thesis are not mapping heuristics, but rather the mapping problem itself and general structural properties that can be exploited in these heuristics.
+As such, we will not dive deeply into the literature of heuristics. At this point, we will only distinguish between general classes of mappings: static, dynamic and hybrid, as well as between heuristics and meta-heuristics. 
+
+Static mappings are mappings defined prior to run-time (commonly, at design-time or at compile-time).
+Traditionally mapping decisions made at design-time are part of a co-design approach and are hard-coded into the application itself.
+By abstracting over the target architecture and the mapping problem, software synthesis methods allow to defer these static decisions to compile-time, and make this kind of mappings more portable.
+
+Dynamic mappings, on the other hand, are chosen at run-time.
+The dynamic mapping problem is in essence the same as task scheduling.
+The trade-offs between time available to make a (scheduling) decision and the available information at run-time are certainly not unique to the mapping problem.
+However, dynamic mappings present an additional hurdle in heterogeneous systems, since code has to be compiled for the different possible targets.
+
+Hybrid mapping approaches sit between static and dynamic ones. An ahead-of-time decision process or mapping space pruning analyzes the mapping space and pre-defines a set of mappings or partial mappings.
+From these pre-defined mappings, a run-time system chooses a mapping or constructs a mapping from the partial mappings, based on the available information at run-time.
+
+Finally, we distinguish between heuristics and meta-heuristics. Mapping heuristics, like load-balancing, are domain-specific algorithms that exploit the specific domain-knowledge to find a solution based on a pre-defined model of the problem.
+On the other hand, meta-heuristics, like genetic algorithms, rely on an iterative evaluation of the points.
+In the case of mappings, this usually means a simulation or profiling of a mapping's execution.
+Again, this distinction is not unique to the mapping problem.

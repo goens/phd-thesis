@@ -1,16 +1,51 @@
+Simulations are extremely important for analyzing an application's performance, or more generally, its behavior.
+As described in Section~\ref{sec:arch_models}, there are multiple levels of detail in which to model and, consequently, simulate, an architecture and its execution.
+For investigating the mapping problem in software synthesis, higher-level simulations are preferable for multiple reasons.
+First and foremost, higher-level simulations are faster.
+If a meta-heuristic iteratively evaluates dozens, hundreds or even thousands of mappings to find a near-optimal one, it greatly benefits from the fast evaluation time associated with a higher-level simulation.
+
+Higher levels of abstraction come with a trade-off, accuracy of the simulation suffers in exchange for the simpler models and faster simulation times.
+Let $\tilde \Theta$ be the approximation of $\Theta$ from the simulation. A loss in accuracy means that $| \Theta(m) - \tilde \Theta(m)|$ becomes larger.
+However, depending on the use-case and mapping objective $\Theta$, this loss in simulation accuracy might not necessarily affect the quality software synthesis results.
+Suppose that the objective $\Theta$ represents execution time or energy consumption, and the goal of the software synthesis is just a best-effort minimization of $\Theta$ (with no additional constraints, i.e. $C \equiv \operatorname{True}$).
+Then the accuracy of the simulation is not important, only its fidelity.
+If $\Theta(m_1) < \Theta(m_2)$ we want the result of the simulation to reflect this, $\tilde \Theta(m_1) < \tilde \Theta(m_2)$.
+As long as this is the case, we don't care about the actual value of $| \Theta(m_i) - \tilde \Theta(m_i)|$, since in this case the exploration will still find the minimum.
+The fidelity of the simulation is a measure of how often this is true.
+On the other hand, if the application is a real-time application, then the truth value of $C$ will depend on the accuracy of the simulation.
+Here, the accuracy of the simulation is much more important.
+
+This chapter describes the simulation aspects which pertain the models of computation and the practical tooling we will use.
+Nuanced simulation details and advanced techniques are beyond the scope of this thesis.
+
+\subsection{Simulating the Execution of Kahn Process Networks}
+
+The behavior of a system plays a central role in simulation. A deterministic model should yield deterministic simulation results.
+Non-determinism, when present, should also be captured by the models and reflected by the simulations.
+
 The behavior of systems is commonly captured in execution traces, which simply record the behavior of different entities (e.g. processes or actors) at different timepoints.
 This can be formally captured in a monoid structure of (Mazurkiewicz) traces or, equivalently, histories~\cite{diekert1995book}.
-Traces are useful to understand the behavior of systems~\cite{vampir} and are common in many domains. However, for systems that are non-deterministic, (by definition) the behavior of the system does not only depend on the input.
-This can make designing~\cite{lee2006problem} and debugging~\cite{murillo_debugging}.
+Traces are useful to understand the behavior of systems~\cite{vampir} and are common in many domains.
+However, for systems that are non-deterministic, (by definition) the behavior of the system does not only depend on the input.
+This can make designing~\cite{lee2006problem} and debugging~\cite{murillo_debugging} particularly difficult.
 In cyber-physical-sytems or, more generally, reactive systems in the sense of Harel and Pnueli~\cite{harel_pnueli_reactive}, input from the physical world might come in a non-deterministic fashion.
 The problem of capturing the behavior of such a system is even more complex when the system is distributed~\cite{shaver_phdthesis}. 
 
 Kahn Process Networks are deterministic, as are all the dataflow models that can be embedded as KPNs.
-This means that the behavior of a KPN application depends only on the input to the network, not on the mapping and scheduling or related execution details.
+This means that the behavior of a KPN application depends only on the input to the network.
+In particular, it does not on the mapping and scheduling or related execution details.
 Thus, their behavior can be captured by a (Mazurkiewicz) trace.
-In particular, this permits to recrate their behavior in a fashion that is independent of the mapping~\cite{find_proper_references}.
-By ``replaying'' the trace, i.e. simulating the execution of a process for every input in the trace, a discrete-event simulator can sucesfully simulate the execution of a KPN, since the tooken sequence is guaranteed to be identical given identical inputs. In particular, this allows us to do design-space exploration.
+This permits to re-create their behavior in a fashion that is independent of the mapping~\cite{find_proper_references}.
+By ``replaying'' the trace, i.e. simulating the execution of a process for every input in the trace, a discrete-event simulator can successfully simulate the execution of a KPN, since the token sequence is guaranteed to be identical given identical inputs.
+In particular, this allows us to do design-space exploration.
 
+A discrete-event simulation of a KPN application thus requires behavior traces. It also needs to model the execution and communication times.
+Modeling execution times from a trace is simple, with a crucial assumption: if the execution times for a trace event only depend on the PE type.
+This assumption won't hold always hold, e.g. when the instruction cache is flushed due to scheduling decisions, or due to unpredictability from the \ac{OS}.
+Note that data caches are modeled as part of the communication between processes.
+However, in most cases this assumption is a good approximation, it is normal to expect that the same code executing on the same data and the same \ac{ISA} will usually require the same amount of time.
+
+Modeling communication is more complicated.
 \todo{discuss KPN simulation and mention~\cite{menard_norcas16}}
 \subsection{Mocasin}
 
