@@ -64,17 +64,16 @@ The main contribution of~\cite{menard_norcas16}, with a concrete model for the T
 
 In this thesis we will use mocasin, a tool for the Model-of-Computation-based Analysis and Simulation of applications~\cite{menard_rapido21}.
 This tool, formerly known as pykpn~\cite{goens_mcsoc18}, has been developed as part of a collaborative effort between multiple researchers at the Chair for Compiler Construction at TU Dresden.
-Many concepts introduced in this thesis have been implemented and tested using mocasin.
-A central part of mocasin is a discrete-event simulator that uses the principles outlined above to simulate KPN applications based on their traces (as well as other models of computation).
-This simulation core is necessary to design and test many of the concepts of this thesis.
-The rest of this section will explain the basics of the simulation and the concepts of mocasin required for the rest of this thesis.
+While the tool itself is a joint contribution with the coauthors of~\cite{menard_rapido21}, many concepts introduced in this thesis have been implemented and tested using mocasin.
+As such, this section will explain the tool in-depth, to enable the description of the different implementations of contributions from this thesis implemented in mocasin.
 
 \begin{figure}[h]
 	\centering
-   \resizebox{0.95\textwidth}{!}{\input{figures/mocasin_flow.tex}}
-	\caption{Simulating KPN Applications in mocasin. TODO: this figure should actually come later}
+   \includegraphics[width=0.5\textwidth]{figures/mocasin.pdf}
+	\caption{The mocasin architecture. Repreinted from \cite{menard_rapido21} (Figure~2).}
 	\label{fig:mocasin_kpn_simulation}
 \end{figure}
+
 
 Figure~\ref{fig:mocasin_kpn_simulation} depicts the basic flow of simulating KPN applications in mocasin.
 In general, simulating a KPN requires four inputs, as explained in Section~\ref{sec:mappings_background}: the KPN graph, a platform description, execution traces and a mapping.
@@ -82,4 +81,15 @@ Instead of a concrete trace, mocasin expects a trace generator, which can genera
 A mapping, while required for simulation, does not need to be provided: it can be calculated in a design-space exploration.
 This is not surprising, since a significant part of Part I of this thesis concerns itself with finding good mappings efficiently.
 
+\subsubsection{simulate}
+A central part of mocasin is a discrete-event simulator that uses the principles outlined above to simulate KPN applications based on their traces (as well as other models of computation).
+
+
 TODO: finish explanation, add figure.
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.95\textwidth}{!}{\input{figures/mocasin_flow.tex}}
+	\caption{Simulating KPN Applications in mocasin. TODO: this figure should actually come later}
+	\label{fig:mocasin_kpn_simulation}
+\end{figure}
