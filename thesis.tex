@@ -16,8 +16,7 @@
 \chapter{Introduction}
 \input{tex/intro/introduction}
 
-\part{KPN-based Software Synthesis}
-\input{tex/intro/traditional}
+%\input{tex/intro/traditional}
 \chapter{Mapping KPNs to Heterogenous MPSoCs}
 \input{tex/mappings/intro}
 \section{Background}
@@ -26,8 +25,16 @@
 \input{tex/mappings/simulating}
 \subsection{The SLX Maping flow}
 \input{tex/mappings/slx}
-\subsection{Benchmarks}
+
+\chapter{Benchmarking}
+\input{tex/apps_semantics/intro_benchmarking}
+\subsection{KPN Benchmarks}
 \input{tex/mappings/benchmarks}
+\section{Random Benchmarks and Level Graphs}
+\input{tex/apps_semantics/level_graphs} %multiprog
+\section{Machine Learning}
+\input{tex/apps_semantics/machine_learning} %mapl, cc20
+
 
 \chapter{Mathematical Structures in Mappings}
 \input{tex/mappings/intro_structures}
@@ -40,7 +47,7 @@
 %\section{Dataflow}
 %\input{tex/mappings/dataflow}
 
-\chapter{Compile-Time Applications}
+\chapter{Applications of Mathematical Structures in Mappings}
 \label{chap:mapping_applications}
 \input{tex/apps_traditional/intro}
 \section{Compact Mappings}
@@ -50,63 +57,52 @@
 \section{Design Space Exploration}
 \input{tex/apps_traditional/dse} %taco, mcsoc18
 
-\chapter{Other Applications}
-\input{tex/apps_traditional/other_apps_intro}
+%\input{tex/apps_traditional/other_apps_intro}
 \section{Run-time applications: TETRiS}
 \input{tex/apps_traditional/tetris} %scopes17_tetris + new
 \section{Memory Allocation}
 \input{tex/apps_traditional/mem} %date14,jsa16,date20_rt
 
-\chapter{Conclusions}
-\input{tex/mappings/conclusions}
+%\chapter{Conclusions}
+%\input{tex/mappings/conclusions}
+%
+%\chapter{Related Work}
+%\input{tex/related/traditional}
 
-\chapter{Related Work}
-\input{tex/related/traditional}
 
+%\part{Beyond KPN-based Software Synthesis}
+%\input{tex/intro/expanded_semantics}
 
-\part{Beyond KPN-based Software Synthesis}
-\input{tex/intro/expanded_semantics}
-
-\chapter{Models of Computation}
+\chapter{Beyond \ac{KPN}: Models of Computation}
 \label{chap:mocs}
 \input{tex/semantics/intro}
 \section{An overview of Models of Computation}
 \input{tex/semantics/moc}
 \section{Extending Semantics: The MacQueen Gap} %maybe use like a motivational example for part
 \input{tex/semantics/macqueen} %parma_ditam, cgo_src (should I move this to applications?)
-
-\chapter{Novel Semantics}
-\input{tex/apps_semantics/intro}
-\section{reactors}
+\section{Reactors}
 \input{tex/semantics/reactors} %dac19,cyphy
 \section{autosar}
 \input{tex/apps_semantics/autosar} %dac20_autosar
 \section{5G}
 \input{tex/apps_semantics/5g} %ict + new
 
-\chapter{Language-Level Transformations}
-\section{Ohua}
+\chapter{Programming Languages}
+\input{tex/semantics/intro_pl}
+\section{Background: Implicit dataflow in Ohua}
 \input{tex/semantics/ohua} 
-\section{yauhau}
+\section{Concise code and Efficient \ac{I/O}}
 \input{tex/apps_semantics/yauhau} %cc_18
-\section{smap?}
+\section{Stateful Parallelism}
 \input{tex/semantics/smap}
 
-
-\chapter{Benchmarking and Beyond}
-\input{tex/apps_semantics/intro_benchmarking}
-\section{level graphs}
-\input{tex/apps_semantics/level_graphs} %multiprog
-\section{MAPL + ML representations?}
-\input{tex/apps_semantics/machine_learning} %mapl, cc20
 
 \chapter{Related Work}
 \input{tex/related/semantics}
 
-\part{Conclusions}
 \chapter{Conclusions} 
 \input{tex/conclusion}
-\part{Appendices}
+
 \appendix
 
 \chapter{Groups and Inverse Semigroups}
