@@ -45,19 +45,41 @@ This assumption won't hold always hold, e.g. when the instruction cache is flush
 Note that data caches are modeled as part of the communication between processes.
 However, in most cases this assumption is a good approximation, it is normal to expect that the same code executing on the same data and the same \ac{ISA} will usually require the same amount of time.
 
-Modeling communication is more complicated.
-\todo{discuss KPN simulation and mention~\cite{menard_norcas16}}
+Modeling communication is more complicated, as it depends on the memory subsystem. In general, the communication costs of sending a KPN token depend on multiple factors, like the size of the token, contention in the memory subsystem (and correspondingly methods of arbitration, routing in the case of a \ac{NoC}, etc), or the API and protocol being used.
+For the simulations in this thesis, we use a model based on annotations of the architecture graph $A$. These annotations are functions that calculate the time cost of communicating data, as a function of its size.
+In this way, we model both the latency and bandwidth of the communication.
+We use a split-cost communication model to assign costs to sending and receiving data~\cite{odendahl2013split}.
+This separation can be used to simulate based on traces, as described above, since we can then compute the cost of communication for both the sending and receiving processes.
+
+When dealing with \ac{NoC}-based architectures, this model is not as accurate.
+Communication over a \ac{NoC} depends also on the routers and links along the path, including the routing algorithms.
+We extended the split-cost communication model to account for these issues in~\cite{menard_norcas16}.
+The idea is to add a third term to account for the network, in addition to the consumer and producer costs. 
+This third term can account for the routing and the topology of the network while maintaining an analytic model which is cheap to evaluate in a high-level simulation.
+
+Simulation is essential for software synthesis, yet it is not the focus of this thesis. As such, we will only discuss the main idea behind the analytic models and their relationship to a fast simulation of \ac{NoC}-based architectures.
+The main contribution of~\cite{menard_norcas16}, with a concrete model for the Tomahawk~2 architecture~\cite{tomahawk2} and the corresponding evaluation comparing to the SystemC-based simulator Noxim~\cite{noxim} are due to my coauthors and beyond the scope of this thesis.
+
 \subsection{Mocasin}
 
-In this thesis we will use \textbf{MoCASin}, a tool for the \textbf{M}odel-\textbf{o}f-\textbf{C}omputation-based \textbf{A}nalysis and \textbf{Si}mulatio\textbf{n} of applications. This tool, formerly known as pykpn~\cite{goens_mcsoc18}, has been developed as part of a collaborative effort between multiple researchers at the Chair for Compiler Construction at TU Dresden. Many concepts introduced in this thesis have been implemented and tested using MoCASin. A central part of MoCASin is a discrete-event simulator that uses the principles outlined above to simulate KPN applications based on their traces (as well as other models of computation). This simulation core is necessary to design and test many of the concepts of this thesis. The rest of this section will explain the basics of the simulation and the concepts of MoCASin required for the rest of this thesis.
+In this thesis we will use mocasin, a tool for the Model-of-Computation-based Analysis and Simulation of applications~\cite{menard_rapido21}.
+This tool, formerly known as pykpn~\cite{goens_mcsoc18}, has been developed as part of a collaborative effort between multiple researchers at the Chair for Compiler Construction at TU Dresden.
+Many concepts introduced in this thesis have been implemented and tested using mocasin.
+A central part of mocasin is a discrete-event simulator that uses the principles outlined above to simulate KPN applications based on their traces (as well as other models of computation).
+This simulation core is necessary to design and test many of the concepts of this thesis.
+The rest of this section will explain the basics of the simulation and the concepts of mocasin required for the rest of this thesis.
 
 \begin{figure}[h]
 	\centering
    \resizebox{0.95\textwidth}{!}{\input{figures/mocasin_flow.tex}}
-	\caption{Simulating KPN Applications in MoCASin. TODO: this figure should actually come later}
+	\caption{Simulating KPN Applications in mocasin. TODO: this figure should actually come later}
 	\label{fig:mocasin_kpn_simulation}
 \end{figure}
 
-Figure~\ref{fig:mocasin_kpn_simulation} depicts the basic flow of simulating KPN applications in MoCASin. In general, simulating a KPN requires four inputs, as explained in Section~\ref{sec:mappings_background}: the KPN graph, a platform description, execution traces and a mapping. Instead of a concrete trace, MoCASin expects a trace generator, which can generate the trace on the fly: this is useful e.g. for non-deterministic models computation, but for KPNs the two are equvialent. A mapping, while required for simulation, does not need to be provided: it can be calculated in a design-space exploration. This is not surprising, since a significant part of Part I of this thesis concerns itself with finding good mappings efficiently.
+Figure~\ref{fig:mocasin_kpn_simulation} depicts the basic flow of simulating KPN applications in mocasin.
+In general, simulating a KPN requires four inputs, as explained in Section~\ref{sec:mappings_background}: the KPN graph, a platform description, execution traces and a mapping.
+Instead of a concrete trace, mocasin expects a trace generator, which can generate the trace on the fly: this is useful e.g. for non-deterministic models computation, but for KPNs the two are equvialent.
+A mapping, while required for simulation, does not need to be provided: it can be calculated in a design-space exploration.
+This is not surprising, since a significant part of Part I of this thesis concerns itself with finding good mappings efficiently.
 
 TODO: finish explanation, add figure.
