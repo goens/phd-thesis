@@ -7,7 +7,7 @@ The relationship between the two can be captured in a mapping.
 This chapter considers all of these aspects with their corresponding models, and the relationship between them.
 It is the central piece of background theory required for the methods presented in this thesis.
 
-\subsection{Kahn Process Networks}
+\section{Kahn Process Networks}
 \label{sec:kpn_basic}
 
 The flow we investigate in Part I is based on the \ac{MoC} of \acfp{KPN}.
@@ -108,7 +108,8 @@ We call this graph the \emph{\ac{KPN} graph}\index{KPN ! graph}.
 	\label{fig:audio_filter_graph}
 \end{figure}
 
-\subsection{Execution Traces}
+\section{Execution Traces}
+\label{sec:traces}
 
 Kahn Process Networks have a more abstract definition with mathematical semantics~\cite{kahn74}, in the sense of Scott~\cite{scott1970}.
 These abstract away the concrete implementation of individual steps in a computation.
@@ -191,7 +192,7 @@ However, an important observation is the converse: a concrete execution of a \ac
 Moreover, any concrete implementation of the \ac{KPN} realizing the same execution will have the same history: the history is an invariant of the abstract execution model.
 It captures the concurrent essence of the concrete computation.
 
-\subsection{Architecture Models}
+\section{Architecture Models}
 \label{sec:arch_models}
 Hardware architectures are in significant contrast to applications from the point of view of modeling.
 Abstraction boundaries are more clearly defined in the hardware world: semiconductor components like transistors are organized into digital switches, which are used to form logic gates (like a NAND gate) in logic diagrams for components, like an \ac{ALU}.
@@ -336,7 +337,8 @@ The Linear System-Level Architecture model they propose is also a graph-based mo
 However, we believe that it is better to separate both concerns conceptually, namely simulation and the specification of mappings.
 As such, we will focus only on the graphs defined in this section for mapping specification and leave the simulation level open to the multiple levels of accuracy, as required by the use-case.
 
-\subsection{The Mapping Problem}
+\section{The Mapping Problem}
+\label{sec:mapping_problem}
 
 The main problem we address in the first part of this thesis is the \emph{mapping problem}\cite{marwedel2011mapping}.
 The mapping problem is the decision problem of assigning physical resources (hardware) to the logical tasks and data (software) of an application.

@@ -22,31 +22,41 @@
 
 %\input{tex/intro/traditional}
 \chapter{Mapping \acsp{KPN} to Heterogenous \acsp{MPSoC}}
+\label{chap:mapping}
 \input{tex/mappings/intro}
-\section{Background}
 \input{tex/mappings/background}
 \section{Simulating Mappings}
+\label{sec:simulating_mappings}
 \input{tex/mappings/simulating}
-\subsection{The SLX Maping flow}
-\input{tex/mappings/slx}
+\section{The \mocasin tool}
+\label{sec:mocasin}
+\input{tex/mappings/mocasin}
 
 \chapter{Benchmarking}
+\label{chap:benchmarking}
 \input{tex/apps_semantics/intro_benchmarking}
 \section{KPN Benchmarks}
+\label{sec:kpn_benchmarks}
 \input{tex/mappings/benchmarks}
 \section{Random Benchmarks and Level Graphs}
+\label{sec:level_graphs}
 \input{tex/apps_semantics/level_graphs} %multiprog
 \section{Machine Learning}
+\label{sec:machine_learning}
 \input{tex/apps_semantics/machine_learning} %mapl, cc20
 
 
 \chapter{Mathematical Structures in Mappings}
+\label{chap:mapping_structures}
 \input{tex/mappings/intro_structures}
 \section{Symmetries}
+\label{sec:symmetries}
 \input{tex/mappings/symmetries} %IESS15
 \section{Metric Spaces}
+\label{sec:metric}
 \input{tex/mappings/metric} %mcsoc18 + new stuff
 \section{Representations}
+\label{sec:representations}
 \input{tex/mappings/representations} %mcsoc18 
 %\section{Dataflow}
 %\input{tex/mappings/dataflow}
@@ -55,16 +65,23 @@
 \label{chap:mapping_applications}
 \input{tex/apps_traditional/intro}
 \section{Compact Mappings}
+\label{sec:compact}
 \input{tex/apps_traditional/compact} %samos19
 \section{Design Centering}
+\label{sec:design_centering}
 \input{tex/apps_traditional/dc} %scopes17_dc + new
 \section{Design Space Exploration}
+\label{sec:dse}
 \input{tex/apps_traditional/dse} %taco, mcsoc18
-
 %\input{tex/apps_traditional/other_apps_intro}
+\section{A Language for Describing Mappings}
+\label{sec:logic_language}
+\input{tex/apps_traditional/logic} %taco, mcsoc18
 \section{Run-time applications: TETRiS}
+\label{sec:tetris}
 \input{tex/apps_traditional/tetris} %scopes17_tetris + new
 \section{Memory Allocation}
+\label{sec:memory}
 \input{tex/apps_traditional/mem} %date14,jsa16,date20_rt
 
 %\chapter{Conclusions}
@@ -81,17 +98,23 @@
 \label{chap:mocs}
 \input{tex/semantics/intro}
 \section{An overview of Models of Computation}
+\label{sec:mocs_overview}
 \input{tex/semantics/moc}
-\section{Extending Semantics: The MacQueen Gap} %maybe use like a motivational example for part
+\section{The MacQueen Gap} %maybe use like a motivational example for part
+\label{sec:macqueen}
 \input{tex/semantics/macqueen} %parma_ditam, cgo_src (should I move this to applications?)
 \section{Reactors}
+\label{sec:reactors}
 \input{tex/semantics/reactors} %dac19,cyphy
-\section{autosar}
+\subsection{autosar}
+\label{sec:autosar}
 \input{tex/apps_semantics/autosar} %dac20_autosar
-\section{5G}
+\subsection{5G}
+\label{sec:5g}
 \input{tex/apps_semantics/5g} %ict + new
 
 \chapter{Programming Languages}
+\label{chap:pl}
 \input{tex/semantics/intro_pl}
 \section{Background: Implicit dataflow in Ohua}
 \input{tex/semantics/ohua} 

@@ -240,7 +240,7 @@ With a specific architecture or topology in mind, the flows encode the architect
 \end{figure}
 
 
-Consider the very simple example of mapping two processes $t_1,t_2$ where $t_2 depends on t_1$ onto an off-the-shelf multicore like the Exynos 5 chip with an octa-core (4+4) ARM big.LITTLE\texttrademark, as depicted in Figure~\ref{fig:mapping_space_motivation}.
+Consider the very simple example of mapping two processes $t_1,t_2$ where $t_2$ depends on $t_1$ onto an off-the-shelf multicore like the Exynos 5 chip with an octa-core (4+4) ARM big.LITTLE\texttrademark, as depicted in Figure~\ref{fig:mapping_space_motivation}.
 The mappings are plotted by encoding the mapping of each of the two tasks as the $x$ and $y$ coordinates of the grid, and the color of the squares in the grid encodes the execution time of the application with that mapping.
 The example is very simple and has deliberately been chosen such that it can be easily visualized. In particular, The actual values of the execution time are irrelevant and have been omitted.
 Still, many of the problems are clear with this simple example already.
@@ -349,6 +349,14 @@ We then expand our conclusions from the \ac{KPN} flow to consider these addition
 \todo{Add a discussion of the motivation to constraint in the right way. Do I have a good example? (GOTO?), cite~\cite{tasharofi2013scala}} 
 
 TODO: Add a figure with the flow of the content and dependencies (ideally, by sections). Perhaps add another figure with the references to all coauthored papers? (it would be too much to add them here). Or: perhaps just discuss how we separate the bibliography (in the ``note on originality'').
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.5\textwidth}{!}{\input{figures/contents_dependency_graph.tex}}
+   \caption{Dependencies of Chapters and Sections of this Thesis}
+	\label{fig:multicore_era}
+\end{figure}
+
 
 \subsection{A Note on Originality}
 

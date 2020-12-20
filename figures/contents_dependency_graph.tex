@@ -1,0 +1,49 @@
+\begin{tikzpicture}
+  \node[ellipse,draw] (mapping) {\ref{chap:mapping}};
+
+  \node[ellipse,draw,below right = of mapping] (benchmarking) {\ref{chap:benchmarking}};
+  \node[ellipse,draw,below left = of benchmarking] (kpn_benchmarks) {\ref{sec:kpn_benchmarks}};
+  \node[ellipse,draw,right = of kpn_benchmarks] (level_graphs) {\ref{sec:level_graphs}};
+  \node[ellipse,draw,below right = of level_graphs] (ml) {\ref{sec:machine_learning}};
+  \draw (mapping) edge[-latex] (kpn_benchmarks);
+  \draw (benchmarking) edge[-latex] (kpn_benchmarks);
+  \draw (benchmarking) edge[-latex] (level_graphs);
+  \draw (benchmarking) edge[-latex] (ml);
+
+  \node[ellipse,draw, below left = of mapping] (structures) {\ref{chap:mapping_structures}};
+  \node[ellipse,draw,below = of structures] (metric) {\ref{sec:metric}};
+  \node[ellipse,draw,left = of metric] (symmetries) {\ref{sec:symmetries}};
+  \node[ellipse,draw,below right = of symmetries] (representations) {\ref{sec:representations}};
+  \draw (mapping) edge[-latex] (structures);
+  \draw (structures) edge[-latex] (symmetries);
+  \draw (structures) edge[-latex] (metric);
+  \draw (symmetries) edge[-latex] (representations);
+  \draw (metric) edge[-latex] (representations);
+  \draw (structures) edge[-latex,in=115,out=225,looseness=1] (representations);
+
+  
+  \node[ellipse,draw,below right = of representations] (compact) {\ref{sec:compact}};
+  \node[ellipse,draw,right = of compact] (design_centering) {\ref{sec:design_centering}};
+  \node[ellipse,draw,below left = of representations] (dse) {\ref{sec:dse}};
+  \node[ellipse,draw,below = of dse] (logic_language) {\ref{sec:logic_language}};
+  \node[ellipse,draw,below = of symmetries] (tetris) {\ref{sec:tetris}};
+  \node[ellipse,draw,below right = of tetris] (memory) {\ref{sec:memory}};
+  \draw (mapping) edge[-latex,in=45,out=225,looseness=1] (memory);
+  \draw (mapping) edge[-latex] (design_centering);
+  \draw (metric) edge[-latex] (compact);
+  \draw (representations) edge[-latex] (dse);
+  \draw (representations) edge[-latex] (logic_language);
+  \draw (symmetries) edge[-latex] (tetris);
+
+  \node[ellipse,draw, below right = of memory] (mocs) {\ref{sec:mocs_overview}};
+  \node[ellipse,draw, below left = of mocs] (macqueen) {\ref{sec:macqueen}};
+  \node[ellipse,draw, left = of macqueen] (reactors) {\ref{sec:reactors}};
+  \draw (mapping) edge[-latex,in=45,out=280,looseness=1] (mocs);
+  \draw (mocs) edge[-latex] (macqueen);
+  \draw (mocs) edge[-latex] (reactors);
+
+  \node[ellipse,draw, below right = of mocs] (pl) {\ref{chap:pl}};
+  \draw (level_graphs) edge[-latex,in=45,out=280,looseness=1] (pl);
+  \draw (mocs) edge[-latex] (pl);
+
+\end{tikzpicture}

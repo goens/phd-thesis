@@ -11,7 +11,8 @@
 \begin{tikzpicture}[node distance = 4em]
     % inputs/readers
     \node [block ] (tgff) {tgff readers};
-    \node [block, below=of tgff] (slx) {SLX readers};
+    \node [block, below=of tgff ] (sdf3) {sdf$^3$ readers};
+    \node [block, below=of sdf3] (slx) {SLX readers};
 
     %data
     \node [data, right=of tgff] (traces) {traces};
@@ -22,12 +23,12 @@
     \node [block, left=of platform] (platformdes) {platform designer};
 
     %modules
-    \node [mio, right=of mapping] (mappers) {mappers};
+    \node [block, right=of mapping] (mappers) {mappers};
     \node [block, right=of app] (simulate) {simulate};
-    \node [mio, above=of simulate] (tetris) {runtime managers (e.g. TETRiS)};
-    \node [mio, right=of mappers] (logic) {logic language manager};
-    \node [mio, below=of mappers] (representations) {representations (e.g. symmetries, metric spaces)};
-    \node [mio, above=of logic] (dc) {design centering (including perturbations)};
+    \node [mio, above=of simulate] (tetris) {runtime managers (Section~\ref{sec:tetris}) };
+    \node [mio, right=of mappers] (logic) {logic language manager (Section~\ref{sec:logic_language})};
+    \node [mio, below=of mappers] (representations) {representations (Chapter~\ref{chap:mapping_structures})};
+    \node [mio, above=of logic, align=center] (dc) {design centering \\ (Section~\ref{sec:design_centering})};
 
 
     %edges
@@ -38,6 +39,8 @@
 
     \path [possible] (tgff) -- (traces);
     \path [possible] (tgff) -- (app);
+    \path [possible] (sdf3) -- (traces);
+    \path [possible] (sdf3) -- (app);
 
     \path [possible] (platformdes) -- (platform);
 

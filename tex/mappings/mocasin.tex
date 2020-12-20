@@ -1,0 +1,82 @@
+
+
+In this thesis we will use \mocasin, a tool for the Model-of-Computation-based Analysis and Simulation of applications~\cite{menard_rapido21}.
+This tool, formerly known as \texttt{pykpn}~\cite{goens_mcsoc18}, has been developed as part of a collaborative effort between multiple researchers at the Chair for Compiler Construction at TU Dresden.
+While the tool itself is a joint contribution with the coauthors of~\cite{menard_rapido21}, many concepts introduced in this thesis have been implemented and tested using \mocasin.
+As such, this section will explain the tool in-depth, to enable the description of the different implementations of contributions from this thesis implemented in \mocasin.
+
+\begin{figure}[h]
+	\centering
+   \includegraphics[width=0.95\textwidth]{figures/mocasin.pdf}
+	\caption{The \mocasin architecture. Adapted from \cite{menard_rapido21} (Figure~2).}
+	\label{fig:mocasin_arch}
+\end{figure}
+
+
+Figure~\ref{fig:mocasin_arch} depicts the basic flow of \mocasin.
+It can be understood as a tool for rapid prototyping of prototyping tools.
+Multiple dataflow \acp{MoC} are supported by \mocasin, like \ac{SDF} or task graphs.
+These models, among others, can be seen as specializations of \ac{KPN}~\cite{lee1995dataflow} and will be discussed more in-depth in Chapter~\ref{chap:mocs}.
+The \mocasin architecture is composed of multiple modules that can be combined to create a specific tool (e.g. for mapping or simulation). 
+
+In general, simulating a KPN requires four inputs, as explained in Section~\ref{sec:mappings_background}: the KPN graph, a platform description, execution traces and a mapping.
+\mocasin has data internal structures for these four inputs that reflect the models as explained in Sections~\ref{sec:kpn_basic,sec:traces,sec:arch_models,sec:mapping_problem}.
+The tool boasts multiple readers to generate the internal data structures from established formats like \texttt{tgff}, \texttt{sdf3} or the \texttt{MAPS} formats.
+Instead of a concrete trace, \mocasin expects a trace generator, which can generate the trace on the fly: this is useful e.g. for non-deterministic models computation, but for KPNs the two are equivalent.
+The \ac{KPN} trace generator, for example, simply reads the trace from a file.
+A mapping, while required for simulation, does not need to be provided: it can be calculated in a design-space exploration.
+This is not surprising, since a significant part of this thesis concerns itself with finding good mappings efficiently.
+
+A central part of \mocasin is a discrete-event simulator that uses the principles outlined above to simulate KPN applications based on their traces (as well as other models of computation).
+We will not dwell on the design of the \texttt{simulate} module since it goes beyond the contribution and scope of this thesis.
+In the following, we will describe some other central modules of \mocasin. 
+
+
+\subsubsection{platform designer}
+
+\begin{listing}
+\begin{minted}[]{python}
+designer = PlatformDesigner(self)
+designer.setSchedulingPolicy('FIFO', 1000)
+designer.newElement("exynos5422")
+# cluster 0 with l2 cache
+designer.addPeClusterForProcessor("cluster_a7", processor_0, num_little)
+# Add L1/L2 caches
+designer.addCacheForPEs("cluster_a7", 1, 0, 8.0, float('inf'),
+                        frequencyDomain=1400000000.0, name='L1_A7')
+designer.addCommunicationResource("L2_A7", ["cluster_a7"], 250, 250,
+                                  float('inf'), float('inf'),
+                                  frequencyDomain=1400000000.0)
+# cluster 1, with l2 cache
+designer.addPeClusterForProcessor("cluster_a15", processor_1, num_big)
+# Add L1/L2 caches
+designer.addCacheForPEs("cluster_a15", 1, 4, 8.0, 8.0,
+                        frequencyDomain=2000000000.0, name='L1_A15')
+designer.addCommunicationResource("L2_A15", ["cluster_a15"], 250, 250,
+                                  float('inf'), float('inf'),
+                                  frequencyDomain=2000000000.0)
+# RAM connecting all clusters
+designer.addCommunicationResource("DRAM", ["cluster_a7", "cluster_a15"],
+                                  120, 120, 8.0, 8.0,
+                                  frequencyDomain=933000000.0)
+designer.finishElement()
+\end{minted}
+\caption{The Odroid-XU4 Platform with the Platform Designer}
+\label{listing:designer_odroid}
+\end{listing}
+
+\subsubsection{mappers}
+
+\subsubsection{configuration}
+
+Using Hydra~\ref{yadan2019-hydra}.
+
+\subsubsection{contribution}
+
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.95\textwidth}{!}{\input{figures/mocasin_flow.tex}}
+	\caption{Simulating KPN Applications in \mocasin. TODO: this figure should actually come later}
+	\label{fig:mocasin_kpn_simulation}
+\end{figure}
