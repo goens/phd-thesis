@@ -673,3 +673,68 @@ numpages = {10}
   url =          {https://github.com/facebookresearch/hydra},
   year =         2019,
 }
+
+@misc{eker2003cal,
+  title={CAL language report: Specification of the CAL actor language},
+  author={Eker, Johan and Janneck, J},
+  year={2003},
+  publisher={December}
+}
+@inproceedings{lohstroh2020language,
+  title={A Language for Deterministic Coordination Across Multiple Timelines},
+  author={Lohstroh, Marten and Menard, Christian and Schulz-Rosengarten, Alexander and Weber, Matthew and Castrillon, Jeronimo and Lee, Edward A},
+  booktitle={2020 Forum for Specification and Design Languages (FDL)},
+  pages={1--8},
+  year={2020},
+  organization={IEEE}
+}
+@inproceedings{lee2019freedom,
+  title={Freedom From Choice and the Power of Models: in Honor of Alberto Sangiovanni-Vincentelli},
+  author={Lee, Edward A},
+  booktitle={Proceedings of the 2019 International Symposium on Physical Design},
+  pages={126--126},
+  year={2019}
+}
+@inproceedings{ertel2014framework,
+  title={A framework for the dynamic evolution of highly-available dataflow programs},
+  author={Ertel, Sebastian and Felber, Pascal},
+  booktitle={Proceedings of the 15th International Middleware Conference},
+  pages={157--168},
+  year={2014}
+}
+@article{decandia2007dynamo,
+  title={Dynamo: amazon's highly available key-value store},
+  author={DeCandia, Giuseppe and Hastorun, Deniz and Jampani, Madan and Kakulapati, Gunavardhan and Lakshman, Avinash and Pilchin, Alex and Sivasubramanian, Swaminathan and Vosshall, Peter and Vogels, Werner},
+  journal={ACM SIGOPS operating systems review},
+  volume={41},
+  number={6},
+  pages={205--220},
+  year={2007},
+  publisher={ACM New York, NY, USA}
+}
+@inproceedings{huet1985cartesian,
+  title={Cartesian closed categories and lambda-calculus},
+  author={Huet, G{\'e}rard},
+  booktitle={LITP Spring School on Theoretical Computer Science},
+  pages={123--135},
+  year={1985},
+  organization={Springer}
+}
+@InProceedings{ertel_pmam18,
+author = {Sebastian Ertel and Justus Adam and Jeronimo Castrillon},
+title = {Supporting Fine-grained Dataflow Parallelism in Big Data Systems},
+booktitle = {Proceedings of the 9th International Workshop on Programming Models and Applications for Multicores and Manycores (PMAM)},
+year = {2018},
+series = {PMAM'18},
+address = {New York, NY, USA},
+month = feb,
+publisher = {ACM},
+doi = {10.1145/3178442.3178447},
+isbn = {978-1-4503-5645-9},
+location = {Vienna, Austria},
+pages = {41--50},
+numpages = {10},
+acmid = {3178447},
+url = {http://doi.acm.org/10.1145/3178442.3178447},
+abstract = {Big data systems scale with the number of cores in a cluster for the parts of an application that can be executed in data parallel fashion. It has been recently reported, however, that these systems fail to translate hardware improvements, such as increased network bandwidth, into a higher throughput. This is particularly the case for applications that have inherent sequential, computationally intensive phases. In this paper, we analyze the data processing cores of state-of-the-art big data systems to find the cause for these scalability problems. We identify design patterns in the code that are suitable for pipeline and task-level parallelism, potentially increasing application performance. As a proof of concept, we rewrite parts of the Hadoop MapReduce framework in an implicit parallel language that exploits this parallelism without adding code complexity. Our experiments on a data analytics workload show throughput speedups of up to 3.5x.},
+}

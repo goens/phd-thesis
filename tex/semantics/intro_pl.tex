@@ -1,7 +1,16 @@
-Motivate with CPN. 
+In this thesis we have discussed multiple \acfp{MoC}, reasoning about their semantics and how to best deploy them on a particular hardware architecture.
+A natural question arising from this is, ``how do we program in these \acp{MoC}?''.
 
-Mention other languages (like CAL)
+In Chapter~\ref{chap:mapping}, Section~\ref{sec:kpn_basic} we saw the \acf{CPN} language.
+\ac{CPN} is a \ac{DSL} designed to describe data flow programs with the Kahn-MacQueen blocking-read semantics, with special annotations for \ac{SDF} actors.
+Other \ac{MoC}-based languages exist, like the CAL actor language~\cite{eker2003cal}, (TODO: the sesame description?) or Lingua Franca~\cite{lohstroh2020language}.
+These languages allow ``freedom from choice''~\cite{lee2019freedom}, by enforcing a model that limits the ways in which to make mistakes, ideally without compromising the expressiveness of what can be designed with the model.
 
-Mention Lingua Franca (reactors), and how it is beyond the scope of this thesis (not my contribution).
+A common trade-off when designing programming languages is also the question of expressiveness versus performance.
+High-level expressive abstractions are often at odds with low-level performance optimizations.
+However, well-designed abstractions can be leveraged with semantics-preserving compiler transformations that still derive an efficient execution.
+The whole principle of software synthesis can be seen as an instance of this principle.
 
-Motivate implicit data-flow (ohua) and transformations.
+This chapter discusses programing languages for defining and enforcing the semantics of a \ac{MoC}.
+After a short review of existing languages, it focuses on the Ohua~\cite{ertel_phdthesis} language, which defines dataflow implicitly.
+It also discusses how we can leverage the language and its semantics to define semantics-preservings transformations at a language level that can optimize the execution.

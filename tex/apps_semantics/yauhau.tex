@@ -1,5 +1,96 @@
-The infrastructure of large internet companies today relies to a great extent on microservice-based architectures~\cite{}.
+Dataflow models expose concurrency. While concurrency enables parallelism, it can also be leveraged in other ways. 
+This section discusses \"{Y}auhau, a framework for optimizing \ac{I/O} in microservice-based systems~\cite{ertel_cc18}.\index{\"{Y}auhau}
+This Ohua-based framework uses the concurrency exposed by the \ac{MoC} to do so.
 
-Discuss~\cite{ertel_cc18}.
+\begin{figure}[t]
+        \centering
+        \includegraphics[scale=0.25]{figures/amazon-microservices.png}\\
+        \small
+
+        [Source: \href{https://www.slideshare.net/apigee/i-love-apis-2015-microservices-at-amazon-54487258}{I Love APIs 2015} by Chris Munns, licensed under \href{https://creativecommons.org/licenses/by/4.0/}{CC BY 4.0}, available at: \href{http://bit.ly/2zboHTK}{\url{http://bit.ly/2zboHTK}}]
+        \vspace{-1mm}
+        \caption{Microservices at Amazon.}
+        \label{fig:amazon_death_star}
+        \vspace{-3mm}
+\end{figure}
+
+The infrastructure of large internet companies today relies to a great extent on microservice-based architectures~\cite{decandia2007dynamo,marlow2014haxl}.
+Figure~\ref{fig:amazon_death_star} shows the microservice infrastructure of Amazon circa 2015. 
+It shows microservices as nodes, and how they depend on each other as edges.
+The figure serves to illustrate the complexity of microservice-based architectures.
+
+In microservice-based systems, \ac{I/O} plays a crucial role in the performance.
+A microservice will commonly send multiple requests to a different microservice, as part of its operation.
+Each request comes with a significant overhead from establishing the connection and sending the data.
+If the requests do not depend on each other, however, they can instead be sent as a single, batched request for mitigating the overhead.
+
+Batching requests is not a novel idea, it is well-established as a technique to optimize \ac{I/O}.
+The trade-off comes from the code required to write batched requests.
+A developer writing code for such a microservice-based architecture needs to take both the funcionality and the \ac{I/O} optimizations into account.
+This makes the code harder to write, read and mantain, as the optimizations clutter the readability of the functionality.
+This is unacceptable in a context where development time is a highly valuable resource, be it for human-resource costs or because it is important to have working solution as quick as possible. 
+
+The suituation described is the case for Facebook's spam-fighting services~\cite{marlow2014haxl}.
+When fighting spam, a novel filter must not only be effective and perform efficiently, it also should be implemented as fast as possible without compromising the functionality.
+An ideal spam-fighting system thus allows the developers to focus on the functionality, and optimizes the implementation without cluttering the code.
+This is precisely what the Haxl\index{Haxl} sytem attempts, using the Haskell abstraction of \emph{applicative functors}\index{applicative functor}.
+Consider the Haskell code snippet (taken from \cite{marlow2014haxl}) in Listing~\ref{listing:haxl_friends_of}:
+
+\begin{listing}[h]
+\begin{minted}[]{Haskell}
+let numCommonFriends =
+     length (intersect (friendsOf x) (friendsOf y))
+in
+if numCommonFriends < 2 && daysRegistered x < 30
+    then...
+    else...
+\end{minted}
+\caption{An example of a Spam-fighting request to be optimized by Haxl (from ~\cite{marlow2014haxl}).}
+\label{listing:haxl_friends_of}
+\end{listing}
+
+The listing shows a code example where, for spam fighting, the number of common Facebook friends of two users are calculated.
+This is done by calling the function \texttt{friendsOf} for both \texttt{x} and \texttt{y}.
+Code like Listing~\ref{listing:haxl_friends_of} is easy to read, but unoptimized, it will send to requests to the microservice that handles the \texttt{friendsOf} function.
+The solution of Haxl is to use applicative functors to compose \ac{I/O} calls, such as \texttt{friendsOf}, and automatically batch independent requests this way.
+Listing~\ref{listing:haxl_appliactive_do} shows how this is achieved in Haxl using applicative-do notation.
+
+\begin{listing}
+\begin{minted}[]{Haskell}
+do a <- friendsOf x
+   b <- friendsOf y
+   return (length (intersect a b))
+\end{minted}
+\caption{The request from Listing~\ref{listing:haxl_friends_of} batched using applicative-do (from ~\cite{marlow2014haxl}).}
+\label{listing:haxl_applicative_do}
+\end{listing}
+
+Under the hood, the applicative functor definition for \texttt{friendsOf} in Haxl gathers the arguments \texttt{x} and \texttt{y} and makes a single, batched request.
+This optimizes the execution with a minimal obfuscation of the code:
+A developer has to switch from a pure functional style to an applicative style, but can otherwise focus on the semantics of the program.
+
+Our central observation is that this \ac{I/O} optimizations all come ``for free'' from the exposed concurrency in a dataflow execution. 
+If we define a dataflow operator that gathers the inputs and issues a single batched request, we get the composition from the semantics of dataflow.
+This is the main idea behind \"{Y}auhau.
+
+\"{Y}auhau is based on the iteration of Ohua embedded in Clojure.
+It is a language with an explicit annotation for functions which perform \ac{I/O}.
+Leveraging these annotations, a semantics-preservig transformation can minimize the number of independent \ac{I/O}-performing function calls.
+
+Consider the example in Listing~\ref{listing:yauhau_friends_of}. It lists the same request as Listing~\ref{listing:haxl_friends_of} in \"{Y}auhau.
+The \texttt{ff} operator refers to a \emph{foreign function}\index{\"{Y}auhau ! foreign function}, which is any (possibly stateful) function.
+The \texttt{io} operator, on the other hand, is an explicit annotation that a function does \ac{I/O}\index{\"{Y}auhau ! io}.
+
+\begin{listing}
+\begin{flalign*}
+& \lit*{let}~\lit*{numCommonFriends} = & \\ 
+& \quad \lit*{ff}_\text{length}(\lit*{ff}_\text{intersect}( & \\ 
+& \quad \quad \lit*{io}(\lit*{ff}_\text{friendsOf}(x)),~\lit*{io}(\lit*{ff}_\text{friendsOf}(y)) & \\
+& \quad ))~\lit*{in}~\ldots & 
+\end{flalign*}
+\caption{The request from Listing~\ref{listing:haxl_friends_of} in \"{Y}auhau.}
+\label{listing:yauhau_friends_of}
+\end{listing}
+
 
 Focus on methods of semantic equivalence, only cite results.
