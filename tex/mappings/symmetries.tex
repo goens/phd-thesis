@@ -148,11 +148,24 @@ Finaly, we measured the total energy over the INA-231 sensors connected over the
    \label{fig:symmetry_measurements}
 \end{figure}
 
-Figure~\ref{fig:symmetry_measurements} shows the results of the measurements as box-and-whiskers plots. 
-\subsection{Orbits} 
+Figure~\ref{fig:symmetry_measurements} shows the results of the measurements as box-and-whiskers plots.
+We see that the execution times of all mappings are well within the ranges of each other, both when measured as wall-clock or \ac{CPU} time.
+We can test this in a more rigurous fashion with an \ac{ANOVA} F-test.
+For the wall-clock data, we get a probability of $p = 5.06\%$, rejecting the null hypothesis that variance in the wall-clock times from different mappings is explained by more than statistical variance.
+For the \ac{CPU} time data, the value of $p=15.2\%$ it is even clearer that the variance is likely just statistical.
+We can conclude that, at least for this example, equivalent mappings indeed seem to have the same execution time behavior.
+
+The energies of the mappings are less clearly distinct, especially for the first two mappings, yet they all still require comparable amounts of erengy.
+An \ac{ANOVA} F-test yields a $p$ value of $0.009\%$.
+It is worth noting here that these measurements are just a first estimation.
+The accuracy of the energy data depends on a multitude of factors like the sampling rate or the measurement accuracy of the INA-231 sensors.
+We have not made a proper assesment of measurement errors and error propagation, which is especially large in the energy measurements that span measurements from four different components.
+Precise energy measurments, however, are beyond the scope of this thesis.
+We this experiment we cannot really conclude nor discard the hypothesis that energy consumption is an invariant of the mapping symmetries.
 
 \subsection{Calculating Symmetries}
-There branch of mathematics known as computational group theory deals with computational aspects of the theory of groups, which we have used here for formalizing the symmetries of applications, architectures and mappings. 
+
+The branch of mathematics known as computational group theory deals with computational aspects of the theory of groups, which we have used here for formalizing the symmetries of applications, architectures and mappings. 
 An overview of the methods of computational group theory can be found in~\cite{seress2003permutation} covering beyond the basics presented in this subsection.
 Here we will present only the methods necessary for the calculations required of applications to software synthesis.
 

@@ -85,6 +85,7 @@ tikz("generated/mappings_equivalent.tex",width=7,height=3,standAlone = FALSE)
 print(multiplot(p1,p2,p3,cols=3))
 dev.off()
 summary(aov(energy~mapping,data = equiv))
+summary(aov(energy~mapping,data = filter(equiv,mapping!=2 & mapping !=1)))
 summary(aov(wall_clock_time~mapping,data = equiv))
 summary(aov(cpu_time~mapping,data = equiv))
 
