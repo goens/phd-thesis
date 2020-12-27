@@ -1,11 +1,154 @@
-In this chapter we will explore the mathematical structure of symmetry in the software synthesis process, mostly the work published in ~\cite{goens_iess15,goens_taco17,goens_scopes17}.
-The material in this section makes use of concepts in group theory. We assume the basic concepts as seen in any undergraduate course on group theory, with the definitions of groups, actions and orbits. A brief introduction, to the level required by this chapter, can be fonud in Appendix~\ref{appendix:groups}. 
-
+In this chapter we will explore the mathematical structure of symmetry in the software synthesis process, mostly the work published in ~\cite{goens_iess15,goens_taco17,goens_scopes17,goens_tcad21}.
+The material in this section makes use of concepts in group theory.
+We assume the basic concepts as seen in any undergraduate course on group
+theory, with the definitions of groups, actions and orbits.
+A brief introduction, to the level required by this chapter, can be fonud in Appendix~\ref{appendix:groups}. 
 
 \subsection{Architectures and Applications}
 
+Intuitively, when we say an object is very symmetric we usually mean it has parts that are similar or identic, and the object looks identical (or similar) from multiple points of view.
+In a symmetric face, for example, both the left and right sides of the face are similar. A hexagonal mosaic might look the same when seen from six different angles.
+Mathematically, this is commonly modeled through transformations. A reflection along the vertical axis in a face, or rotations of $60^\circ$ in the heaxgon, both leave the object (mostly) unchanged.
+We can do the same for hardware architectures, even heterogeneous ones.
+
+For example, the Exynos~5 in the Odroid-XU4 has four identical Cortex A7\texttrademark, say $\PE_1,\ldots,\PE_4$ and four identical Cortex A15\texttrademark cores, say $\PE_5,\ldots,\PE_8$.
+A transformation that swaps the cores $\PE_1$ and $\PE_2$ leaves the archtiecture topology unchanged, since the cores are identical. This is depicted in Figure~\ref{fig:exynos_symmetries}.
+On the other hand, a transformation that swaps $\PE_1$ and $\PE_5$ does change the topology, since the cores are of different types. As can also be seen in Figure~\ref{fig:exynos_symmetries}.
+\begin{figure}[h]
+	\centering
+\resizebox{0.3\textwidth}{!}{
+   \begin{tikzpicture}
+     \input{figures/odroid}
+   \end{tikzpicture}
+ }
+   \caption{Symmetries in the Odroid-XU4 architecture. TODO: fix figure.}
+   \label{fig:exynos_symmetries}
+\end{figure}
+
+When the memory subsystem is more complex, this is also reflected in the topology. Consider the \ac{NoC}-based architecture depicted in the example, with four identical cores $\PE_1\ldots,\PE_4$.
+An analogous transformation to the one described before, which swaps the cores $\PE_1$ and $\PE_2$, is not a symmetry of this topology, as depicted in Figure~\ref{fig:non_equivalent}.
+The change in the cores changes the communication patterns.
+Before the transformation, sending data from $\PE_1$ to $\PE_3$ needs two hops over the \ac{NoC}, whereas after the transformation it can be sent within a single hop.
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.3\textwidth}{!}{
+   \begin{tikzpicture}
+     \input{figures/odroid}
+   \end{tikzpicture}
+ }
+   \caption{The communication topology affects symmetries in architectures.}
+   \label{fig:non_equivalent}
+\end{figure}
+
+Generally, the transformations that preserve the structure of the architecture topology have a clear structure.
+If two transformations $t_1$ and $t_2$ preserve the structure of the architecture topology, then their composition $t_1 \circ t_2$ also preserves it.
+Similarly, it is clear that reversing a transformation $t_1^{-1}$ also preserves the structure.
+Finally, the identity transformation on the architecture $\operatorname{id}_A$ (which does not change anything) clearly preserves the structure.
+These observations together mean that these transformations have the structure of a group with the function composition $(\circ)$ as its operation.
+
+More precisely, the group of symmetries of the achitecture is precisely the group of graph isomorphisms from the architecture graph $A$ to itself.
+An isomorphism from an object to itself is called an automorphism\index{automorphism}.
+We denote the group of automorphisms of the architecture $A$ as $\Aut(A)$
+
+For the case of the \ac{NoC}-based architecture, the authomorphism group $\Aut(A\text{NoC}) \cong D_4$ is a dihederal group on $4$ points.
+It conists of $3$ rotations, $4$ reflections and the identity transformation.
+The Odroid architecture, on the other hand, has $\Aut(A_\text{Odroid}) \cong S_4 \times S_4$ as symmetry group.
+This group with $48$ transformations is comprised of (independent) arbitrary permutations of the A15 and A7 cores.
+
+Since the Odroid architecture is heterogeneous, both clusters are distinct and there is no symmetry between them.
+Many complex architectures, however, do consist of multiple identical culsters. Consider the architecture depicted in Figure~\ref{fig:coolidge}.
+It is the MPPA3 Coolidge from Kalray~\cite{coolidge} and consists of $5$ identical clusters.
+Each cluster has $17$ cores, $16$ of which are identical general-purpose cores, and the last one is a special-purpose secure and management core.
+
+The MPPA3 Coolidge is a hierarchically-designed architecture. The five identical clusters are conceptually at a different level than the cores at each cluster.
+Designs like the HAEC~\cite{haec} topology mentioned in the introduction (cf. Figure~\ref{fig:haec}) have even more levels of hierarchy.
+The symmetries of these hierarchical architectures are reflected in the different levels of hierarchy of the topology~\cite{goens_tcad21}.
+For example, the automorphism group of the MPPA3 Coolidge is $\Aut(A_\text{Coolidge}) \cong S_{16} \wr S_5$ and has $16! \cdot 5! \approx 2.51 \cdot 10^{15}$ symmetries. 
+
+So far we have discussed the symmetries of architectures.
+However, we can apply the same principle to applications and their graphs.
+Conisder the audio filter example application from Section~\ref{sec:kpn_basic} (cf. Figure~\ref{fig:audio_filter_graph}). 
+The left and right channels perform precisely the same computation on different data.
+We could not, for example, just swap the \texttt{fft\_l} and \texttt{fft\_r} nodes, since that would result in a different application that also swaps the channels of the audio file.
+On the other hand, if we swap the whole subgraph consisting of \texttt{fft\_l}, \texttt{filter\_l} and \texttt{ifft\_l} with the equivalent subgraph of \texttt{fft\_r}, \texttt{filter\_r} and \texttt{ifft\_r}, the application remains identical.
+This is depicted on Figure~\ref{fig:audio_filter_symmetries}.
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.9\textwidth}{!}{
+\begin{tikzpicture}
+   \input{figures/audio_filter_graph}
+ \end{tikzpicture}
+}
+   \caption{A symmetry of the audio filter application. TODO: adapt figure}
+	\label{fig:audio_filter_symmetries}
+\end{figure}
+
+Mathematically, we need to model the semantics of the application to reflect its symmetries.
+For an application $K = (V_K,E_K)$ we can label the nodes $V_K$ with unique identifiers relating them to the $KPN$ process that execute them (e.g. the \texttt{\_\_PNprocess} in a \ac{CPN} program). 
+Formally, thus, the automorphism group $\Aut(E)$ of the labeled graph $K$ is trivial, i.e. $\Aut(E) = \{ \id \}$. 
+We could label $K$ differently to capture the symmetry from Figure~\ref{fig:audio_filter_symmetries}.
+For example, if use the source code of the process as label, we would capture this symmetry.
+We have to be more careful, however, as this can lead to a problematic definition of symmetries.
+
+An application might use the same code at different points, resulting in very different behavior.
+For example, consider an application that receives a list of points, which it sorts before operating on it.
+Before returning the list, it sorts them again to ensure they are sorted.
+Both times it sorts the list using the quicksort algorithm, yet the second time the list is almost always sorted or close to being sorted.
+Then the execution of the same quicksort code in the second instance behaves very differently from the first time.
+
+A difference like the one outlined above is very difficult to capture automatically, as it requires understanding of the application to a very high level of abstraction.
+We thus consider application symmerties as manually-defined anotations.
+There are some conceivable ways to automatically capture and annotate such application symmetries, for example when dealing with known data-level parallelism.
+In future work, a framework as we discuss in Chapter~\ref{chap:mocs}, Section~\ref{sec:macqueen} could be extended to extract symmetries.
+For the rest of this thesis, however, we focus on symmetries induced from the architecture.
+
 \subsection{Mappings}
 
+We have seen how the architecture and applications have symmetries in their structure. 
+The groups $\Aut(A)$ and $\Aut(K)$ act on the architecture $A$ and the application $K$, respectively.
+These actions also induce an action on the mapping space. 
+Let $m : K \rightarrow A$ be a mapping.
+Recall that a symmetry $\sigma \in \Aut(A)$ of the architecture is a transformation that leaves the structure of the architecture unchanged.
+Conisder then the mapping $\sigma m := k \mapsto \sigma(m(k))$.
+Since the structure of $A$ is unchanged, then the structure of $m$ and $\sigma m$ is also identical.
+All observable properties of $m$ and $\sigma m$, like the execution time or energy consumption, are the same.
+If they were not, it would have to be due to a structural difference in the (sub)architectures $m(K),(\sigma m)(k) = \sigma(m(K)) \leq A$, which are isomorphic by assumption on $\sigma$.
+We say that these properties like the execution time and energy consumption are \emph{invariants}\index{invariants} of the group action.
+
+Figure~\ref{fig:mapping_action_example} shows an example of the action on mappings. \todo{add and describe figure.}
+
+The case for $K$ is analogous.
+Let $\pi \in \Aut(K)$ be a symmetry of the application.
+Then the mapping $\pi m := k \mapsto m(\pi^{-1}k)$ is equivalent to $m$.
+Note that we define it with $\pi^{-1}$ instead of $\pi$ so that this defines a left action.
+Indeed, for $\pi, \tau \in \Aut(K)$, we have
+\begin{align*}
+  (\pi (\tau m))(k) = \pi m(\tau^{-1}k) = m(\pi^{-1}\tau^{-1}k) = m((\tau \pi)^{-1}k) = ((\tau \pi) m))(k) 
+\end{align*}
+
+From the models of the problem, as defined in Chapter~\ref{chap:mapping}, mappings under these symmetries are necessarily indistinguishable from each other, since they rely on inherent symmetries of the models.
+On the other hand, these are just models, they need not reflect reality.
+It still leaves the question open, how does this hold up in pracitice?
+Are equivalent mappings actually equivalent?
+In~\cite{goens_scopes17} we tested this empirically, by executing four equivalent mappings and measuring the runtime and energy.
+We tested four equivalent mappings of the audio filter benchmark on an Odroid XU3 and executed each $50$ times, measuring three metrics.
+The Odroid XU3 is almost identical to the Odroid XU4, but features on-board energy sensors.
+We measured the \acs{CPU} time, which is the total aggregate time spent by all \acsp{CPU} executing the application.
+We also measured the wall-clock time, which is the total time of the application, measured from start to finish as it would pass on a wall clock.
+Finaly, we measured the total energy over the INA-231 sensors connected over the I2C bus, as the aggregate of the energy measured at each individual component, sampled at $10$~Hz.
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.95\textwidth}{!}{
+     \input{generated/mappings_equivalent}
+ }
+   \caption{Measurements of four equivalent mapings for the audio filter application on the Odroid-XU3 architecture.}
+   \label{fig:symmetry_measurements}
+\end{figure}
+
+Figure~\ref{fig:symmetry_measurements} shows the results of the measurements as box-and-whiskers plots. 
 \subsection{Orbits} 
 
 \subsection{Calculating Symmetries}
