@@ -73,13 +73,37 @@ Our central observation is that this \ac{I/O} optimizations all come ``for free'
 If we define a dataflow operator that gathers the inputs and issues a single batched request, we get the composition from the semantics of dataflow.
 This is the main idea behind \"{Y}auhau.
 
+
 \"{Y}auhau is based on the iteration of Ohua embedded in Clojure.
 It is a language with an explicit annotation for functions which perform \ac{I/O}.
 Leveraging these annotations, a semantics-preservig transformation can minimize the number of independent \ac{I/O}-performing function calls.
+We map the Clojure-based Ohua to an internal expression \acsu{IR}, as is shown in Figure~\ref{fig:clojure_to_yauhau}.
 
-Consider the example in Listing~\ref{listing:yauhau_friends_of}. It lists the same request as Listing~\ref{listing:haxl_friends_of} in \"{Y}auhau.
-The \texttt{ff} operator refers to a \emph{foreign function}\index{\"{Y}auhau ! foreign function}, which is any (possibly stateful) function.
-The \texttt{io} operator, on the other hand, is an explicit annotation that a function does \ac{I/O}\index{\"{Y}auhau ! io}.
+\begin{figure}[h]
+	\centering
+	\begin{tabular}{r r c l r}
+		&\mintinline{Clojure}{x} & $\mapsto$ & $x$ & \\
+		&\mintinline{Clojure}{(fun [x] t)} $\equiv$ \mintinline{Clojure}{#(t)} & $\mapsto$ & $\lambda x.t$ & \\
+		&\mintinline{Clojure}{(t t)} & $\mapsto$ & $t \: t$ & \\
+		&\mintinline{Clojure}{(let [x t] t)} & $\mapsto$ & $\lit*{let} \: x = t \: \lit*{in} \: t$ & \\
+		&\mintinline{Clojure}{(if t t t)} & $\mapsto$ & $\lit*{if}(t \: t \: t)$  &\\
+		&\mintinline{Clojure}{(f x1 ... xn)} & $\mapsto$ & $\lit*{ff}_f(x_1 \ldots x_n)$ & \\
+		&\mintinline{Clojure}{(io x)}&$\mapsto$& $\lit*{io}(x)$ & \\
+		%		\\
+		%		\multicolumn{4}{l}{\textit{Values:}}\\
+		%		&\mintinline{Clojure}{(reqF x1 ... xn)}& $\mapsto$ & $r_f$ & \\
+	\end{tabular}
+	
+	\caption{Mapping the terms of the Clojure-based language to an expression \acs{IR}.}
+	\label{fig:clojure_to_yauau}
+\end{figure}
+
+The expression \ac{IR} defined in Figure~\ref{fig:clojure_to_yauau} is based on $\lambda$ calculus with a \texttt{let} construction for lexical scoping and explicit conditionals (\texttt{if}).
+The central innovations of the language are the two particular terms, \texttt{ff} for foreign functions, which is any (possibly stateful) function.
+The other term is \texttt{io}, which is an explicit annotation that a function does \ac{I/O}\index{\"{Y}auhau ! io}.
+The premise is to optimize the number of annotated \ac{I/O} calls leveraging the concurrency from the dataflow semantics derived from this language.
+The example in Listing~\ref{listing:yauhau_friends_of} lists the same request as Listing~\ref{listing:haxl_friends_of} in \"{Y}auhau.
+
 
 \begin{listing}
 \begin{flalign*}
@@ -93,4 +117,4 @@ The \texttt{io} operator, on the other hand, is an explicit annotation that a fu
 \end{listing}
 
 
-Focus on methods of semantic equivalence, only cite results.
+

@@ -40,7 +40,6 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 
 
-tikz("generated/tetris_equivalent.tex")
 ct1 <- read_csv("data/ct1.stats", col_names = FALSE)
 ct2 <- read_csv("data/ct2.stats", col_names = FALSE)
 ct3 <- read_csv("data/ct3.stats", col_names = FALSE)
