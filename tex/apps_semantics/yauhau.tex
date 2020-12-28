@@ -82,16 +82,16 @@ We map the Clojure-based Ohua to an internal expression \acsu{IR}, as is shown i
 \begin{figure}[h]
 	\centering
 	\begin{tabular}{r r c l r r r c l r}
-		&\mintinline{Clojure}{x} & $\mapsto$ & $x$ &  &\mintinline{Clojure}{(t t)} & $\mapsto$ & $t \: t$ & \\
-		&\mintinline{Clojure}{(let [x t] t)} & $\mapsto$ & $\lit*{let} \: x = t \: \lit*{in} \: t$ & 		&\mintinline{Clojure}{(if t t t)} & $\mapsto$ & $\lit*{if}(t \: t \: t)$  &\\ 
-		&\mintinline{Clojure}{(fun [x] t)} $\equiv$ \mintinline{Clojure}{#(t)} & $\mapsto$ & $\lambda x.t$ & &\mintinline{Clojure}{(f x1 ... xn)} & $\mapsto$ & $\lit*{ff}_f(x_1 \ldots x_n)$ & \\
-		&\mintinline{Clojure}{(io x)}&$\mapsto$& $\lit*{io}(x)$ & \\
-		%		\\
+		&\mintinline{Clojure}{x} & $\mapsto$ & $x$ &  &\mintinline{Clojure}{(let [x t] t)} & $\mapsto$ & $\lit*{let} \: x = t \: \lit*{in} \: t$ &  \\
+
+	&\mintinline{Clojure}{(io x)}&$\mapsto$& $\lit*{io}(x)$ & &\mintinline{Clojure}{(fun [x] t)} $\equiv$ \mintinline{Clojure}{#(t)} & $\mapsto$ & $\lambda x.t$ &\\ 
+	&\mintinline{Clojure}{(if t t t)} & $\mapsto$ & $\lit*{if}(t \: t \: t)$  &	 &\mintinline{Clojure}{(f x1 ... xn)} & $\mapsto$ & $\lit*{ff}_f(x_1 \ldots x_n)$ & \\
+    &\mintinline{Clojure}{(t t)} & $\mapsto$ & $t \: t$ & 		%		\\
 		%		\multicolumn{4}{l}{\textit{Values:}}\\
 		%		&\mintinline{Clojure}{(reqF x1 ... xn)}& $\mapsto$ & $r_f$ & \\
 	\end{tabular}
 	
-	\caption{Mapping the terms of the Clojure-based language to an expression \acs{IR}.}
+	\caption{Mapping the terms of the Clojure-based language to an expression \acs{IR}. Adapted from Figure~9 in~\cite{ertel_cc18}.}
 	\label{fig:clojure_to_yauau}
 \end{figure}
 
@@ -101,17 +101,23 @@ The other term is \texttt{io}, which is an explicit annotation that a function d
 The premise is to optimize the number of annotated \ac{I/O} calls leveraging the concurrency from the dataflow semantics derived from this language.
 The example in Listing~\ref{listing:yauhau_friends_of} lists the same request as Listing~\ref{listing:haxl_friends_of} in \"{Y}auhau.
 
-
 \begin{listing}
 \begin{flalign*}
 & \lit*{let}~\lit*{numCommonFriends} = & \\ 
 & \quad \lit*{ff}_\text{length}(\lit*{ff}_\text{intersect}( & \\ 
-& \quad \quad \lit*{io}(\lit*{ff}_\text{friendsOf}(x)),~\lit*{io}(\lit*{ff}_\text{friendsOf}(y)) & \\
+& \quad \quad \lit*{ff}_\text{friendsOf}(\lit*{io}(x)),~\lit*{ff}_\text{friendsOf}(\lit*{io}(y)) & \\
 & \quad ))~\lit*{in}~\ldots & 
 \end{flalign*}
 \caption{The request from Listing~\ref{listing:haxl_friends_of} in \"{Y}auhau.}
 \label{listing:yauhau_friends_of}
 \end{listing}
 
+The \ac{I/O} optimizations in \"{Y}auhau come from batching requests.
+Instead of calling \texttt{ff}$_\text{friendsOf}$(\texttt{io}(\texttt{x})) and \texttt{ff}$_\text{friendsOf}$(\texttt{io}(\texttt{y})) as two separate \ac{I/O} requests, we can call them as a single batched request, since they are independent.
+In \"{Y}auhau we do so by introducing a \emph{batched} \ac{I/O} statement, \texttt{bio}\index{batched \acs{I/O}}.
+The \texttt{bio} statement takes a list of arguments and does a batched call with this list.
+In the example, the two statements become a single \texttt{ff}$_\text{friendsOf}$(\texttt{bio}(\texttt{[x,y]}).
 
-
+Through semantics-preserving transformations using \texttt{let} floating we can get independent \ac{I/O} calls batched this way and transform them to dataflow.
+The explicit concurrency in the dataflow transformation allows to execute batched \ac{I/O} calls when they arrive.
+An important advantage of this is that it also allows us to transcend the function boundaries
