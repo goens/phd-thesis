@@ -1,3 +1,10 @@
+In the previous two sections we have discussed multiple benchmarks in two different classes: hand-written benchmarks and randomly generated benchmarks.
+We have discussed the advantages and disadvantages of both.
+Hand-written benchmarks cost many person-hours to write and maintain, and are usually very limited due to \ac{IP}.
+Random benchmarks can overcome the scarcity of hand written ones at the cost of accuracy, they are less realistic and not as useful for assessing how well a method will perform on real use-cases.
+There is a third approach that sits in-between the two above, to use machine learning to generate benchmarks with realistic properties.
+This section discusses this approach and its limitations.
+
 \subsection{Generative models}
 \label{sec:generative}
 
@@ -51,6 +58,8 @@ If we have a filter to distinguish the types of programs, e.g. one based on vect
 
 
 Summarize~\cite{goens_mapl19}.
+
+\subsection{Models of Code}
 
 Then only briefly motivate~\cite{brauckmann_cc20} and \cite{brauckmann_fdl20}.
 

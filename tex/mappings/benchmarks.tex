@@ -1,1 +1,85 @@
-Discuss all SLX benchmarks, the e3s suite, and all architectures.
+The \mocasin framework supports three input formats at the time of this writing: \texttt{tgff},\texttt{MAPS} and \texttt{sdf3}.
+We will discuss the first two for benchmarking here, while the \texttt{sdf3} format will be discussed in Section~\ref{sec:level_graphs}.
+
+\subsection{CPN Benchmarks}
+
+The first input format for \mocasin is the \texttt{MAPS} format, which uses benchmarks written in the \ac{CPN} language (cf. Section~\ref{kpn_basic}).
+A \ac{CPN} application is compiled using the \ac{MAPS} flow, which evolved into the commercial tool suite from SLX.
+SLX generously provided access to their tool suite for this benchmarking, as well as some \ac{CPN} benchmarks. 
+
+The tool flow compiles an application using a \acp{pthread} back-end with instrumentation to record all tokens read and written in a trace.
+Since this traces are deterministic and depend only on the inputs, not on the execution order, they can be used to replay and simulate the execution (cf. Section~\ref{sec:simulating_mappings}).
+In an instrumented run, the \ac{MAPS} flow also executes each process in isolation (with the stored tokens), gathering information about the precise instructions executed.
+This is used for performance estimation using an abstract processor model\cite{eusse2014pre}.
+The performance estimation for each process, together with the execution traces can then be used to simulate a mapping with \mocasin, as explain in Section~\ref{sec:simulating_mappings}.
+This is summarized in Figure~\ref{fig:maps_flow}.
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.8\textwidth}{!}{
+   \begin{tikzpicture}
+     \input{figures/example_mapping}
+   \end{tikzpicture}
+ }
+   \caption{Benchmarks in the \ac{MAPS} flow. TODO: fix figure}
+   \label{fig:maps_flow}
+\end{figure}
+
+
+We use three \ac{CPN} benchmarks for evaluation.
+The first benchmark is the audio filter example as seen in Chapter~\ref{chap:mapping}, which takes a stereo file and implements a band-pass filter after transforming to the frequency, and transforming it back afterwards.
+This benchmark has $8$ processes and $15$ channels (some channels for parameters are not depicted in Figure~\ref{fig:audio_filter_graph}).
+The second benchmark we consider is an embedded pedestrian-recognition application using an algorithm based on the \ac{HOG} technique\index{HOG}.
+This benchmark was kindly provided by SLX and consists of $10$ processes with $33$ channels.
+Finally, we use a speaker recognition application, as described in~\cite{bouraoui2019comparing}.
+Figure~\ref{fig:speaker_recognition} shows the graph of the speaker recognition application. \index{speaker recognition}
+The speaker recognition application has $12$ processes and $33$ channels.
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.9\textwidth}{!}{
+     \input{figures/speaker_recognition}
+ }
+   \caption{The \ac{KPN} graph of the speaker recognition application.}
+   \label{fig:speaker_recognition}
+\end{figure}
+
+\subsection{The E3S Benchmarks}
+
+The second input of \mocasin we use for benchmarking is \texttt{tgff}.
+The \texttt{tgff} format comes from \acf{tgff}, a random task graph generator~\cite{dick1998tgff}. 
+However, the same author also published a benchmark suite, the \ac{E3S}~\cite{e3s}.
+Based on data from the Embedded Microprocessor Benchmark Consortium, the suite provides task graphs and processor execution times for applications from multiple embedded domains.
+In total, the \ac{E3S} boasts Table~\ref{tab:e3s} summarizes the applications.
+
+\begin{table*}[t]
+  %\footnotesize
+  \caption{Summary of applications in the \ac{E3S}}
+  \begin{center}
+    \begin{tabular}{lll}
+      %\hline
+      Domain & No. of task graphs & tasks per graph\\
+      \hline
+      auto-indust & 4 & 4-9\\
+      networking & 4 & 1-4\\
+      telecom & 9 & 2-6\\
+      consumer & 2 & 5-7\\
+      office-automation & 1 & 5\\
+    \end{tabular}
+    \label{tab:e3s}
+  \end{center}
+  \vspace{-0.5cm}
+\end{table*}
+
+The processors and architectures in the \ac{E3S} are generally not \acp{MPSoC}, most of them are single-core systems.
+This comes mostly because the benchmark suite is pretty dated, being over $20$ years old at the time of this writing.
+Unfortunately, benchmarks are generally scarce.
+The methods investigated in this thesis here have more to do with the trends than the actual numbers, which is why using such a dated benchmark is still adequate.
+We expect the relative performance of mapping algorithms on the \ac{E3S} benchmarks to be similar to that on present and future applications.
+
+A significant focus of the methods we will evaluate with these benchmarks is on the multicore architectures.
+To overcome the limitation of the single-core nature of the \ac{E3S}, we use the same method as in~\cite{schwarzer2017symmetry}.
+We use the architecture topology of a modern multicore, including the frequencies, as well as the memory subsystem with its latency and bandwidth, and scale the numbers from the \ac{E3S} for each of the cores of the modern multicore.
+This gives a realistic scenario, albeit not simulating a concrete instance of the architecture.
+In~\cite{schwarzer2017symmetry} the authors do this to create architectures with a regular mesh structure, with less realistic topologies like heterogeneous meshes with randomly placed cores.
+Instead, we use the topologies from actual existing systems like the HAEC~\cite{HAEC} or the Kalray MPPA3 Coolidge~\cite{coolidge} and map the processors in these architectures to those in the benchmark suite.
