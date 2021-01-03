@@ -116,7 +116,7 @@ These abstract away the concrete implementation of individual steps in a computa
 Even so, the execution of a computation can be thought of as a series of steps or partial computations that eventually yield the final result.
 These series, which is commonly referred to as execution trace, can be captured as a sequence of steps, e.g. as the element of a Scott Domain\footnote{this will all be discussed more in-depth in Chapter~\ref{chap:mocs}}. 
 Abstract computations, modeled as Scott-continuous functions, can can make computations of arbitrary length.
-For an alphabet $D$, this is modeled by (countably) infinite sequences in $D^\omega \setminus D^* = \{ (a_n)_{n \in \mathbb{N}} \mid a_n \in D \text {for all} n \in \mathbb{N} \}$.
+For an alphabet $D$, this is modeled by (countably) infinite sequences in $D^\omega \setminus D^* = \{ (a_n)_{n \in \mathbb{N}} \mid a_n \in D~\text{for all}~n \in \mathbb{N} \}$.
 A concrete execution, on the other hand, always has a finite length.
 It always resides in $D^*$, the Kleene colsure of $D$.
 For a (Scott-continuous) function, this sequence can be modeled as a finite string in the computation domain.

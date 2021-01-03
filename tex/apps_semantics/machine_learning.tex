@@ -25,8 +25,12 @@ There are different classes of generative models, however:
 
 \end{enumerate}
 
-The models from (\ref{conditional-estimation}) are interesting problems on their own and will be discussed in Section~\ref{sec:outlook}.
-The focus of this paper is the discussion of using solutions to (\ref{fischer-wald}) for benchmark generation.
+Conditional estimation generative models have plenty of applications.
+For example, conditional estimation generative models can be used for code completion tasks, which could even be leveraged to create code that is close to a specified feature vector.
+With well-chosen features, this would allow for tools to create other kinds of benchmarks out of, e.g. a representative data set (see Section~\ref{sec:representative}). 
+Even more so, this could be used to create domain-specific benchmarks with more samples out of a small domain-specific dataset, by producing code with feature vectors as extracted from the small dataset.
+Tuning heuristics and even auto-completion tasks could all be based on conditional estimation models.
+The focus of this section is the discussion of using solutions to (\ref{fischer-wald}) for benchmark generation.
 This problem is the basis for generative models of code, and solutions to (\ref{conditional-estimation}) are based on or related to it as well.
 
 \subsection{Potential Problems}
@@ -37,7 +41,7 @@ Concretely, it should be code that is also i.i.d. with respect to the (implicit)
 If this training set is available, then it can be used instead of the synthesized benchmarks.
 Figure~\ref{fig:histograms} illustrates this further.
 
-The theoretical pdf depicted represents, again, the probability for a particular program to be written.
+The theoretical \ac{pdf} depicted represents, again, the probability for a particular program to be written.
 To the right the illustration represents a plausible histogram of the code actually present in a training set.
 Underneath it, two additional histograms are depicted. To the right, in green, a histogram that is plausibly synthesized by a good generative model trained with the training set.
 While it need not be identical to the training set, it should be similar if the generative model has been trained well.
@@ -56,8 +60,16 @@ It is likely that with the current state of generative models, where enough trai
 For the other kinds of benchmark, the situation is less problematic.
 If we have a filter to distinguish the types of programs, e.g. one based on vectors of features interesting for the use case, then we can use generative models with these filters to produce benchmark sets of the kinds ``representative coverage benchmark'' and perhaps in some cases even ``fuzzing benchmark'', if the generative models generalize well and are run long enough to produce enough data.
 
+\begin{figure*}[th]
+	\centering
+	\includegraphics[width=\textwidth]{figures/clgen_flow.pdf}
+	\caption{The flow of CLGen and our re-evaluation. Reproduced from Figure~1 in~\cite{goens_mapl19}.}
+	\label{fig:clgen_flow}
+\end{figure*}
 
-Summarize~\cite{goens_mapl19}.
+We investigated these problems in~\cite{goens_mapl19}, where we re-evaluated the benchmark generation of CLGen~\cite{cummins_cgo17}.
+Figure~\ref{fig:clgen_flow} summarizes the flow of CLGen and our re-evaluation.
+
 
 \subsection{Models of Code}
 
