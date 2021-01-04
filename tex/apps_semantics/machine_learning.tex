@@ -62,16 +62,39 @@ If we have a filter to distinguish the types of programs, e.g. one based on vect
 
 \begin{figure*}[th]
 	\centering
-	\includegraphics[width=\textwidth]{figures/clgen_flow.pdf}
+	\includegraphics[width=.8\textwidth]{figures/clgen_flow.pdf}
 	\caption{The flow of CLGen and our re-evaluation. Reproduced from Figure~1 in~\cite{goens_mapl19}.}
 	\label{fig:clgen_flow}
 \end{figure*}
 
 We investigated these problems in~\cite{goens_mapl19}, where we re-evaluated the benchmark generation of CLGen~\cite{cummins_cgo17}.
 Figure~\ref{fig:clgen_flow} summarizes the flow of CLGen and our re-evaluation.
+In the original CLGen setup, the authors of~\cite{cumins_cgo17} mined kernels from Github to train a generative model of code.
+The model in CLGen was a character-based model using a \ac{LSTM}\cite{lstm} architecture to learn a character distribution from (normalized) code.
+The generative model is then used to generate synthetic benchmarks. A driver ensures they compile and provides input values for the generated benchmarks, which are used together with a set of established benchmark suites to train a heuristic.
+The Grewe et al. heuristic~\cite{grewe} trained from these benchmarks is a machine learning model that decides based on a set of hand-designed code features whether to execute an OpenCL kernel in a \acsu{CPU} or the \acsu{GPU}. 
+Our setup~\cite{goens_mapl19} takes the alternative route of foregoing the generative model, and using the mined github kernels instead of the synthetic benchmarks.
 
+A comparison of the 
+\begin{figure}[h]
+	\centering
+\resizebox{0.95\textwidth}{!}{
+     \input{generated/clgen_accuracy}
+     }
+   \caption{Accuracy obtained by the heuristic for the different datasets in the setup. Adapted from Figure~2 of~\cite{goens_mapl19}.}
+   \label{fig:clgen_accuracy}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.95\textwidth}{!}{
+     \input{generated/clgen_pca}
+     }
+   \caption{Smoothed relative frequencies of kernels as function of the first principal component. Adapted from Figure~6 of~\cite{goens_mapl19}}
+   \label{fig:clgen_pca}
+\end{figure}
 
 \subsection{Models of Code}
 
-Then only briefly motivate~\cite{brauckmann_cc20} and \cite{brauckmann_fdl20}.
+Only briefly motivate~\cite{brauckmann_cc20} and \cite{brauckmann_fdl20}.
 
