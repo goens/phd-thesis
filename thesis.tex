@@ -4,7 +4,7 @@
 		twoside,openright,titlepage,numbers=noenddot,headinclude,%1headlines,
 	 	footinclude=true,cleardoublepage=empty,
 		dottedtoc, % Make page numbers in the table of contents flushed right with dots leading to them
-		BCOR=5mm,paper=a4,fontsize=11pt, % Binding correction, paper type and font size
+		BCOR=5mm,paper=a4,fontsize=10pt, % Binding correction, paper type and font size
 		ngerman,american, % Languages, change this to your language(s)
 		]{scrreprt} 
 \input{aux/classicthesis-config}
@@ -20,14 +20,15 @@
 
 \input{tex/titlepage.tex}
 \cleardoublepage
-\section*{Abstract}
+\chapter*{Abstract}
+\epigraph{All models are wrong, but some are useful}{George Box (Attributed)}
 \input{tex/abstract.tex}
 \cleardoublepage
-\section*{Publications}
-Some contents of this thesis, including ideas and some figures, have previously appeared in the following publications:
-\printbibliography[title={},keyword={contribution}]
+\chapter*{Publications}
+Some contents of this thesis, including ideas and some figures, have previously appeared in the following publications: \\ \vspace{1cm}
+\printbibliography[heading=none,keyword={contribution}]
 \cleardoublepage
-\section*{Acknowledgments}
+\chapter*{Acknowledgments}
 \input{tex/acknowledgements}
 \cleardoublepage
 \tableofcontents
