@@ -1,3 +1,14 @@
-Briefly discuss~\cite{lohstroh_dac19} as idea and dwell more mathematical aspects in~\cite{Lohstroh_cyphy19} (my contribution). Be careful to delineate contributions here.
+So far we have discussed multiple \acp{MoC} with different extensions.
+Most models we have focused on in this thesis are deterministic, which as explained in the introduction, is an important and useful property of a model's semantics.
+We have how determinism in \acp{KPN} allows us to simulate and analyze their execution.
+Without it, many concepts we have seen in chapters~\ref{chap:mapping,chap:mapping_structures,chap:mapping_applications} breaks down.
 
+The models we have discussed neglect one important aspect, however; they neglect time.
+Computation takes time~\cite{lee2009computing}, and this is a fundamental property of its semantics which is usually implicit.
+Determinism as we have discussed it here means that the output of a computation is a deterministic function of its input.
+This does not mean that the time it takes is deterministic, as we have studied in~\cite{goens_scopes17}.
+Especially in the context of \acp{CPS} or real-time systems, the computation time is an essential part of the functional specification of an application.
+In this section we discuss the Reactor model~\cite{lohstroh_dac19}, which aims be a deterministic \ac{MoC} with timed semantics.
+
+Briefly discuss as idea and dwell more mathematical aspects in~\cite{Lohstroh_cyphy19} (my contribution). Be careful to delineate contributions here.
 Should I write full formalization? Discuss Lean proof (probably not finished in time)

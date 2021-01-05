@@ -1,22 +1,38 @@
-\documentclass{report}
-
+%\documentclass{report}
+%\usepackage[english]{babel}
+\documentclass[
+		twoside,openright,titlepage,numbers=noenddot,headinclude,%1headlines,
+	 	footinclude=true,cleardoublepage=empty,
+		dottedtoc, % Make page numbers in the table of contents flushed right with dots leading to them
+		BCOR=5mm,paper=a4,fontsize=11pt, % Binding correction, paper type and font size
+		ngerman,american, % Languages, change this to your language(s)
+		]{scrreprt} 
+\input{aux/classicthesis-config}
 \input{tex/preamble}
-\title{Improving Model-Based Software Synthesis}
-\author{Andr\'{e}s Goens}
+
 \begin{document}
 \input{aux/commands.tex}
-\date{}
+\frenchspacing % Reduces space after periods to make text more compact
+\raggedbottom % Makes all pages the height of the text on that page
+\selectlanguage{american} % Select your default language - e.g. american or ngerman
+\pagenumbering{roman} % Roman page numbering prior to the start of the thesis content (i, ii, iii, etc)
+\pagestyle{plain} % Suppress headers for the pre-content pages
 
-\maketitle
-\clearpage
+\input{tex/titlepage.tex}
+\cleardoublepage
 \section*{Abstract}
 \input{tex/abstract.tex}
-\clearpage
-\tableofcontents
-\clearpage
+\cleardoublepage
+\section*{Publications}
+Some contents of this thesis, including ideas and some figures, have previously appeared in the following publications:
+\printbibliography[title={},keyword={contribution}]
+\cleardoublepage
 \section*{Acknowledgments}
 \input{tex/acknowledgements}
-
+\cleardoublepage
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic} 
 \chapter{Introduction}
 \input{tex/intro/introduction}
 
@@ -103,7 +119,7 @@
 \section{The MacQueen Gap} %maybe use like a motivational example for part
 \label{sec:macqueen}
 \input{tex/semantics/macqueen} %parma_ditam, cgo_src (should I move this to applications?)
-\section{Reactors}
+\section{Time Semantics}
 \label{sec:reactors}
 \input{tex/semantics/reactors} %dac19,cyphy
 \subsection{autosar}
@@ -145,8 +161,7 @@
 %\bibliographystyle{alpha}
 %\bibliography{aux/references,aux/mios}
 \clearpage
-\printbibliography[title={References (co-authored)},keyword={contribution}]
-\printbibliography[title={References (other)},notkeyword={contribution}]
+\printbibliography[title={References},notkeyword={contribution}]
 
 \listoffigures
 
