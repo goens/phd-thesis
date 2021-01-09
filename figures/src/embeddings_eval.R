@@ -1,5 +1,6 @@
 library(readr)
 library(tidyverse)
+library(tikzDevice)
 library(tsne)
 library(scales)
 library(rsq)
@@ -42,7 +43,7 @@ rel_runtime <- function(r1, r2){
 vectorized_rel_runtime <- Vectorize(rel_runtime,vectorize.args=c('r1','r2'))
 
 
-mappings <- read_csv("results/randoms_multiple_metrics.csv")
+mappings <- read_csv("data/randoms_multiple_metrics.csv")
 pruned <- select(mappings,mapping,representation,representation.target_distortion,representation.extra_dimensions,runtime) 
 pruned$representation <- fct_relevel(pruned$representation, "SimpleVector", "MetricSpaceEmbedding", "SymmetryEmbedding")
 left <- rename(pruned,m1 = mapping,r1 = runtime)
@@ -54,40 +55,56 @@ subset_mappings <- group_by(tuples,representation.target_distortion,representati
 product <- group_by(subset_mappings,representation.target_distortion,representation.extra_dimensions,representation) %>%
   transmute(rel_distance = vectorized_rel_distance(m1,m2),
             rel_runtime = vectorized_rel_runtime(r1,r2))
-increased <- mutate(product, rel_distance = ifelse(representation=="SimpleVector",rel_distance,rel_distance*3))
-ggplot(data = increased,mapping = aes(x=rel_distance,y=rel_runtime,color=representation.target_distortion)) +
-  geom_point() +
-  facet_wrap(representation~representation.extra_dimensions)
+increased <- mutate(product, rel_distance = ifelse(representation=="SimpleVector",rel_distance,rel_distance*1))
 
-only_max <- increased %>%
+increased_scenarios <- increased  %>%
+  mutate(scenario=paste(representation,ifelse(is.na(representation.extra_dimensions),'',ifelse(representation.extra_dimensions,'ED','No-ED')),sep='\n')) %>%
+  distinct()
+increased_scenarios$scenario <- fct_relevel(increased_scenarios$scenario,'MetricSpaceEmbedding\nNo-ED', 'SymmetryEmbedding\nNo-ED', 'MetricSpaceEmbedding\nED', 'SymmetryEmbedding\nED','SimpleVector\n')
+
+tikz(file="generated/metric_spaces_comparison.tex",standAlone = F,width=12,height=4)
+print(
+  sample_n(increased_scenarios,200) %>% #to make it easier on latex
+  ggplot(mapping = aes(x=rel_distance,y=rel_runtime,color=factor(representation.target_distortion))) +
+  geom_point() +
+  facet_wrap(~scenario,scale='free') +
+  scale_color_brewer(palette = "Greens",na.value="grey50",name="(target)\ndistortion") +
+  labs(x="relative distance",y="relative runtime")  +
+  theme(text=element_text(size=18),
+        legend.position = c(0.8,0.2)) 
+  
+)
+dev.off()
+only_max <- increased_scenarios %>%
   group_by(representation,
            representation.target_distortion,
            representation.extra_dimensions) %>%
   arrange(rel_distance) %>%
   transmute(rel_distance = rel_distance,
-            max_rel_runtime = accumulate(rel_runtime,max)) %>%
+            max_rel_runtime = accumulate(rel_runtime,max),scenario=scenario) %>%
   distinct() %>%
   ungroup() %>%
   group_by(representation,
+           scenario,
            representation.target_distortion,
            representation.extra_dimensions,
            rel_distance) %>%
   summarize(max_rel_runtime = max(max_rel_runtime)) %>%
   mutate(representation.target_distortion = factor(representation.target_distortion))
 
-ggplot(data = only_max,mapping = aes(x=rel_distance,y=max_rel_runtime,color=representation.target_distortion)) +
-  scale_color_brewer(palette = "Greens",na.value="grey50") +
-  geom_point() +
+tikz(file="generated/metric_spaces_comparison_max.tex",standAlone = F,width=12,height=4)
+print(
+sample_n(only_max,50) %>%
+ggplot(mapping = aes(x=rel_distance,y=max_rel_runtime,color=representation.target_distortion)) +
+  scale_color_brewer(palette = "Greens",na.value="grey50",name="(target)\ndistortion") +
   geom_smooth(formula=y~x,method = 'lm') +
-  facet_wrap(representation~representation.extra_dimensions)
-
-metrics <- group_by(product,representation.target_distortion,representation.extra_dimensions,representation) %>%
-  summarize(
-    chisq.p.val = chisq.test(rel_distance,rel_runtime)$p.value,
-    chisq = chisq.test(rel_distance,rel_runtime)$statistic,
-    rho = cor.test(rel_distance,rel_runtime, method="spearman")$statistic,
-    rho = cor.test(rel_distance,rel_runtime, method="spearman")$p.value,
-  )
+  geom_point() +
+  labs(x="relative distance",y="relative runtime") +
+  facet_wrap(~scenario,scale="free") + 
+  theme(text=element_text(size=18),
+        legend.position = c(0.8,0.2)) 
+)
+dev.off()
 
 metrics_max <- group_by(only_max,representation.target_distortion,representation.extra_dimensions,representation) %>%
   summarize(
@@ -96,15 +113,18 @@ metrics_max <- group_by(only_max,representation.target_distortion,representation
     rho = cor.test(rel_distance,max_rel_runtime, method="spearman")$p.value,
   ) %>% mutate(scenario=paste(representation,ifelse(is.na(representation.extra_dimensions),'',ifelse(representation.extra_dimensions,'ED','No-ED')),sep='\n'))
 metrics_max$scenario <- fct_relevel(metrics_max$scenario,'MetricSpaceEmbedding\nNo-ED', 'SymmetryEmbedding\nNo-ED', 'MetricSpaceEmbedding\nED', 'SymmetryEmbedding\nED','SimpleVector\n')
-#Some doubles, probably because 
-#err <- filter(summarise(group_by(only_max,representation.target_distortion,representation.extra_dimensions,representation,rel_distance),tot = n(),rel_runtimes = length(unique(max_rel_runtime))),tot != 1)
 
+tikz("generated/metrics_regression_rsq.tex",width=8,height=3.5,standAlone = F)
+print(
 ggplot(data = metrics_max) +
   geom_col(position = position_dodge(preserve='single'),
            color = 'black',
            mapping = aes(x=scenario,
                          y=rsq_val,fill=representation.target_distortion)) +
   scale_fill_brewer(palette = "Greens",na.value="grey50",name = "(target)\ndistortion") +
-  theme(axis.text.x = element_text(angle=25,hjust=0.5,vjust=0.4),text=element_text(size=18)) +
+  theme(axis.text.x = element_text(angle=25,hjust=0.7,vjust=0.4),
+        text=element_text(size=18),
+        axis.ticks.x = element_blank()) +
   labs(x=element_blank(),y="Linear Regression $R^2$") 
-  
+ ) 
+dev.off()
