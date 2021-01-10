@@ -7,6 +7,11 @@ Here I should summarize~\cite{goens_mcsoc16}.
 
 Discuss genetic, tabu search, simulated annealing for mapping.
 
+Parameters: random walk $500$ random iterations, genetic $20$ generations of population size $10$, crossover rate of $1$ with probability $0.35$ and mutation probability $0.5$, with a tournament selection with tournament size $4$ and a $\mu + \lambda$ strategy.
+\ac{GBM} with \texttt{bx\_m} of $1$, \texttt{bx\_p} of $0.95$, \texttt{by\_m} of $0.5$,\texttt{by\_p} of $0.75$, 
+simulated annealing with an initial temperature of $1$ and a final temperature of $0.1$, with a temperature proportionality constant of $0.5$  and a random movement starting radius of $5$.
+Tabu search with a maximum of $30$ iterations, each of size $5$ and with a move set size of $10$ and tabu tenure of $5$, and a random candidate move update radius of $2$.
+
 \begin{figure}[h]
 	\centering
    \resizebox{0.95\textwidth}{!}{\input{generated/heuristics_vs_metaheuristics.tex}}
