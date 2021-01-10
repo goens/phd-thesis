@@ -7,6 +7,9 @@
 		BCOR=5mm,paper=a4,fontsize=10pt, % Binding correction, paper type and font size
 		ngerman,american, % Languages, change this to your language(s)
 		]{scrreprt} 
+\usepackage{ifthen}
+\newboolean{printversion}
+\setboolean{printversion}{false}
 \input{aux/classicthesis-config}
 \input{tex/preamble}
 
@@ -18,9 +21,15 @@
 \pagenumbering{roman} % Roman page numbering prior to the start of the thesis content (i, ii, iii, etc)
 \pagestyle{plain} % Suppress headers for the pre-content pages
 
+\ifthenelse{\boolean{printversion}}{%
+\input{tex/coverpage.tex}
+}{}
 \input{tex/titlepage.tex}
+\ifthenelse{\boolean{printversion}}{%
+}{
 \cleardoublepage
 \tableofcontents
+}
 \cleardoublepage
 \vspace*{8cm}
 % Sets a PDF bookmark for the dedication
@@ -50,6 +59,10 @@ Some contents of this thesis, including ideas and some figures, have previously 
 \addcontentsline{toc}{section}{\nameref{sec:acks}}
 \input{tex/acknowledgements}
 \cleardoublepage
+\ifthenelse{\boolean{printversion}}{
+\cleardoublepage
+\tableofcontents
+}{}
 \pagenumbering{arabic} 
 \chapter{Introduction}
 \input{tex/intro/introduction}
