@@ -20,18 +20,35 @@
 
 \input{tex/titlepage.tex}
 \cleardoublepage
-\chapter*{Abstract}
+\tableofcontents
+\cleardoublepage
+\vspace*{8cm}
+% Sets a PDF bookmark for the dedication
+\pdfbookmark{Dedication}{dedication}
+\thispagestyle{empty}
+\begin{center}
+  \Large \emph{Dedicated to ...}
+\end{center}
+\cleardoublepage
+\chapter*{Preamble}
+\label{sec:preamble}
+\addcontentsline{toc}{chapter}{\nameref{sec:preamble}}
 \epigraph{All models are wrong, but some are useful}{George Box (Attributed)}
+\section*{Abstract}
+\label{sec:abstract}
+\addcontentsline{toc}{section}{\nameref{sec:abstract}}
 \input{tex/abstract.tex}
 \cleardoublepage
-\chapter*{Publications}
+\section*{Publications}
+\label{sec:publications}
+\addcontentsline{toc}{section}{\nameref{sec:publications}}
 Some contents of this thesis, including ideas and some figures, have previously appeared in the following publications: \\ \vspace{1cm}
 \printbibliography[heading=none,keyword={contribution}]
 \cleardoublepage
-\chapter*{Acknowledgments}
+\section*{Acknowledgments}
+\label{sec:acks}
+\addcontentsline{toc}{section}{\nameref{sec:acks}}
 \input{tex/acknowledgements}
-\cleardoublepage
-\tableofcontents
 \cleardoublepage
 \pagenumbering{arabic} 
 \chapter{Introduction}
