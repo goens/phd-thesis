@@ -4,23 +4,29 @@ library(grid)
 library(tikzDevice)
 multiple_reps <- filter(read_csv("data/slx-multiple-representations.csv"),!is.na(best_mapping_time))
 
-norm_time_simple <- function(time,mapper){
+norm_time_rep <- function(time,mapper,representation){
+sv = which('SimpleVector' == representation)
 map = which('genetic' == mapper)
-return(time[map][1])
+return(time[intersect(sv,map)[1]])
 }
+gm_mean = function(x, na.rm=TRUE){
+  exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
+}
+
 relative_times <- group_by(multiple_reps,platform,kpn,mapper,representation) %>%
   summarize(best_time = mean(best_mapping_time),
             best_err = sd(best_mapping_time),
             total_time = mean(estimated_total_time),
             total_err = sd(estimated_total_time)
             ) %>%
-  group_by(platform) %>%
-  mutate(relative_best = best_time/norm_time_simple(best_time,mapper),
-         relative_time = total_time/norm_time_simple(total_time,mapper),
-         relative_best_min = relative_best - best_err/norm_time_simple(best_time,mapper), 
-         relative_best_max = relative_best + best_err/norm_time_simple(best_time,mapper), 
-         relative_total_min = relative_time - total_err/norm_time_simple(total_time,mapper), 
-         relative_total_max = relative_time + total_err/norm_time_simple(total_time,mapper), 
+  ungroup() %>%
+  group_by(platform,kpn) %>%
+  mutate(relative_best = best_time/norm_time_rep(best_time,mapper,representation),
+         relative_time = total_time/norm_time_rep(total_time,mapper,representation),
+         relative_best_min = relative_best - best_err/norm_time_rep(best_time,mapper,representation), 
+         relative_best_max = relative_best + best_err/norm_time_rep(best_time,mapper,representation), 
+         relative_total_min = relative_time - total_err/norm_time_rep(total_time,mapper,representation), 
+         relative_total_max = relative_time + total_err/norm_time_rep(total_time,mapper,representation), 
          ) %>%
   ungroup() 
 relative_times$representation <- fct_relevel(relative_times$representation,'SimpleVector','Symmetries','MetricSpaceEmbedding','SymmetryEmbedding')
@@ -41,8 +47,14 @@ filter(summarized,platform == 'mppa_coolidge' | platform == 'exynos') %>%
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=relative_best_gmean_min,ymax=relative_best_gmean_max))  +
   facet_wrap(~platform)
 
+filter(summarized,platform == 'mppa_coolidge' | platform == 'exynos') %>%
+  ggplot() +
+  geom_col(position="dodge2",mapping = aes(x=mapper,y=relative_total_gmean,fill=representation)) + 
+  geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=relative_total_gmean_min,ymax=relative_total_gmean_max))  + 
+  scale_y_log10() +
+  facet_wrap(~platform)
 ####################################
- Symmetries
+# Symmetries
 ####################################
 
 norm_time <- function(time,canonical,mapper){
@@ -56,9 +68,6 @@ can = which(FALSE == canonical)
 return(time[can[1]])
 }
 
-gm_mean = function(x, na.rm=TRUE){
-  exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
-}
 
 genetic <- filter(read_csv("data/changed_operations.csv"),!is.na(best_mapping_time))
 clean_names <- mutate(genetic,platform=ifelse(platform == 'designer_odroid', 'Exynos',ifelse(platform == 'multi_cluster','Simple cluster',ifelse(platform == "mppa_coolidge","MPPA3 Coolidge","HAEC"))))
