@@ -193,6 +193,7 @@ Moreover, any concrete implementation of the \ac{KPN} realizing the same executi
 It captures the concurrent essence of the concrete computation.
 
 \section{Architecture Models}
+
 \label{sec:arch_models}
 Hardware architectures are in significant contrast to applications from the point of view of modeling.
 Abstraction boundaries are more clearly defined in the hardware world: semiconductor components like transistors are organized into digital switches, which are used to form logic gates (like a NAND gate) in logic diagrams for components, like an \ac{ALU}.
@@ -256,6 +257,7 @@ The general situation described in the Y-charts approach is very common in pract
 With newer developments in hardware, like the proliferation of \ac{NoC}-based architectures, many modern approaches apply the same principle to these modern architectures.
 For example, the models used by~\cite{weichslgartner2014daarm,singh2010communication,richthammer2018search} all assume a regular mesh ($N \times M$)\ac{NoC}-based topology and parametrize the architecture by the size of the mesh, $N,M$ as well as the core types and communication and memory parameters like worst-case latency values.
 TODO: multi-level (pimentel)
+TODO: standards ~\cite{ieee-2804-2019,mca_shim15}
 
 In the DOL approach~\cite{thiele2007DOL}, architectures are modeled in an XML specification that implicitly models the architectures as graphs with specific annotations e.g. for memory sizes or resource sharing methods like \ac{FIFO}. 
 While this is an ad-hoc model, its graph-based nature is general enough to describe arbitrary architectures.
