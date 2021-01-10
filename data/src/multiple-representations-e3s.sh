@@ -1,3 +1,4 @@
+rm -fr multirun-heuristics-multiple-representations
 pykpn generate_mapping \
       kpn=tgff_reader  \
       trace=tgff_reader \
@@ -10,6 +11,7 @@ pykpn generate_mapping \
       -m
 pykpn parse_multirun parsers=[best_mapping_time,estimated_total_time] path=multirun-heuristics-multiple-representations output_format=csv
 
+rm -fr multirun-metaheuristics-multiple-representations
 pykpn generate_mapping \
       kpn=tgff_reader  \
       trace=tgff_reader \
@@ -21,5 +23,5 @@ pykpn generate_mapping \
       hydra.sweep.dir=multirun-metaheuristics-multiple-representations \
       log_level=ERROR \
       -m
-pykpn parse_multirun parsers=[best_mapping_time,estimated_total_time] path=multirun-heuristics-multiple-representations output_format=csv
+pykpn parse_multirun parsers=[best_mapping_time,estimated_total_time] path=multirun-metaheuristics-multiple-representations output_format=csv
 #rm -fr multirun
