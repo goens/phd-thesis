@@ -42,7 +42,7 @@ rel_runtime <- function(r1, r2){
 
 vectorized_rel_runtime <- Vectorize(rel_runtime,vectorize.args=c('r1','r2'))
 
-
+if( !file.exists("data/metrics_rel_distances.csv")){
 mappings <- read_csv("data/randoms_multiple_metrics.csv")
 pruned <- select(mappings,mapping,representation,representation.target_distortion,representation.extra_dimensions,runtime) 
 pruned$representation <- fct_relevel(pruned$representation, "SimpleVector", "MetricSpaceEmbedding", "SymmetryEmbedding")
@@ -55,6 +55,12 @@ subset_mappings <- group_by(tuples,representation.target_distortion,representati
 product <- group_by(subset_mappings,representation.target_distortion,representation.extra_dimensions,representation) %>%
   transmute(rel_distance = vectorized_rel_distance(m1,m2),
             rel_runtime = vectorized_rel_runtime(r1,r2))
+} else{
+ product <- read.csv("data/metrics_rel_distances.csv") 
+}
+
+write.csv(product,"data/metrics_rel_distances.csv")
+
 increased <- mutate(product, rel_distance = ifelse(representation=="SimpleVector",rel_distance,rel_distance*1))
 
 increased_scenarios <- increased  %>%
