@@ -43,3 +43,10 @@ sorting=ynt
 
 \include{figures/tikz_commands}
 \include{aux/commands.tex}
+%https://tex.stackexchange.com/questions/354715/r-tikzdevice-relative-directories
+\newcommand\inputTikz[2][generated]{ 
+    \let\pgfimageOld\pgfimage% 
+    \renewcommand{\pgfimage}[2][]{\pgfimageOld[##1]{#1/##2}}% 
+    \input{#1/#2}% 
+    \let\pgfimage\pgfimageOld% 
+}
