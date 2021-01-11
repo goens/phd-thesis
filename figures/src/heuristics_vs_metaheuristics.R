@@ -91,37 +91,58 @@ p1 <- filter(results_summary, platform == "exynos") %>%
   ggplot() +
   geom_col(position='dodge2',mapping = aes(x=mapper,y=relative_best_gmean,fill=mapper)) +
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=min_best_gmean,ymax=max_best_gmean))  +
+  geom_text(size = 4,vjust=0.8, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_best_gmean,digits=2))) +
   scale_fill_manual(values =mixed_palette,guide=F) +
-  scale_x_discrete(labels=mapper_labels) +
-  theme(axis.text.x = element_text(angle=45,hjust=0.5,vjust=0.5),text=element_text(size=11))+
+  theme(axis.text.x = element_blank(),text=element_text(size=11),axis.ticks.x = element_blank())+
   labs(x=element_blank(),y="Rel. mapper results",title="Exynos")
 p2 <- filter(results_summary, platform == "mppa_coolidge") %>%
   ggplot() +
   geom_col(position='dodge2',mapping = aes(x=mapper,y=relative_best_gmean,fill=mapper)) +
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=min_best_gmean,ymax=max_best_gmean)) +
+  geom_text(size = 4,vjust=0.8, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_best_gmean,digits=2))) +
   scale_fill_manual(values =mixed_palette,guide=F) +
-  scale_x_discrete(labels=mapper_labels) +
-  theme(axis.text.x = element_text(angle=45,hjust=0.5,vjust=0.5),text=element_text(size=11))+
+  theme(axis.text.x = element_blank(),text=element_text(size=11),axis.ticks.x=element_blank())+
   labs(x=element_blank(),y="Rel. mapper results",title="MPPA3 Coolidge")
 
 p3 <- filter(results_summary, platform == "exynos") %>%
   ggplot() +
   geom_col(position='dodge2',mapping = aes(x=mapper,y=relative_time_gmean,fill=mapper)) +
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=min_time_gmean,ymax=max_time_gmean)) +
-  scale_fill_manual(values =mixed_palette,guide=F) +
-  scale_x_discrete(labels=mapper_labels) +
-  theme(axis.text.x = element_text(angle=45,hjust=0.5,vjust=0.5),text=element_text(size=11))+
+  geom_text(size = 4,vjust=0.7, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_time_gmean,digits=2))) +
+  scale_fill_manual(values =mixed_palette, labels=mapper_labels)  +
+  theme(legend.position='top',legend.title=element_blank(),axis.text.x = element_blank(),text=element_text(size=11),axis.ticks.x = element_blank())+
   labs(x=element_blank(),y="Rel. execution time",title="")
-  
 p4 <- filter(results_summary, platform == "mppa_coolidge") %>%
   ggplot() +
   geom_col(position='dodge2',mapping = aes(x=mapper,y=relative_time_gmean,fill=mapper)) +
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=min_time_gmean,ymax=max_time_gmean)) +
+  geom_text(size = 4,vjust=0.8, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_time_gmean,digits=2))) +
   scale_fill_manual(values =mixed_palette,guide=F) +
-  theme(axis.text.x = element_text(angle=45,hjust=0.5,vjust=0.5),text=element_text(size=11))+
-  scale_x_discrete(labels=mapper_labels) +
+  theme(axis.text.x = element_blank(),text=element_text(size=11),axis.ticks.x = element_blank())+
   labs(x=element_blank(),y="Rel. execution time",title="")
-
 tikz("generated/heuristics_vs_metaheuristics.tex",width=8,height=5,standAlone = F)
 print(multiplot(p1,p2,p3,p4,cols=2))
 dev.off()
+
+#HCA Chapter
+#  p1 <- p1 +
+#    labs(x=element_blank(),y="Rel. mapper results",title=element_blank()) + 
+#    theme(axis.text.x = element_blank(),text=element_text(size=14),axis.ticks.x = element_blank()) 
+#  p2 <- p2 +
+#    labs(x=element_blank(),y="Rel. mapper results",title=element_blank()) +
+#    theme(axis.text.x = element_blank(),text=element_text(size=14),axis.ticks.x = element_blank())
+#  p3 <- p3 +
+#    labs(x=element_blank(),y="Rel. execution time",title="") + 
+#    theme(axis.text.x = element_blank(),text=element_text(size=14),axis.ticks.x = element_blank())
+#  p4 <- p4 +
+#    labs(x=element_blank(),y="Rel. execution time",title="") +
+#    scale_fill_manual(values =mixed_palette, labels=mapper_labels,)  +
+#    theme(legend.position='top',legend.title=element_blank(),axis.text.x = element_blank(),text=element_text(size=14),axis.ticks.x = element_blank())
+#  
+#tikz("/tmp/exynos-mapper-comparison.tex",width=8,height=3,standAlone = F)
+#print(multiplot(p1,p3,cols=2))
+#dev.off()
+#
+#tikz("/tmp/coolidge-mapper-comparison.tex",width=8,height=3,standAlone = F)
+#print(multiplot(p2,p4,cols=2))
+#dev.off()
