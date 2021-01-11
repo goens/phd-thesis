@@ -3,10 +3,53 @@ Explain about representations in general. Basically:~\cite{goens_mcsoc18}.
 
 \subsection{Symmetries}
 
-\subsection{Metric Spaces}
+\begin{figure}[h]
+	\centering
+  \resizebox{0.55\textwidth}{!}{
+    \begin{tikzpicture}[x=1pt,y=1pt]
+      \input{figures/2d_mapping_heatmap_symmetries.tex}
+    \end{tikzpicture}
+    }
+	\caption{A visualization of the mapping space of Figure~\ref{fig:fig:mapping_space_motivation} in the Symmetries representation.}
+	\label{fig:example_space_symmetries}
+\end{figure}
+\subsection{Metric Space Embeddings}
+\begin{figure}[h]
+	\centering
+  \resizebox{0.55\textwidth}{!}{
+    \begin{tikzpicture}[x=1pt,y=1pt]
+      \input{figures/2d_mapping_heatmap_embedding.tex}
+    \end{tikzpicture}
+  }
+	\caption{A visualization of the mapping space of Figure~\ref{fig:fig:mapping_space_motivation} in the MetricSpaceEmbedding representation.}
+	\label{fig:example_space_embedding}
+\end{figure}
+\subsection{Embeddings and Symmetries}
+\begin{figure}[h]
+	\centering
+  \resizebox{0.55\textwidth}{!}{
+    \begin{tikzpicture}[x=1pt,y=1pt]
+    \input{figures/2d_mapping_heatmap_embedding_symmetries.tex}
+    \end{tikzpicture}
+  }
+	\caption{A visualization of the mapping space of Figure~\ref{fig:fig:mapping_space_motivation} in the SymmetryEmbedding representation.}
+	\label{fig:example_space_symmetries_embedding}
+\end{figure}
 
 \subsection{The Mapping Spaces}
 Show visualizations using t-SNE~\cite{tsne}, also show other metrics like
 correlations with metrics (distance) and execution time.
+
+\begin{figure}[h]
+	\centering
+\resizebox{1.00\textwidth}{!}{
+   \begin{tikzpicture}
+     \input{figures/mapping_space_example_full}
+   \end{tikzpicture}
+ }
+   \caption{An example of the mapping space for a simple two-task application in all four representations.}
+   \label{fig:mapping_space_full}
+\end{figure}
+
 
 \cite{li2018visualizing} better than t-SNE

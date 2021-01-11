@@ -1,0 +1,24 @@
+\begin{scope}[scale=1.0,every node/.append style={scale=1.0}]
+\input{figures/mapping_space_example.tex}
+\end{scope}
+
+
+\begin{scope}[x=1pt,y=1pt,scale=1.5,every node/.append style={scale=1.5},xshift=400,yshift=-400]
+\input{figures/2d_mapping_heatmap_symmetries.tex}
+\end{scope}
+
+\begin{scope}[x=1pt,y=1pt,scale=1.5,every node/.append style={scale=1.5},xshift=800,yshift=-100]
+\input{figures/2d_mapping_heatmap_embedding.tex}
+\end{scope}
+
+\begin{scope}[x=1pt,y=1pt,scale=1.5,every node/.append style={scale=1.5},xshift=800,yshift=-400]
+\input{figures/2d_mapping_heatmap_embedding_symmetries.tex}
+\end{scope}
+
+\begin{scope}[scale=1.5,every node/.append style={scale=1.5}]
+\node (sv) at (20,8.5) [draw,minimum width=6cm,align=center,minimum height=1.5cm] {\Huge SimpleVector};
+\node (me) at (34,8.5) [draw,minimum width=6cm,align=center,minimum height=1.5cm] {\Huge MetricSpaceEmbedding};
+
+\node (sy) at (20,-16) [draw,minimum width=6cm,align=center,minimum height=1.5cm] {\Huge Symmetries};
+\node (se) at (34,-16) [draw,minimum width=6cm,align=center,minimum height=1.5cm] {\Huge SymmetryEmbedding};
+\end{scope}
