@@ -1,0 +1,3 @@
+[submodule "data/src/loss-landscape"]
+	path = data/src/loss-landscape
+	url = git@github.com:tomgoldstein/loss-landscape.git
