@@ -20,13 +20,12 @@ PLATFORMS="mppa_coolidge exynos"
 APPS="audio_filter hog speaker_recognition"
 for app in $APPS; do
     for plat in $PLATFORMS; do
-        OUTDIR="dc-${plat}-${app}"
-        OUT_DIR=multirun/dc-af-exynos
+        OUT_DIR="multirun/dc-${plat}-${app}"
         rm -fr $OUT_DIR
         pykpn find_design_center \
-                 kpn=audio_filter  \
+                 kpn=$app  \
                  trace=slx_default \
-                 platform=exynos \
+                 platform=$plat \
                  hydra.sweep.dir=$OUT_DIR \
                  random_seed=`seq -s, 1 10` \
                  threshold=${THRESHOLDS["${plat}${app}"]} \

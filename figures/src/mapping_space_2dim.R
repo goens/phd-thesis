@@ -162,7 +162,7 @@ ggplot(data=data_metric) +
 dev.off()
 
 factor_space_emb <- mutate(data_metric,time=ifelse(in_canonical(canonical,x,y),time,NA))
-tikz("generated/2d_mapping_heatmap_embedding_symmetries.tex",standAlone = FALSE, height = 4, width = 5)
+  tikz("generated/2d_mapping_heatmap_embedding_symmetries.tex",standAlone = FALSE, height = 4, width = 5)
 print(
 ggplot(data=factor_space_emb) +
   geom_point(mapping = aes(x=t1,y=t2,color=time),size=10) +
@@ -171,3 +171,4 @@ ggplot(data=factor_space_emb) +
   theme(legend.text = element_blank(),text=element_text(size=18))  
 )
 dev.off()
+  
