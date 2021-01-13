@@ -91,13 +91,13 @@ random_with_accuracy$`Model` <- factor(random_with_accuracy$`Model`,levels = c("
 #      theme(legend.position = "top", axis.text.x = element_text(angle = 45, hjust = 1)))#, legend.position = c(0.9,0.85))
 #dev.off()
 latex_percent = scales::label_percent(suffix = '\\%')
-
+mixed_palette <- c(brewer.pal(n=5,name='Blues')[c(3,4,5)],brewer.pal(n=9,name="Greens")[c(4,5,6,7,8,9)])
 df_rd_plt <- ggplot(data = filter(differential_with_accuracy_rd, Model != "Static mapping" & Model != "Random mapping") )+
     geom_col(width=0.7,position=position_dodge(width=TRUE),mapping = aes(x=`Model`,y=Accuracy,fill=Model)) +
     geom_text(size = 4, position = position_dodge(width=TRUE),mapping = aes(x=`Model`,y=Accuracy+0.035,colour=Model,label=round(Accuracy,digits=2))) +
     theme(axis.text.x = element_blank(),axis.ticks.x=element_blank(),text=element_text(size=20)) +
-    scale_color_brewer(palette = "Set1") +
-    scale_fill_brewer(palette = "Set1") +
+    scale_color_manual(values = mixed_palette) +
+    scale_fill_manual(values = mixed_palette) +
     #scale_fill_manual(limits = grouped_models[c(3,4,5,6,7,8,9,10,11)],values = c(brewer.pal(n = 12, name = "Set3"),muted("blue"))[c(3,4,5,10,11,12,6,13,7)]) +
     #scale_color_manual(values = c(brewer.pal(n = 12, name = "Set3"),muted("blue"))[c(3,4,5,10,11,12,6,13,7)]) +
     scale_y_continuous(labels = latex_percent, limits=c(0,1)) +
@@ -108,8 +108,8 @@ df_gp_plt <- ggplot(data = filter(differential_with_accuracy, Model != "Static m
     geom_text(size = 4, position = position_dodge(width=TRUE),mapping = aes(x=`Model`,y=Accuracy+0.03,colour=Model,label=round(Accuracy,digits=2))) +
     theme(axis.text.x = element_blank(),axis.ticks.x=element_blank(),text=element_text(size=20)) +
     guides(color=FALSE) +
-    scale_color_brewer(palette = "Set1") +
-    scale_fill_brewer(palette = "Set1") +
+    scale_color_manual(values = mixed_palette) +
+    scale_fill_manual(values = mixed_palette) +
     #scale_fill_manual(values = c(brewer.pal(n = 12, name = "Set3"),muted("blue"))[c(3,4,5,10,11,12,6,13,7)]) +
     #scale_color_manual(values = c(brewer.pal(n = 12, name = "Set3"),muted("blue"))[c(3,4,5,10,11,12,6,13,7)]) +
     scale_y_continuous(labels = latex_percent, limits=c(0,1)) +

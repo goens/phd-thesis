@@ -58,23 +58,25 @@ equiv <- full_join(ct1m, full_join(ct2m, full_join(ct3m,ct4m))) %>%
 ggplot(data = equiv) +
   geom_histogram(mapping = aes(x=wall_clock_time,fill=mapping)) + facet_wrap(~mapping)
 
+mixed_palette <- c(brewer.pal(n=9,name="Greens")[c(4,5,6,7,8,9)])
+
 ggplot(data = equiv) +
   geom_histogram(mapping = aes(x=energy,fill=mapping)) + facet_wrap(~mapping)
 p1 <- ggplot(data = equiv) +
   geom_boxplot(mapping = aes(x=mapping,fill=mapping,y=wall_clock_time,group=mapping)) +
-  scale_fill_brewer(palette = "Set2") +
+  scale_fill_manual(values =mixed_palette) +
   labs(x=element_blank(),y="Wall-clock time [s]") +
   theme(axis.text.x=element_blank(),legend.position = "bottom",text = element_text(size=14))  +
   guides(fill=guide_legend(nrow=1,title.position="top"))
 p2 <- ggplot(data = equiv) +
   geom_boxplot(mapping = aes(x=mapping,fill=mapping,y=cpu_time,group=mapping)) + 
-  scale_fill_brewer(palette = "Set2") +
+  scale_fill_manual(values =mixed_palette) +
   labs(x=element_blank(),y="CPU time [s]") +
   theme(axis.text.x=element_blank(),legend.position = "bottom",text = element_text(size=14))  +
   guides(fill=guide_legend(nrow=1,title.position="top"))
 p3 <- ggplot(data = equiv) +
   geom_boxplot(mapping = aes(x=mapping,fill=mapping,y=energy,group=mapping)) + 
-  scale_fill_brewer(palette = "Set2") +
+  scale_fill_manual(values =mixed_palette) +
   labs(x="mapping",y="Energy [J]") +
   theme(axis.text.x=element_blank(),legend.position = "bottom",text = element_text(size=14))  +
   guides(fill=guide_legend(nrow=1,title.position="top"))

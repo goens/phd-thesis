@@ -20,8 +20,7 @@ append.freqstr <- function(strings){
 
 tikz('generated/compact_latency.tex',standAlone = FALSE, width = 10,height = 5)
 ggplot(data=ungroup(filter(means,fire.rate != 0.01)),mapping = aes(x=type,y=delay.avg))+
-    geom_boxplot() + #hide outlires because added by jitter
-    scale_color_brewer(palette = "Set2") +
+    geom_boxplot(fill=rgb(0.1,0.6,0.6),alpha=0.9) + #hide outlires because added by jitter
     #geom_jitter(width=0.14) +
     facet_wrap(~fire.rate, labeller = labeller(fire.rate = append.freqstr))+
     theme(text=element_text(size=22),legend.title=element_blank(),axis.text.x = element_text(angle=45,vjust=0.4)) + 
@@ -47,12 +46,13 @@ by.scenario.allapps <-  summarize(by.scenario.allapps.full, delay.avg = mean(del
 #    geom_boxplot(mapping = aes(x=type,y=delay.avg..cycles.,color=case),position=position_dodge()) +
 #    facet_wrap(~fire.rate, labeller = labeller(fire.rate = append.freqstr)) + theme_light(base_size=22) #+  scale_y_log10() 
 
+mixed_palette <- c(brewer.pal(n=5,name='Blues')[c(4)],brewer.pal(n=9,name="Greens")[c(5)])
 tikz("generated/compact_cases.tex",standAlone = FALSE, width = 8,height = 4)
 print(ggplot(data = filter(ungroup(by.scenario.allapps.full), app == 0)) +
           labs(y = "Average network delay / cycles", x="Mapping type") +
           geom_boxplot(mapping = aes(x=type,y=delay.avg..cycles.,color=case),position=position_dodge()) +
           facet_wrap(~fire.rate, labeller = labeller(fire.rate = append.freqstr)) +
-          scale_color_brewer(palette = "Set2") +
+          scale_color_manual(values = mixed_palette) +
           theme(text = element_text(size=18),legend.position="top") +
           scale_y_log10() )
 dev.off()
