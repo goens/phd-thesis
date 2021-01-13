@@ -1,10 +1,12 @@
 library(readr)
 library(tidyverse)
 library(tikzDevice)
+library(RColorBrewer)
 library(tsne)
 library(scales)
 library(rsq)
 library(ggrastr)
+library(ggforce)
 
 rankQuantileCut <- function(a,n){
     a_ranks <- rank(a, ties.method = "first")
@@ -82,7 +84,7 @@ vectorized_rel_runtime <- Vectorize(rel_runtime,vectorize.args=c('r1','r2'))
 
 if( !file.exists("data/metrics_rel_distances.csv")){
 mappings_exynos <- read_csv("data/randoms-metrics-exynos.csv")
-mappings_coolidge <- read_csv("data/randoms-metrics-exynos.csv")
+mappings_coolidge <- read_csv("data/randoms-metrics-coolidge.csv")
 mappings_simplevector <- read_csv("data/random-metrics-simplevector.csv")
 mappings <- full_join(mappings_exynos,full_join(mappings_coolidge,mappings_simplevector))
 pruned <- select(mappings,platform,mapping,representation,representation.target_distortion,representation.extra_dimensions,runtime) 
@@ -195,7 +197,7 @@ metrics_max <- group_by(only_max,representation.target_distortion,representation
 
 metrics_max$scenario <- fct_relevel(metrics_max$scenario,'MetricSpaceEmbedding\nNo-ED', 'SymmetryEmbedding\nNo-ED', 'MetricSpaceEmbedding\nED', 'SymmetryEmbedding\nED','SimpleVector\n')
 embedding_labels <- c('MetricSpaceEmbedding\nNo-ED' = 'M.S.Emb.\nNo-ED', 'SymmetryEmbedding\nNo-ED' = 'Sym.+Emb.\nNo-ED', 'MetricSpaceEmbedding\nED'='M.S.Emb.\nED', 'SymmetryEmbedding\nED'='Sym.+Emb.\nED','SimpleVector\n'='Simp. Vec.\n')
-platform_labels <- c('exynos' = "Odroid XU3", 'mppa_coolidge' = "MPPA3 Coolidge")
+platform_labels <- c('exynos' = "Odroid XU4", 'mppa_coolidge' = "MPPA3 Coolidge")
 
 p1 <-  filter(metrics_max,platform == 'exynos') %>%
 ggplot() +
@@ -228,4 +230,45 @@ ggplot() +
 
 tikz("generated/metrics_regression_rsq.tex",width=8,height=4,standAlone = F)
 print(multiplot(p1,p2,cols=2) )  
+dev.off()
+
+
+thresholds <- c(38.5,45.3,70.4)
+jlt_projection <- read.csv("data/randoms-metrics-exynos.projection.csv")
+projection_w_thresholds <- mutate(jlt_projection,
+                                  t1 = runtime <= thresholds[1],
+                                  t2 = runtime <= thresholds[2],
+                                  t3 = runtime <= thresholds[3],
+                                  num_thresholds = factor(t1+t2+t3))
+
+mse <- filter(projection_w_thresholds,representation == 'MetricSpaceEmbedding',
+       representation.target_distortion == '1.001', representation.extra_dimensions == 'True'
+       )  %>% mutate( t1 = ifelse(t1,'feasible','infeasible'),
+                      t2 = ifelse(t2,'feasible','infeasible'), 
+                      t3 = ifelse(t3,'feasible','infeasible'), 
+                      )
+mse$t1 <- fct_relevel(mse$t1,'infeasible', 'feasible')  
+mse$t2 <- fct_relevel(mse$t2,'infeasible', 'feasible')  
+mse$t3 <- fct_relevel(mse$t3,'infeasible', 'feasible')  
+empty <- tibble()
+p1 <- ggplot(mse) +
+  geom_point_rast(mapping = aes(x=x,y=y,color=t1),size=1)  +
+  geom_ellipse(data=empty, aes(x0=1.95,y0=3.9,a=0.9,b=0.45,angle=10))  +
+  scale_color_brewer(palette="Set1") +
+  theme(text=element_text(size=18),legend.position='bottom') +
+  labs(x="1. Dimension (projection)", y="2. Dimension (projection)",title="Low threshold", color=element_blank())
+p2 <- ggplot(mse) +
+  geom_point_rast(mapping = aes(x=x,y=y,color=t2),size=1)  +
+  geom_ellipse(data=empty,aes(x0=2.3,y0=4.2,a=1.25,b=0.52,angle=10))  +
+  scale_color_brewer(palette="Set1") +
+  theme(text=element_text(size=18),legend.position='bottom') +
+  labs(x="1. Dimension (projection)", y="2. Dimension (projection)",title="Med. threshold", color=element_blank())
+p3 <- ggplot(mse) +
+  geom_point_rast(mapping = aes(x=x,y=y,color=t3),size=1)  +
+  geom_ellipse(data=empty,aes(x0=3.0,y0=4.1,a=1.99,b=0.61,angle=0))  +
+  scale_color_brewer(palette="Set1") +
+  theme(text=element_text(size=18),legend.position='bottom') +
+  labs(x="1. Dimension (projection)", y="2. Dimension (projection)", title="High threshold", color=element_blank())
+tikz('generated/design_center_mapping_spaces.tex',width=10,height=4,standAlone=F)
+print(multiplot(p1,p2,p3,cols=3))
 dev.off()

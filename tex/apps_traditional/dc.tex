@@ -30,6 +30,12 @@ In the next step thus, the algorithm adapts the design center and the estimated 
 Additionally, from the covariance matrix of the sampled points, the algorithm stores a linear transformation to skew or stretch the ball around a point.
 This way, the neighborhoods are not restricted to balls $B_r(m)$ around the point $m$, but rather to linear transformations of such balls, i.e. $A B_r(m)$ for a matrix $A$ with $|\operatorname{det}(A)| = 1$.
 
+\begin{figure}[h]
+	\centering
+   \resizebox{0.95\textwidth}{!}{\inputTikz{design_center_mapping_spaces.tex}}
+	\caption{Examples of possible neighborhoods around design centers in two-dimensional random projections of the design space for the \texttt{audio filter} application on the Odroid XU4.}
+	\label{fig:design_centering_exynos}
+\end{figure}
 TODO: add visualization.
 
 These methods all rely on the metric space structure of the mapping space, as distances between mappings and the concept of neighborhoods all rely on the metric space structure.
