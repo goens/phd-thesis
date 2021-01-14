@@ -1,0 +1,13 @@
+platform.name,estimated_total_time,trace,kpn,platform.processor_1.type,log_level,mapper,best_mapping_time,platform,platform.processor_0.type
+exynos,17.219873428344727,slx_default,hog,ARM_CORTEX_A15,ERROR,gbm,595.541110332,mppa_coolidge,ARM_CORTEX_A7
+exynos,1.4799892902374268,slx_default,audio_filter,ARM_CORTEX_A15,ERROR,static_cfs,38.516654643,exynos,ARM_CORTEX_A7
+exynos,0.259998083114624,slx_default,audio_filter,ARM_CORTEX_A15,ERROR,static_cfs,84.528126495,mppa_coolidge,ARM_CORTEX_A7
+exynos,0.3999969959259033,slx_default,hog,ARM_CORTEX_A15,ERROR,gbm,2312.323393,exynos,ARM_CORTEX_A7
+exynos,0.2759981155395508,slx_default,hog,ARM_CORTEX_A15,ERROR,static_cfs,1123.0775895,mppa_coolidge,ARM_CORTEX_A7
+exynos,0.1999986171722412,slx_default,hog,ARM_CORTEX_A15,ERROR,static_cfs,864.718081051,exynos,ARM_CORTEX_A7
+exynos,0.29599785804748535,slx_default,audio_filter,ARM_CORTEX_A15,ERROR,gbm,35.990474,exynos,ARM_CORTEX_A7
+exynos,8.323939085006714,slx_default,audio_filter,ARM_CORTEX_A15,ERROR,gbm,131.725295492,mppa_coolidge,ARM_CORTEX_A7
+exynos,0.3359975814819336,slx_default,speaker_recognition,ARM_CORTEX_A15,ERROR,static_cfs,30.853399833,exynos,ARM_CORTEX_A7
+exynos,1.939985752105713,slx_default,speaker_recognition,ARM_CORTEX_A15,ERROR,gbm,25.546831607,exynos,ARM_CORTEX_A7
+exynos,0.3039977550506592,slx_default,speaker_recognition,ARM_CORTEX_A15,ERROR,static_cfs,755.730459601,mppa_coolidge,ARM_CORTEX_A7
+exynos,20.579848766326904,slx_default,speaker_recognition,ARM_CORTEX_A15,ERROR,gbm,1446.449676467,mppa_coolidge,ARM_CORTEX_A7
