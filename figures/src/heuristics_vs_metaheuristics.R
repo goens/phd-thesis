@@ -1,4 +1,4 @@
-library(tidyverse)
+  library(tidyverse)
 library(readr)
 library(RColorBrewer)
 library(tikzDevice)
@@ -94,7 +94,7 @@ p1 <- filter(results_summary, platform == "exynos") %>%
   geom_text(size = 4,vjust=0.8, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_best_gmean,digits=2))) +
   scale_fill_manual(values =mixed_palette,guide=F) +
   theme(axis.text.x = element_blank(),text=element_text(size=11),axis.ticks.x = element_blank())+
-  labs(x=element_blank(),y="Rel. mapper results",title="Exynos")
+  labs(x=element_blank(),y="Rel. mapper results",title="Odroid XU4")
 p2 <- filter(results_summary, platform == "mppa_coolidge") %>%
   ggplot() +
   geom_col(position='dodge2',mapping = aes(x=mapper,y=relative_best_gmean,fill=mapper)) +
@@ -111,7 +111,7 @@ p3 <- filter(results_summary, platform == "exynos") %>%
   geom_text(size = 4,vjust=0.7, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_time_gmean,digits=2))) +
   scale_fill_manual(values =mixed_palette, labels=mapper_labels)  +
   theme(legend.position='top',legend.title=element_blank(),axis.text.x = element_blank(),text=element_text(size=11),axis.ticks.x = element_blank())+
-  labs(x=element_blank(),y="Rel. execution time",title="")
+  labs(x=element_blank(),y="Rel. exploration time",title="")
 p4 <- filter(results_summary, platform == "mppa_coolidge") %>%
   ggplot() +
   geom_col(position='dodge2',mapping = aes(x=mapper,y=relative_time_gmean,fill=mapper)) +
@@ -119,7 +119,7 @@ p4 <- filter(results_summary, platform == "mppa_coolidge") %>%
   geom_text(size = 4,vjust=0.8, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_time_gmean,digits=2))) +
   scale_fill_manual(values =mixed_palette,guide=F) +
   theme(axis.text.x = element_blank(),text=element_text(size=11),axis.ticks.x = element_blank())+
-  labs(x=element_blank(),y="Rel. execution time",title="")
+  labs(x=element_blank(),y="Rel. exploration time",title="")
 tikz("generated/heuristics_vs_metaheuristics.tex",width=8,height=5,standAlone = F)
 print(multiplot(p1,p2,p3,p4,cols=2))
 dev.off()

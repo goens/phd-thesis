@@ -1,23 +1,68 @@
-General DSE for this, heuristics/metaheuristics.
+As we saw in Chapter~\ref{chap:mapping}, a central step of model-based software synthesis is a \ac{DSE} step for finding mappings, among others.
+We know the mapping space is intractably large and complex and we cannot find the actual optima in the space for any real-life problem sizes.
+The best we can hope for are near-optimal mappings in a reasonable amount of time.
+Thus, we focus both on the quality of the mappings as well as the time required.
+This section will focus on \ac{DSE} for finding near-optimal mappings, as defined in Section~\ref{sec:mapping_problem}. 
+We will see many applications of the structures defined and analyzed in Chapter~\ref{chap:mapping_structures}
 
 \subsection{Heuristics and Metaheuristics}
 
-Discuss what metaheuristics are.
-Here I should summarize~\cite{goens_mcsoc16}.
+Generally in \ac{DSE} we distinguish between two approaches for dealing with these kinds of intractable problems, heuristics and meta-heuristics (cf. Section~\ref{sec:mapping_problem}).
+Recall that mapping heuristics are domain-specific algorithms that exploit the specific domain-knowledge to find a solution based on a pre-defined model of the problem, whereas meta-heuristics rely on an iterative evaluation of the points.
+As we outlined above, different heuristics and meta-heuristics come with trade-offs between the exploration time required to find a solution and the quality of said solution.
+This is certainly the case for many discrete optimization problems in general, the mapping problem being no exception~\cite{goens_mcsoc16}.
+Commonly, meta-heuristics tend to find better results provided enough time, but require accordingly more time to do so.
 
-Discuss genetic, tabu search, simulated annealing for mapping.
+A particular difficulty of comparing mapping approaches and algorithms are the different models used by different algorithms~\cite{goens_mcsoc16}.
+With \mocasin we designed a common framework that allows us to compare between mapping algorithms~\cite{menard_rapido21}.
+In particular, in \mocasin we have two heuristics for mapping: the \ac{GBM} heuristic~\cite{castrillon_dac12} and a static mapping variant~\cite{menard_rapido21} of the \ac{CFS} scheduler from Linux.
+Additionally, we have implemented genetic algorithms based on and inspired by those found in Sesame~\cite{erbas2006multiobjective,quan2014towards,goens_mcsoc16}, a simulated annealing~\cite{simulated_annealing} mapping algorithm and a tabu search~\cite{tabu_search}.
+We also have a simple random walk algorithm for reference.
+A survey of these mapping algorithms, among others can be found in~\cite{singh2013mapping}.
+We implemented these algorithms for \mocasin and this thesis to have a basis for comparison from established literature.
 
-Parameters: random walk $500$ random iterations, genetic $20$ generations of population size $10$, crossover rate of $1$ with probability $0.35$ and mutation probability $0.5$, with a tournament selection with tournament size $4$ and a $\mu + \lambda$ strategy.
-\ac{GBM} with \texttt{bx\_m} of $1$, \texttt{bx\_p} of $0.95$, \texttt{by\_m} of $0.5$,\texttt{by\_p} of $0.75$, 
-simulated annealing with an initial temperature of $1$ and a final temperature of $0.1$, with a temperature proportionality constant of $0.5$  and a random movement starting radius of $5$.
-Tabu search with a maximum of $30$ iterations, each of size $5$ and with a move set size of $10$ and tabu tenure of $5$, and a random candidate move update radius of $2$.
+We first compare these mapping algorithms to establish a baseline. 
+We execute a random walk $500$ random iterations.
+For the genetic algorithm we run an evolutionary $\mu + \lambda$ strategy for $20$ generations of population size $10$, crossover rate of $1$ with probability $0.35$ and mutation probability $0.5$, with a tournament selection with tournament size $4$.
+For the \ac{GBM} algorithm we set the parameters as \texttt{bx\_m} of $1$, \texttt{bx\_p} of $0.95$, \texttt{by\_m} of $0.5$,\texttt{by\_p} of $0.75$, 
+The simulated annealing heuristic we execute with an initial temperature of $1$ and a final temperature of $0.1$, with a temperature proportionality constant of $0.5$  and a random movement starting radius of $5$.
+Finally, for the tabu search mapper we set a maximum of $30$ iterations, each of size $5$ and with a move set size of $10$ and tabu tenure of $5$, and a random candidate move update radius of $2$.
+These parameters were chosen such that the mappers seemed to yield good result, yet not systematically (e.g. using something like Bayesian optimization or general (hyper-)parameter optimization approaches).
+A deliberate choice in the parameters however is that the exploration times should be comparable between the meta-heuristics, i.e. such that the iterative mappers evaluate a similar amount of mappings.
 
 \begin{figure}[h]
 	\centering
    \resizebox{0.95\textwidth}{!}{\input{generated/heuristics_vs_metaheuristics.tex}}
-	\caption{Comparison of multiple mapping heuristics and metaheuristics.}
+	\caption{Comparison of multiple mapping heuristics and metaheuristics on the \ac{E3S} benchmarks.}
 	\label{fig:metric_comparison}
 \end{figure}
+
+Figure~\ref{fig:metric_comparison} shows a comparison of the different heuristics and metaheuristics on the \ac{E3S} benchmarks.
+Each of the metaheuristics that require random data we execute $10$ times and show the variation as calculated by the unbiased estimator of the standard deviation of the multiple sampled times.
+The execution times vary obviously depending on the different benchmark applications and on the platforms they run on.
+The absolute values of these times, however, are not interesting for comparing the mapping algorithms.
+We thus norm the values of the execution times, taking the results of the genetic algorithms as baseline.
+We then aggregate all values with the geometric mean.
+The error bars in the plot are calculated by taking the average value $\plusminus$ the estimated standard deviation and norming each of the two extremes, the results of which are the extremes shown in the plot.
+
+We first examine the results for the Odroid XU4 architecture.
+The two heuristics find considerably lower results in average, but they do so in considerably less time.
+More concretely, they yield about an order of magnitude worse results in about an order of magnitude less time.
+The results of the random walk heuristic are significantly worse than those of the more structured metaheuristics, even though it takes a comparable amount of time.
+This is due to a deliberate choice, since as explained above, the number of random mappings was chosen specifically to be comparable to the number the number of mappings evaluated by the other meta-heuristics.
+Since $500$ mappings is not a small amount, it is not terribly surprising that the random mapper beats the two heuristics.
+Finally, the best mappings are found by the simulated annealing meta-heuristic, albeit only by $3\%$ compared to the genetic algorithm.
+
+When we turn our attention to the significantly larger and more complex MPPA3 Coolidge architecture, we see that the picture changes drastically.
+The marked difference between heuristics and meta-heuristics disappears in this case.
+The \ac{GBM} heuristic is on par with the random walk results in average, while taking substantially less time.
+This is simply explained by the significantly larger design space of mapping to the MPPA3 Coolidge.
+In this case, the genetic algorithm significantly outperforms both other meta-heuristics, by a factor of $4-5$, while taking less time.
+The most striking result here, however, is the extremely good performance of the static CFS heuristic.
+This good performance is misleading at first, a perhaps more honest assessment of the results is that \emph{all other (meta-) heuristics perform poorly}.
+We can interpret this as a consequence of the growing design space and its complexity, which affects the metaheuristics, while the static CFS mapper can still leverage domain-specific knowledge to find fairly good mappings.
+
+TODO: add and test genetic with CFS initials.
 
 \subsection{Leveraging Symmetries}
 Talk about~\cite{goens_taco17} + new stuff (mpsym)
@@ -26,3 +71,24 @@ Talk about~\cite{goens_taco17} + new stuff (mpsym)
 Improving DSE algorithms with metric spaces?
 
 Talk about gradient descent: why it does not work w/o metric space structure, and why it should with it.
+\begin{figure}[h]
+	\centering
+   \resizebox{0.95\textwidth}{!}{\input{generated/geometric_heuristics_coolidge.tex}}
+	\caption{The effect of embedding-based representations in metaheuristics that leverage the geometry on the MPPA3 Coolidge platform.}
+	\label{fig:coolidge_geometric}
+\end{figure}
+
+\subsection{All Representations}
+\begin{figure}[h]
+	\centering
+   \resizebox{0.95\textwidth}{!}{\input{generated/multiple_representations_exynos.tex}}
+	\caption{Comparison of the effects of multiple representations on the Odroid XU4 platform.}
+	\label{fig:multiple_representations_exynos}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.95\textwidth}{!}{\input{generated/multiple_representations_coolidge.tex}}
+	\caption{Comparison of the effects of multiple representations on the MPPA3 Coolidge platform.}
+	\label{fig:multiple_representations_exynos}
+\end{figure}
