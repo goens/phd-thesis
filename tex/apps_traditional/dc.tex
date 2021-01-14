@@ -20,6 +20,29 @@ This algorithm uses the metric space structure of the mapping space (cf. Section
 For a fixed probability $P$, a design center is a feasible point $m$ in the design space, such that points in a neighborhood of $m$ are feasible with probability at least $P$.
 For the context of this discussion, we consider neighborhoods of the form $B_r(m)$, a ball with radius $r$ around the point $m$.
 The $L_p$-adaptation algorithm seeks to find and $m$ which maximizes the radius $r$ such that the $B_r(m)$ is feasible with probability at least $P$.
+\begin{figure*}[t]
+  \centering
+	\begin{subfigure}[b]{0.33\textwidth}
+    \includegraphics[width=\textwidth]{figures/coolidge-af-high-threshold.png}
+		\caption{High threshold.}
+		\label{fig:lvars-bench-cores}
+	\end{subfigure}
+	~
+	\begin{subfigure}[b]{0.33\textwidth}
+    \includegraphics[width=\textwidth]{figures/coolidge-af-med-threshold.png}
+		\caption{Med. threshold.}
+		\label{fig:lvars-bench-overhead}
+	\end{subfigure}
+	~
+	\begin{subfigure}[b]{0.33\textwidth}
+    \includegraphics[width=\textwidth]{figures/coolidge-af-low-threshold.png}
+		\caption{Low threshold.}
+		\label{fig:lvars-bench-peak}
+	\end{subfigure}
+
+	\caption{Visualization of the design space for multiple thresholds}%
+	\label{fig:visualization_design_centering_spaces}
+\end{figure*}
 
 The particular principle behind the $L_p$-adaptation algorithm is that it is based on estimating using an $L_p$ ball, i.e. with the $L_p$ norm $||x|| = (\sum_{i=1}^n x_i^p)^{1/p}$.
 The algorithm is inspired on the evolution of robustness in biological systems~\cite{asmus2017lp}.
@@ -36,7 +59,8 @@ This way, the neighborhoods are not restricted to balls $B_r(m)$ around the poin
 	\caption{Examples of possible neighborhoods around design centers in two-dimensional random projections of the design space for the \texttt{audio filter} application on the Odroid XU4.}
 	\label{fig:design_centering_exynos}
 \end{figure}
-TODO: add visualization.
+
+
 
 These methods all rely on the metric space structure of the mapping space, as distances between mappings and the concept of neighborhoods all rely on the metric space structure.
 Strictly speaking, neighborhoods can be defined on any topology, but not with radii as in the $L_p$ algorithm.

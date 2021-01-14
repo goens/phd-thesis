@@ -43,7 +43,7 @@ The execution times vary obviously depending on the different benchmark applicat
 The absolute values of these times, however, are not interesting for comparing the mapping algorithms.
 We thus norm the values of the execution times, taking the results of the genetic algorithms as baseline.
 We then aggregate all values with the geometric mean.
-The error bars in the plot are calculated by taking the average value $\plusminus$ the estimated standard deviation and norming each of the two extremes, the results of which are the extremes shown in the plot.
+The error bars in the plot are calculated by taking the average value $\pm$ the estimated standard deviation and norming each of the two extremes, the results of which are the extremes shown in the plot.
 
 We first examine the results for the Odroid XU4 architecture.
 The two heuristics find considerably lower results in average, but they do so in considerably less time.
@@ -77,6 +77,29 @@ Talk about gradient descent: why it does not work w/o metric space structure, an
 	\caption{The effect of embedding-based representations in metaheuristics that leverage the geometry on the MPPA3 Coolidge platform.}
 	\label{fig:coolidge_geometric}
 \end{figure}
+
+We can take two observations from these results and combine them.
+The first one is the knowledge that geometry-based heuristics indeed benefit from a better metric, independent of if the resulting heuristics are overall good.
+The second observation is more subtle, it's about the general structure of the design space. 
+An observation we can make is that 
+
+\begin{figure*}[t]
+  \centering
+	\begin{subfigure}[b]{0.43\textwidth}
+    \includegraphics[width=\textwidth]{figures/coolidge-af-space-sim-vec.png}
+		\caption{SimpleVector}
+		\label{fig:lvars-bench-cores}
+	\end{subfigure}
+	~
+	\begin{subfigure}[b]{0.43\textwidth}
+    \includegraphics[width=\textwidth]{figures/coolidge-af-space-emb-sym.png}
+		\caption{SymmetryEmbedding}
+		\label{fig:lvars-bench-overhead}
+	\end{subfigure}
+
+	\caption{Visualization of the same design space of the audio filter benchmark on the MPPA3 Coolidge platform in two different representations.}%
+	\label{fig:visualization_simpvec_symemb}
+\end{figure*}
 
 \subsection{All Representations}
 \begin{figure}[h]
