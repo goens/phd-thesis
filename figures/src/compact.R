@@ -1,5 +1,6 @@
 library(tidyverse)
 library(tikzDevice)
+library(RColorBrewer)
 compact.mappings <- read.csv("data/compact.csv")
 grouped <- group_by(compact.mappings,applications,app,type,fire.rate)
 means <- summarize(grouped,delay.avg=mean(delay.avg..cycles.),delay.var=mean(delay.var..cycles.),throughput=mean(throughput..flits.cycle.),overlap=mean(overlap))
