@@ -2,12 +2,20 @@ library(tidyverse)
 library(readr)
 library(grid)
 library(tikzDevice)
-multiple_reps <- filter(read_csv("data/slx-multiple-representations.csv"),!is.na(best_mapping_time))
+library(RColorBrewer)
 
-norm_time_rep <- function(time,mapper,representation){
-sv = which('SimpleVector' == representation)
-map = which('genetic' == mapper)
-return(time[intersect(sv,map)[1]])
+slx_heuristics <- read.csv("data/heuristics-multiple-representations-slx.csv")
+slx_meta <- read.csv("data/metaheuristics-multiple-representations-slx.csv")
+
+#e3s_heuristics <- read.csv("data/heuristics-multiple-representations-e3s.csv")
+#e3s_meta <- read.csv("data/heuristics-multiple-representations-slx.csv")
+
+slx_data <- full_join(slx_heuristics,slx_meta)
+
+
+norm_time_rep <- function(time,mapper){
+map = which('gbm' == mapper)
+return(time[map[1]])
 }
 gm_mean = function(x, na.rm=TRUE){
   exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
@@ -162,14 +170,3 @@ ggplot(data=filter(times_normed_per_app,representation.canonical_operations==TRU
   facet_wrap(~mapper, labeller = as_labeller(mapper.labs) ) +
   theme(legend.position="none", text = element_text(size = 16)) 
 dev.off()
-
-
-
-
-
-
-
-
-
-
-  

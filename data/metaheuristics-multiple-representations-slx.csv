@@ -419,7 +419,7 @@ ARM_CORTEX_A15,ERROR,slx_default,audio_filter,random_walk,exynos,SymmetryEmbeddi
 ARM_CORTEX_A15,ERROR,slx_default,audio_filter,simulated_annealing,exynos,SimpleVector,mppa_coolidge,13.899889945983887,4139.439903996,ARM_CORTEX_A7,10
 ARM_CORTEX_A15,ERROR,slx_default,audio_filter,gradient_descent,exynos,SymmetryEmbedding,exynos,19.515849590301514,33.852894143,ARM_CORTEX_A7,6
 ARM_CORTEX_A15,ERROR,slx_default,speaker_recognition,genetic,exynos,SimpleVector,mppa_coolidge,18.67185640335083,27315.816172999,ARM_CORTEX_A7,2
-ARM_CORTEX_A15,ERROR,slx_default,speaker_recognition,random_walk,exynos,SymmetryEmbedding,mppa_coolidge,12486.51372885704,30415.222328634,ARM_CORTEX_A7,4
+ARM_CORTEX_A15,ERROR,slx_default,speaker_recognition,random_walk,exynos,SymmetryEmbedding,mppa_coolidge,,30415.222328634,ARM_CORTEX_A7,4
 ARM_CORTEX_A15,ERROR,slx_default,hog,simulated_annealing,exynos,SymmetryEmbedding,exynos,47.63561773300171,695.224763284,ARM_CORTEX_A7,6
 ARM_CORTEX_A15,ERROR,slx_default,hog,random_walk,exynos,MetricSpaceEmbedding,mppa_coolidge,6.743953466415405,10521.862429834,ARM_CORTEX_A7,3
 ARM_CORTEX_A15,ERROR,slx_default,audio_filter,genetic,exynos,SymmetryEmbedding,exynos,14.179893970489502,19.036037858,ARM_CORTEX_A7,4

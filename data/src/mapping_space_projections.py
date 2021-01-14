@@ -33,8 +33,8 @@ with open(filename,'r') as f:
     reader = csv.DictReader(f)
     for row in reader:
         rep = row['representation']
-        td = row['representation.target_distortion']
-        ed = row['representation.extra_dimensions']
+        td = row['platform']
+        ed = row['platform']
         if (rep,td,ed) not in mappings:
             mappings[(rep,td,ed)] = []
             runtimes[(rep,td,ed)] = []

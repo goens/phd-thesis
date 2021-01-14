@@ -16,8 +16,8 @@ THRESHOLDS["mppa_coolidgeaudio_filter"]=5930ms,7909ms,8305ms
 THRESHOLDS["mppa_coolidgehog"]=12153ms,13343ms,14925ms
 THRESHOLDS["mppa_coolidgespeaker_recognition"]=50227ms,52987ms,60014ms
 
-PLATFORMS="mppa_coolidge exynos"
-APPS="audio_filter hog speaker_recognition"
+PLATFORMS="mppa_coolidge" # exynos"
+APPS="speaker_recognition" #audio_filter hog 
 for app in $APPS; do
     for plat in $PLATFORMS; do
         OUT_DIR="multirun/dc-${plat}-${app}"
