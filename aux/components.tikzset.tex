@@ -1,0 +1,509 @@
+%% COMMANDS %%
+
+\newcommand{\textoverline}[1]{{$\overline{\mbox{#1}}$}}
+\newcommand{\textinmath}[1]{\textnormal{\scriptsize{#1}}}
+
+\newcommand{\pathdots}[2]{\path (#1) -- node[pos=0.54,sloped,font=\Huge]{\dots} (#2);}
+
+\newcommand{\arrow}[2]{\draw [-latex] (#1) -- (#2);}
+\newcommand{\arrowlbl}[4][]{\draw [-latex] (#2) -- node[#1]{#4} (#3);}
+\newcommand{\edgearcarrowlbl}[5][]{\draw [-latex] (#2) -- ++(#4) -- node[#1]{#5} ($(#3)+(#4)$) -- (#3);}
+
+%\newcommand{\algoloop}[1][2][{\node at ($(+#1.west)+(-0.5,+0.5)$) {frontend};
+%	\draw [-latex, thick, rounded corners] ($(transmit.north west)+(+0.2,+0.2)$) -| ($(transmit.south east)+(+0.2,-0.2)$) -- ($(transmit.south west)+(-0.2,-0.2)$) |- ($(transmit.north west)+(+0.2,+0.2)$);
+
+
+%% GENERIC %%
+
+\usetikzlibrary{calc}
+
+\tikzset{
+	%
+	box/.pic={
+		\node [ draw, rectangle, minimum width=1.2cm, minimum height=1.2cm ] at (0,0) (-box) {};
+	},
+	myellipse/.pic={
+		\node [ draw, ellipse, minimum width=2cm, minimum height=1cm ] at (0,0) (-box) {};
+	}
+	%
+}
+\tikzset{
+%
+greenbox/.pic={
+	\node [ draw=green, very thick, rectangle, minimum width=1.2cm, minimum height=1.2cm ] at (0,0) (-box) {};
+}
+%
+}
+
+\tikzset{
+	%
+	shuffle-arrows/.pic={
+		\begin{scope}[scale=0.6,shift={(-0.5,-0.25)}]
+			\draw[->, thick, line cap=round] (0.0,0.5) .. controls (0.5,0.5) and (0.5,0.0) .. (1.0,0.0);
+			\draw[line width=2.5pt, white] (0.0,0.0) .. controls (0.5,0.0) and (0.5,0.5) .. (1.0,0.5);
+			\draw[->, thick, line cap=round] (0.0,0.0) .. controls (0.5,0.0) and (0.5,0.5) .. (1.0,0.5);
+		\end{scope}
+	}
+	%
+}
+
+\tikzset{
+	%
+	pics/constellation/.style args={#1}{
+		code={
+			\draw[#1, line cap=round] (-0.33,0) -- (0.33,0);
+			\draw[#1, line cap=round] (0,0.33) -- (0,-0.33);
+			\draw[#1, fill=#1] (-0.15,-0.15) circle (0.04);
+			\draw[#1, fill=#1] (0.15,-0.15) circle (0.04);
+			\draw[#1, fill=#1] (-0.15,0.15) circle (0.04);
+			\draw[#1, fill=#1] (0.15,0.15) circle (0.04);
+			\draw [#1] (0,0) circle (0.212);
+		}
+	}
+	%
+}
+
+\tikzset{
+	%
+	wave/.pic={
+		\begin{scope}[scale=0.7, shift={(-0.6,-0.35)}]
+			\begin{axis}[
+				xmin=-70, xmax=790, 
+				ymin=-1.1, ymax=1.1,
+				hide x axis,
+				hide y axis,
+				width=8em,
+				height=6.5em
+			]
+				\addplot [domain=0:720, samples=100, thick, line cap=round] {sin(x)};
+			\end{axis}
+		\end{scope}
+	}
+	%
+}
+
+\tikzset{
+	%
+	pics/smallwave/.style args={#1}{
+		code={
+		\begin{scope}[scale=0.7, shift={(-0.6,-0.35)}]
+			\begin{axis}[
+				xmin=-0.1, xmax=4.1, 
+				ymin=-1.1, ymax=1.1,
+				hide x axis,
+				hide y axis,
+				width=8em,
+				height=6.5em,
+				color=#1
+			]
+				\addplot [domain=0:4, samples=100, thick, line cap=round] {0.4*sin(x*360)};
+			\end{axis}
+		\end{scope}
+	}
+},
+pics/smallwave/.default=black
+}
+
+
+\tikzset{
+%
+pics/shortwave/.style args={#1}{
+	code={
+	\begin{scope}[scale=0.7, shift={(-0.6,-0.35)}]
+		\begin{axis}[
+			xmin=-0.1, xmax=1.9, 
+			ymin=-1.1, ymax=1.1,
+			hide x axis,
+			hide y axis,
+			width=5.5em,
+			height=6.5em,
+			color=#1
+			]
+			\addplot [domain=0:4, samples=100, thick, line cap=round] {0.4*sin(x*360)};
+		\end{axis}
+	\end{scope}
+	}
+},
+pics/shortwave/.default=black
+}
+
+\tikzset{
+	%
+	pics/sinc/.style args={#1}{
+		code={
+		\begin{scope}[scale=0.7, shift={(-0.6,-0.35)}]
+			\begin{axis}[
+				xmin=-700, xmax=700, 
+				ymin=-0.5, ymax=2.1,
+				hide x axis,
+				hide y axis,
+				width=8em,
+				height=6.5em,
+				color=#1
+			]
+				\addplot [domain=-680:680, samples=200, thick, line cap=round] {sin(x)/(x/360*3.14)};
+			\end{axis}
+		\end{scope}
+	}
+},
+pics/sinc/.default=black
+}
+
+\tikzset{
+%
+cp_cs/.pic={
+	\begin{scope}[scale=0.7, shift={(-0.6,-0.35)}]
+		\begin{axis}[
+			xmin=-700, xmax=700, 
+			ymin=-2, ymax=2,
+			hide x axis,
+			hide y axis,
+			width=8em,
+			height=6.5em
+			]
+			\addplot [domain=-680:680, samples=200, thick, line cap=round] {cos(x)};
+		\end{axis}
+	\end{scope}
+}
+}
+
+\tikzset{
+	%
+	whitebox/.pic={
+		\node [ draw, rectangle, fill=white, minimum width=.05cm, minimum height=.5cm ] at (0,0) (-box) {};
+	}
+	%
+}
+
+
+
+\tikzset{
+	%
+	pics/rnd1/.style args={#1}{
+		code={
+		\begin{scope}[scale=0.7, shift={(-0.6,-0.35)}]
+			\begin{axis}[
+				xmin=-700, xmax=700, 
+				ymin=-5, ymax=5,
+				hide x axis,
+				hide y axis,
+				width=7em,
+				height=6.5em,
+				color=#1
+				]
+				\addplot [domain=-680:680, samples=200, thick, line cap=round] {sin(x)-3};
+				\addplot [domain=-680:680, samples=200, thick, line cap=round] {cos(x)};
+				\addplot [domain=-680:680, samples=200, thick, line cap=round] {sin(x)+3};
+			\end{axis}
+		\end{scope}
+	}
+},
+pics/rnd1/.default=black
+}
+
+\tikzset{
+	%
+	die/.pic={
+		\draw (-0.3,-0.3) rectangle (0.3,0.3);
+	}
+	%
+}
+
+\tikzset{
+	%
+	magnifier/.pic={
+		\draw[thick, line cap=round, inner sep=0] (0,0) circle (0.14);
+		\draw[very thick, line cap=round, inner sep=0] (0.11,-0.11) -- (0.22,-0.22);
+	}
+	%
+}
+
+\tikzset{
+	%
+	ruler/.pic={
+		\begin{scope}[scale=0.045]
+			\draw (-10,2) rectangle (10,-2);
+			\foreach \x in {-9,-6,...,9} {%
+				\draw (\x,2) -- (\x,0.2);
+				\ifnum \x<9
+					\foreach \y in {1,2} {%
+						\draw ($(\x,2)+(\y,0)$) -- ($(\x,1)+(\y,0)$);
+					};
+				\fi
+			};
+		\end{scope}
+	}
+	%
+}
+
+
+
+%% COMPONENTS %%
+
+\tikzset{
+	interleaver/.pic={
+		\pic[shift={(0,-0.2)}]{shuffle-arrows};
+		\node at (0.00,0.3) {\textsf{Intv}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	deinterleaver/.pic={
+		\pic[shift={(0,-0.2)}]{shuffle-arrows};
+		\node at (0.00,0.3) {\textsf{De-Intv}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	enc-nsnr/.pic={
+		\node at (0.0, 0.35) {\textsf{\small{Cv-Enc}}};
+		\node at (0.0,-0.02) {\textsf{\large{\textoverline{S}-\textoverline{R}}}};
+		\node at (0.0,-0.42) {\textsf{\footnotesize{1/2}}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	enc-sr-acc/.pic={
+		\node at (0.0, 0.35) {\textsf{\small{Cv-Enc}}};
+		\node at (0.0,-0.02) {\textsf{\large{S-R}}};
+		\node at (0.0,-0.38) {\textsf{\footnotesize{ACC}}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	dec-nsnr/.pic={
+		\node at (0.0, 0.35) {\textsf{\small{Cv-Dec}}};
+		\node at (0.0,-0.02) {\textsf{\large{\textoverline{S}-\textoverline{R}}}};
+		\node at (0.0,-0.42) {\textsf{\footnotesize{1/2}}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	dec-sr-acc/.pic={
+		\node at (0.0, 0.35) {\textsf{\small{Cv-Dec}}};
+		\node at (0.0,-0.02) {\textsf{\large{S-R}}};
+		\node at (0.0,-0.38) {\textsf{\footnotesize{ACC}}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	encoder/.pic={
+		\node at (0,-0.18) {%
+			\footnotesize{$\overline{\underline{1010}}$}%
+			\hspace{0.4ex}%
+			\footnotesize{$\overline{\underline{11}}$}%
+		};
+		\node at (0.00,0.34) {\textsf{\small{Encod}}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	pics/decoder/.style args={#1}{
+		code={
+			\node [#1] at (0,-0.18) {%
+				\footnotesize{$\overline{\underline{1010}}$}%
+				\hspace{0.4ex}%
+				\footnotesize{$\overline{\underline{11}}$}%
+			};
+			\node [#1] at (0.00,0.34) {\textsf{\small{Decod}}};
+		}
+	},
+	pics/decoder/.default=black
+}
+
+\tikzset{
+	mapper/.pic={
+		\pic[shift={(0,-0.18)}]{constellation};
+		\node at (0.00,0.31) {\textsf{\small{Map}}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	pics/demapper/.style args={#1}{
+		code={
+			\pic[shift={(0,-0.18)}]{constellation=#1};
+			\node [#1] at (0.00,0.31) {\textsf{\small{Demap}}};
+		}
+	},
+	pics/demapper/.default=black
+}
+
+
+
+\tikzset{
+	resource_mapper/.pic={
+		\pic[shift={(-0.08,-0.18)}]{shortwave};
+		\pic[shift={(0.25,-0.18)}]{rnd1};
+		\node at (0.00,0.34) {\textsf{\small{S/P}}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	resource_mapper/.pic={
+		\pic[shift={(-0.08,-0.18)}]{shortwave};
+		\pic[shift={(0.25,-0.18)}]{rnd1};
+		\node at (0.00,0.34) {\textsf{\small{S/P}}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	pics/fft/.style args={#1}{
+		code={
+		\pic[shift={(-0.08,-0.18)}]{shortwave=#1};
+		\pic[shift={(0.25,-0.18)}]{rnd1=#1};
+		\node [#1] at (0.00,0.34) {\textsf{\small{FFT}}};
+		}
+	}
+}
+
+\tikzset{
+	pics/idft/.style args={#1}{
+		code={
+		\pic[shift={(-0.08,-0.18)}]{rnd1=#1};
+		\pic[shift={(0.6,-0.18)}]{shortwave=#1};
+		\node [#1] at (0.00,0.34) {\textsf{\small{IDFT}}};
+		}
+	}
+}
+
+
+
+\tikzset{
+	cp/.pic={
+		\pic[shift={(0,-0.18)}]{cp_cs};
+		\pic[shift={(-0.12,-0.17)}, scale=0.95, white] {whitebox};
+		\node at (0.00,0.34) {\textsf{\small{CP/CS}}};
+		\pic {box};
+	}
+}
+
+
+\tikzset{
+	modulator/.pic={
+		\pic[shift={(0,-0.18)}]{sinc};
+		\node at (0.00,0.34) {\textsf{\small{Mod}}};
+		\pic {greenbox};
+	}
+}
+
+\tikzset{
+	demodulator/.pic={
+		\pic[shift={(0,-0.18)}]{sinc};
+		\node at (0.00,0.34) {\textsf{\small{Demod}}};
+		\pic {greenbox};
+	}
+}
+
+\tikzset{
+	equalizer/.pic={
+		\pic[shift={(0,-0.18)}]{sinc};
+		\node at (0.00,0.34) {\textsf{\small{Inv}}};
+	}
+}
+
+\tikzset{
+	detector/.pic={
+		\pic[shift={(0,-0.18)}] {smallwave};
+		\pic[shift={(0,-0.17)}, scale=0.95, white] {magnifier};
+		\pic[shift={(0,-0.17)}, scale=1.27, white] {magnifier};
+		\pic[shift={(0,-0.17)}, scale=1.1] {magnifier};
+		\node at (0.00,0.34) {\textsf{\small{Detect}}};
+		\pic {box};
+	}
+}
+\tikzset{
+	synchronizer/.pic={
+		\pic[shift={(0,-0.18)}] {smallwave};
+		\pic[shift={(0,-0.17)}, scale=0.95, white] {magnifier};
+		\pic[shift={(0,-0.17)}, scale=1.27, white] {magnifier};
+		\pic[shift={(0,-0.17)}, scale=1.1] {magnifier};
+		\node at (0.00,0.31) {\textsf{\small{Sync}}};
+	}
+}
+
+\tikzset{
+	estimator/.pic={
+		\pic[shift={(0,-0.14)}, scale=0.55] {constellation};
+		\draw[white, fill=white] (-0.4,-0.24) rectangle (0.4,-0.5);
+		\pic[shift={(0,-0.33)}, scale=0.8] {ruler};
+		\node at (0.00,0.34) {\textsf{\small{Estim}}};
+	}
+}
+
+\tikzset{
+	source/.pic={
+		\node at (0,0.34) {\textsf{\small{Source}}};
+		\node at (0,-0.18) {\small{$\overline{\underline{1010}}$}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	data/.pic={
+		\node at (0,0.34) {\textsf{\small{Data}}};
+		\node at (0,-0.18) {\small{$\overline{\underline{1010}}$}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	rayleigh/.pic={
+		\begin{scope}[shift={(-0.43,-0.16)}]
+			\begin{axis}
+				[ width=69.5pt, height=62pt, axis x line=bottom, outer axis line style={-}, xtick=\empty, ytick=\empty ]
+				\addplot [samples=200] { 1/sqrt(1-x^2) };
+			\end{axis}
+		\end{scope}
+		\node at (0,-0.4) {\textsf{\scriptsize{Rayleigh}}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	white-gaussian/.pic={
+		\begin{scope}[shift={(-0.43,-0.16)}]
+			\begin{axis}
+				[ width=69.5pt, height=62pt, axis x line=bottom, outer axis line style={-}, xtick=\empty, ytick=\empty ]
+				\addplot [samples=200] { 1/sqrt(6*3^2) * exp( -x^2 / sqrt(6*3^2) ) };
+			\end{axis}
+		\end{scope}
+		\node at (0,-0.4) {\textsf{\scriptsize{Gauss}}};
+		\pic {box};
+	}
+}
+
+\tikzset{
+	hard-decision/.pic={
+		\node at (0,0.28) {\textsf{\small{Hard}}};
+		\draw[thick,shift={(0,-0.2)}] (-0.2,-0.2) -- (0,-0.2) -- (0,0.2) -- (0.2,0.2);
+		\pic {box};
+	}
+}
+
+\tikzset{
+	add/.pic={
+		\draw [ line cap=round ] (-0.2,0) -- (0.2,0);
+		\draw [ line cap=round ] (0,-0.2) -- (0,0.2);
+		\draw (0,0) circle (0.25);
+		\node [ minimum width=0.5cm, minimum height=0.5cm ] at (0,0) (-box) {};
+	}
+}
+
+\tikzset{
+	multiply/.pic={
+		\draw [ line cap=round ] (-0.141,-0.141) -- (+0.141,+0.141);
+		\draw [ line cap=round ] (-0.141,+0.141) -- (+0.141,-0.141);
+		\draw (0,0) circle (0.25);
+		\node [ minimum width=0.5cm, minimum height=0.5cm ] at (0,0) (-box) {};
+	}
+}

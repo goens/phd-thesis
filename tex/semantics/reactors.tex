@@ -44,8 +44,8 @@ The second reason for the deviation is the level of detail. The formalization of
 The aim of the formalization here is to isolate the abstract model's semantics and leave implementation details out.
 
 \paragraph{Restrictions}
-We explicitly restrict ourselves to a subset of the model, leaving out mutations, startup and shutdown. These are discussed in Chapter~2 of~\cite{lohsroh_phdthesis}.
-We also leave out cycles in the graphs for simplicity of the exposition, for a thorough discussion about cycles and causality loops see Chapter~2 of~\cite{lohsroh_phdthesis}.
+We explicitly restrict ourselves to a subset of the model, leaving out mutations, startup and shutdown. These are discussed in Chapter~2 of~\cite{lohstroh_phdthesis}.
+We also leave out cycles in the graphs for simplicity of the exposition, for a thorough discussion about cycles and causality loops see Chapter~2 of~\cite{lohstroh_phdthesis}.
 We do not model state in reactors or reactions either. This is not a strong restriction, since it can be modeled as self-edge (with an action).
 
 \paragraph{Formalization}
@@ -63,7 +63,7 @@ Data are thus sequences $s \in S = \Sigma^* \cup \Sigma^\omega$ over a finite al
 The basic unit of computation in Reactors are reactions, which take a finite number of data tokens as input and return a finite number as output.
 Thus, a \emph{reaction} is simply a Scott-continuous function $r : S^n \rightarrow S^m$\index{Reactors ! reaction}
 Note that this already restricts the definition of reactions.
-As defined in~\cite{lohsroh_cyphy19} with an informal \emph{source code} ``object'', they can interpreted in the semantics of the language of that source code.
+As defined in~\cite{lohstroh_cyphy19} with an informal \emph{source code} ``object'', they can interpreted in the semantics of the language of that source code.
 As such, they could implement any relation on $S^n \times S^m$.
 In particular, we assume reactions are deterministic (as mathematical functions) and respect causality (being Scott-continuous).
 

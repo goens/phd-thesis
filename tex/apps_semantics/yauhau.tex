@@ -85,8 +85,8 @@ We map the Clojure-based Ohua to an internal expression \acsu{IR}, as is shown i
 		&\mintinline{Clojure}{x} & $\mapsto$ & $x$ &  &\mintinline{Clojure}{(let [x t] t)} & $\mapsto$ & $\lit*{let} \: x = t \: \lit*{in} \: t$ &  \\
 
 	&\mintinline{Clojure}{(io x)}&$\mapsto$& $\lit*{io}(x)$ & &\mintinline{Clojure}{(fun [x] t)} $\equiv$ \mintinline{Clojure}{#(t)} & $\mapsto$ & $\lambda x.t$ &\\ 
-	&\mintinline{Clojure}{(if t t t)} & $\mapsto$ & $\lit*{if}(t \: t \: t)$  &	 &\mintinline{Clojure}{(f x1 ... xn)} & $\mapsto$ & $\lit*{ff}_f(x_1 \ldots x_n)$ & \\
-    &\mintinline{Clojure}{(t t)} & $\mapsto$ & $t \: t$ & 		%		\\
+	&\mintinline{Clojure}{(t t)} & $\mapsto$ & $t \: t$ &	 &\mintinline{Clojure}{(f x1 ... xn)} & $\mapsto$ & $\lit*{ff}_f(x_1 \ldots x_n)$ & \\
+    & & & & &	\mintinline{Clojure}{(if t t t)} & $\mapsto$ & $\lit*{if}(t \: t \: t)$  	%		\\
 		%		\multicolumn{4}{l}{\textit{Values:}}\\
 		%		&\mintinline{Clojure}{(reqF x1 ... xn)}& $\mapsto$ & $r_f$ & \\
 	\end{tabular}

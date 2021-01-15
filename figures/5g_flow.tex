@@ -1,0 +1,194 @@
+\usetikzlibrary{calc}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes}
+\usetikzlibrary{intersections,decorations.markings}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{fit}
+\usetikzlibrary{automata}
+
+%\usepackage{../includes/nick-shorthands}
+
+\newcommand{\lblTextsize}{\small}
+
+\input{aux/components.tikzset.tex}
+\tikzset{
+	blub/.style args={#1}{draw=#1, inner sep=0, ellipse, fill=white, minimum width=1.2cm, minimum height=0.5cm},
+	copy/.style={blub, color=gray!80},
+	pics/antenna/.style args={#1}{
+		code={
+			\draw [color=#1] (0,0) -- (50:0.5);
+			\draw [color=#1] (0,0) -- (130:0.5);
+			\draw [color=#1] (0,0) -- (0,-0.5);
+		}
+	},
+	pics/frontend/.style args={#1}{
+		code={
+			\node[inner sep=0] (-ant) {
+				\tikz[xshift=2cm]{ 
+					\pic [anchor=west] at (0,0) {antenna=#1};
+				}
+			};	
+%			\pic (-ant) at (0,0) {antenna=#1};
+			
+			\node[blub=#1, right= of -ant] (-b) {
+				\tikz{ 
+					\pic [anchor=center]{synchronizer};
+				}
+			};
+			\node[blub=#1, right= of -b] (-c) {
+				\tikz{ 
+					\pic [anchor=center] at (0,0) {fft=#1};
+				}
+			};
+			\node[blub=gray!80, below= of -c] (-d) {
+				\tikz{ 
+					\pic [anchor=center] at (0,0) {fft=gray!80};
+				}
+			};
+			\node[blub=#1, right= of -c] (-e) {
+				\tikz{ 
+					\pic [anchor=center] at (0,0) {estimator};
+				}
+			};
+
+			\draw [-Stealth, color=#1] (-ant) -- (-b);
+			\draw [-Stealth, color=#1, name path=-t] (-b) -- (-c);
+			\draw [-Stealth, dashed, color=gray!80] (-b) -- (-d);	
+			\draw [-Stealth, color=#1] (-c) -- (-e);	
+		}
+	},
+	pics/backend/.style args={#1}{
+		code={
+			\node[blub=#1] (-a) {
+				\tikz{ 
+					\pic [inner sep=0, anchor=center] at (0,0) {idft=#1};
+				}
+			};
+			
+			\node[blub=#1, right= of -a] (-b) {
+				\tikz{ 
+					\pic [inner sep=0, anchor=center] at (0,0) {demapper=#1};
+				}
+			};
+			
+			\node[blub=#1, right= of -b] (-c) {
+				\tikz{ 
+					\pic [inner sep=0, anchor=center] at (0,0) {decoder=#1};
+				}
+			};
+		
+			\draw [-Stealth, color=#1] (-a) -- (-b);
+			\draw [-Stealth, color=#1] (-b) -- (-c);
+		}
+	}
+}
+
+
+\begin{tikzpicture}
+
+	\draw [yshift=0] pic (A3) {frontend=gray!80};
+	\draw [yshift=3] pic (A2) {frontend=gray!80};
+	\draw [yshift=6] pic (A1) {frontend=gray!80};
+	\draw [yshift=9]  pic (A0) {frontend=black};
+	
+	
+	\node at (1,-1) (antLabel) {\lblTextsize\#Antennas};
+	\node at (2,-2) (carrierLabel) {\lblTextsize\#Carriers};
+	\node at ($(A0-c.south)!0.6!(A0-d.north)$) (scCnt) {\lblTextsize\#Sub-Carriers};
+	
+	\draw [->, dashed] (antLabel)  -- ($(A3-ant.east)!0.5!(A3-b.west)$);
+	\draw [->, dashed] (carrierLabel.north)  -- ($(A0-b.east)!0.5!(A3-c.west)$);
+	\draw [->, dashed] (carrierLabel.north)  -- ($(A0-b.south east)!0.4!(A3-d.north west)$);
+	\draw [->, dashed] (scCnt.north)  -- ++(90:0.5cm);
+	
+	\node[blub=black, below= of A0-e] (B) {
+		\tikz{ 
+			\pic [anchor=center] at (0,0) {equalizer};
+		}
+	};
+
+	\foreach \y in {4,3,...,1}{
+		\pgfmathparse{\y*3}
+		\edef\yStart{\pgfmathresult}
+		\node[yshift=\yStart, right= of B, inner sep=0] (C\y) {
+			\tikz{ 
+				\pic [inner sep=0, anchor=center] at (0,0) {backend=gray!80};
+			}
+		};
+		\draw [gray!80, -Stealth] (B.east) -- (C\y.west);
+	}
+
+	\node[right= of B, inner sep=0] (C) {
+		\tikz{ 
+			\pic [inner sep=0, anchor=center] {backend=black};
+		}
+	};
+
+	\foreach \y in {3,2,1}{
+		\pgfmathparse{\y*3}
+		\edef\yStart{\pgfmathresult}
+%		\node[yshift=\yStart, above= of C, align=center, inner sep=0] (C_\y) {
+%			\tikz{ 
+%				\pic [inner sep=0, anchor=center] at (0,0) {backend=gray!80};
+%			}
+%		};
+	
+		\draw  pic [anchor=west] (C_\y) at ([yshift=\yStart] C.west |- A0-e.east) {backend=gray!80};
+		\draw [gray!80, -Stealth] (B.north east) -- (C_\y-a.south west);
+	}
+
+
+	\draw  pic [anchor=west] (C_0) at (C.west |- A0-e.east) {backend=gray!80};
+	\draw [gray!80, -Stealth] (B.north east) -- (C_0-a.south west);
+	
+	\node at ([yshift=-0.35cm]C_0-a.south) (layerCnt) {\lblTextsize\#Layers};
+	\node at ([yshift=-0.35cm]C_0-b.south) (rbCnt) {\lblTextsize\#RBs};
+	\node at ([yshift=-0.35cm]C_0-c.south) (userCnt) {\lblTextsize\#Users};
+	
+	\draw [->, dashed] (rbCnt.west) -- ++(210:2.8cm);
+	\draw [->, dashed] (userCnt.west) -- ++(235:1.4cm);
+	\draw [->, dashed] (layerCnt.west) -- ++(195:0.6cm);
+	\draw [->, dashed] (layerCnt.west) -- ++(245:1cm);
+
+
+	\draw [-Stealth] (A0-e) -- (B);
+	\draw [-Stealth, gray!80] (A1-c) -- (B);
+	\draw [-Stealth, gray!80] (A2-c) -- (B);
+	\draw [-Stealth, gray!80] (A3-c) -- (B);
+	\draw [-Stealth] (A0-c) -- (B);
+	
+	\draw [-Stealth] (B) -- (C);
+	
+	\draw  ($ (A0-b.south east)!0.4!(A0-c.south west) $ ) arc(-120:120:0.2 and 0.35);
+	\draw  [rotate=-45] ([shift=(-90:0.4cm)]$ (A0-b.south east)!0.4!(A0-d.north west) $ ) arc(-120:120:0.2 and 0.35);
+
+	\draw  ([yshift=-2.5]$ (B.east)!0.4!(C.west) $ ) arc(-150:150:0.2 and 0.35);
+	\draw  [rotate=45] ([shift=(90:-0.1cm)]$ (B.north east)!0.4!(C_0-a.south west) $ ) arc(-120:120:0.1 and 0.15);
+
+
+%	\coordinate (origin) at (0,0);
+%	\coordinate (xmax) at ([xshift=8.5cm] origin);
+%	\coordinate (ymax) at ([yshift=3.8cm] origin);
+%	\coordinate (y1) at ([yshift=2.5cm] origin);
+%	
+%	\foreach \x/\xl in {0/, 1/0.1M, 2/1M/, 3/10M, 4/100M, 5/1G, 6/10G, 7/100G, 8/1T}
+%	\draw (\x,0.0) -- (\x,-0.1) node [below] {\xl};
+%	\foreach \y/\yl in {0/1000, 1/100, 2/10, 3/1}
+%	\draw (0.0,\y) -- (-0.1,\y) node [left] {\yl};
+%	
+%	\draw [->, very thick] (origin) -- (xmax) node [midway, below, yshift=-15](xlabel) {Throughput [bps]};
+%	\draw [->, very thick] (origin) -- (ymax) node [midway, left, xshift=-20, rotate=90, anchor=south](ylabel) {Latency [ms]};
+%
+%	\draw [rounded corners, fill=gray!5, name path=6G] (0,0) rectangle (8,3.2) node[below left=]{6G};
+%	\draw [rounded corners, fill=gray!10, name path=5G] (0,0) rectangle (6,2.4) node[below left=]{5G};
+%	\draw [rounded corners, fill=gray!15, name path=4G] (0,0) rectangle (4.5,1.3) node[below left=]{4G};
+%	\draw [rounded corners, fill=gray!80, name path=3G] (0,0) rectangle (3.1,1) node[below left=]{3G};
+%	\draw [rounded corners, fill=gray!25, name path=2G] (0,0) rectangle (1.3,1) node[below left=]{2G};
+%	
+%	\draw [Stealth-Stealth, red, ultra thick] (0.3,0.25cm) -- ++ (7.7cm,0)
+%		node [very near end, above]{$\sim 10^7$};
+%	\draw [Stealth-Stealth, red, ultra thick] (0.25,0.3cm) -- ++ (0, 2.9cm)
+%	node [very near end, right]{$\sim 10^3$};
+%	
+	
+\end{tikzpicture}

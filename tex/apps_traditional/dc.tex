@@ -15,7 +15,7 @@ To test if a (feasible) mapping is robust, we apply \emph{perturbations}\index{m
 A perturbation consists in taking the mapping and changing it partially, to see if it is (still) feasible.
 A robust mapping should be resistant to perturbations, as motivated by the remapping scenarios described before.
 
-To find such robust mappings we propose~\cite{hempel_scopes17} adapting the bio-inspired algorithm for called $L_p$-adaptation~\cite{asmus2017lp}.
+To find such robust mappings we propose~\cite{hempel_scopes17} adapting the bio-inspired algorithm for called $L_p$-adaptation~\cite{asmus2017lp}.\index{$L_p$ adaptation}\index{bio-inspired design centering}
 This algorithm uses the metric space structure of the mapping space (cf. Section~\ref{sec:metric_spaces}) to navigate it and find a \emph{design center}.\index{design center}
 For a fixed probability $P$, a design center is a feasible point $m$ in the design space, such that points in a neighborhood of $m$ are feasible with probability at least $P$.
 For the context of this discussion, we consider neighborhoods of the form $B_r(m)$, a ball with radius $r$ around the point $m$.
@@ -45,7 +45,7 @@ The $L_p$-adaptation algorithm seeks to find and $m$ which maximizes the radius 
 	\label{fig:visualization_design_centering_spaces}
 \end{figure*}
 
-Figure~\ref{fig:visualization_design_centering_spaces} again uses a visualization with the method described in~\cite{visualloss} to illustrate the intuition behind the design centering algorithm.
+Figure~\ref{fig:visualization_design_centering_spaces} again uses a visualization with the method described in~\cite{visualloss} to illustrate the intuition behind the design centering algorithm.\index{thresholds}
 We see the mountain landscape of the mapping space, where the height is the execution time of that mapping.
 The figure shows three different possible thresholds (high,medium,low). All peaks that are above the threshold are colored red: these depict infeasible points.
 A robust mapping is a mapping such that we could ``walk'' in any direction from it without reaching one of the red peaks.

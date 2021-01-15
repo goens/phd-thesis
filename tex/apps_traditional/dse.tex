@@ -6,8 +6,9 @@ This section will focus on \ac{DSE} for finding near-optimal mappings, as define
 We will see many applications of the structures defined and analyzed in Chapter~\ref{chap:mapping_structures}
 
 \subsection{Heuristics and Metaheuristics}
+\label{sec:heuristics_vs_metaheuristics}
 
-Generally in \ac{DSE} we distinguish between two approaches for dealing with these kinds of intractable problems, heuristics and meta-heuristics (cf. Section~\ref{sec:mapping_problem}).
+Generally in \ac{DSE} we distinguish between two approaches for dealing with these kinds of intractable problems, heuristics and meta-heuristics (cf. Section~\ref{sec:mapping_problem}).\index{meta-heuristics}
 Recall that mapping heuristics are domain-specific algorithms that exploit the specific domain-knowledge to find a solution based on a pre-defined model of the problem, whereas meta-heuristics rely on an iterative evaluation of the points.
 As we outlined above, different heuristics and meta-heuristics come with trade-offs between the exploration time required to find a solution and the quality of said solution.
 This is certainly the case for many discrete optimization problems in general, the mapping problem being no exception~\cite{goens_mcsoc16}.
@@ -17,6 +18,7 @@ A particular difficulty of comparing mapping approaches and algorithms are the d
 With \mocasin we designed a common framework that allows us to compare between mapping algorithms~\cite{menard_rapido21}.
 In particular, in \mocasin we have two heuristics for mapping: the \ac{GBM} heuristic~\cite{castrillon_dac12} and a static mapping variant~\cite{menard_rapido21} of the \ac{CFS} scheduler from Linux.
 Additionally, we have implemented genetic algorithms based on and inspired by those found in Sesame~\cite{erbas2006multiobjective,quan2014towards,goens_mcsoc16}, a simulated annealing~\cite{simulated_annealing} mapping algorithm and a tabu search~\cite{tabu_search}.
+\index{genetic algorithm}\index{simulated annealing}\index{tabu search}\index{random walk}
 We also have a simple random walk algorithm for reference.
 A survey of these mapping algorithms, among others can be found in~\cite{singh2013mapping}.
 We implemented these algorithms for \mocasin and this thesis to have a basis for comparison from established literature.
@@ -34,10 +36,10 @@ A deliberate choice in the parameters however is that the exploration times shou
 	\centering
    \resizebox{0.95\textwidth}{!}{\input{generated/heuristics_vs_metaheuristics.tex}}
 	\caption{Comparison of multiple mapping heuristics and metaheuristics on the \ac{E3S} benchmarks.}
-	\label{fig:metric_comparison}
+	\label{fig:heuristics_vs_metaheuristics}
 \end{figure}
 
-Figure~\ref{fig:metric_comparison} shows a comparison of the different heuristics and metaheuristics on the \ac{E3S} benchmarks.
+Figure~\ref{fig:heuristics_vs_metaheuristics} shows a comparison of the different heuristics and metaheuristics on the \ac{E3S} benchmarks.
 Each of the metaheuristics that require random data we execute $10$ times and show the variation as calculated by the unbiased estimator of the standard deviation of the multiple sampled times.
 The execution times vary obviously depending on the different benchmark applications and on the platforms they run on.
 The absolute values of these times, however, are not interesting for comparing the mapping algorithms.
@@ -65,7 +67,83 @@ We can interpret this as a consequence of the growing design space and its compl
 TODO: add and test genetic with CFS initials.
 
 \subsection{Leveraging Symmetries}
-Talk about~\cite{goens_taco17} + new stuff (mpsym)
+
+As motivated when discussing them in Section~\ref{sec:symmetries}, symmetries can be used to improve \ac{DSE} in the mapping problem.
+There are two distinct applications of symmetries in \ac{DSE}.
+The first application is for speeding up meta-heuristics (without modifying them), as shown in~\cite{goens_taco17}, by leveraging the equivalence of symmetric mappings in a symmetry-aware cache.
+The second application is by pruning the design space as seen by the meta-heuristic~\cite{goens_mcsoc18,goens_tcad21}, effectively changing the meta-heuristic.
+
+We will first discuss the idea of a symmetry-aware cache.\index{symmetry-aware cache}
+As discussed before, meta-heuristics work through an iterative principle, where they evaluate mappings and drive the search based on the results of the evaluation.
+While the evaluation is fast and light-weight by design (cf. sections~\ref{sec:sec:simulating_mappings} or~\ref{sec:architecture_models}), it still usually dominates the execution time of the exploration (cf. Figure~\ref{fig:heuristics_vs_metaheuristics}).
+A defining property of the symmetries is how simulation results are invariants of the equivalence classes of orbits (cf. Section~\ref{sec:symmetries}).
+This means that if we know the results of a simulation for a mapping, we know the results for all mappings in its equivalence class.
+We can leverage this by designing a symmetry-aware mapping cache, which stores simulations results by equivalence class instead of by mapping~\cite{goens_taco17}.
+This yields a trade-off, where computations about the symmetry have to be executed every time a mapping is going to be looked-up in the cache or evaluated.
+
+We implemented a symmetry-aware cache in \mocasin which uses \mpsym and its Python interface.
+We used this to evaluate the method of symmetry-aware caching on the \ac{E3S} benchmarks by accelerating the various meta-heuristics discussed in Section~\ref{sec:heuristics_vs_metaheuristics}.
+We can also evaluate the domain-specific methods of mpsym~\cite{goens_tcad21} by applying this method to multiple architecture topologies.
+In addition to the Odroid XU4 and MPPA3 Coolidge, which we used consistently throughout this thesis, we also test the methods on the exploration of two additional architectures: \ac{HAEC} and a simple generic cluster.
+The \ac{HAEC} architecture (cf. Figure~\ref{fig:HAEC}) is a \ac{PCB} design with low-latency optical interconnects on layers with a $4 \times 4$ regular-mesh structure.
+Four such layers are then connected, using low-latency wireless interconnects to communicate between adjacent layers.
+While in the \ac{HAEC} design each node of the layer is an \ac{MPSoC}, we model the topology by placing cores in those nodes and considering the board as a single \ac{MPSoC}.
+This serves to evaluate our methods on this topology.
+The generic cluster architecture we evaluate is the simplest non-trivial clustered architecture topology.
+It consists of two identical clusters, each of which with two identical cores.
+Each cluster shares a cache, and the two clusters can communicate over main memory.
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.95\textwidth}{!}{\input{generated/symmetries_cache.tex}}
+	\caption{The effect of a symmetry-aware cache on multiple architecture topologies as evaluated on the \ac{E3S} benchmarks.}
+	\label{fig:symmetry_cache}
+\end{figure}
+
+
+Figure~\ref{fig:symmetry_cache} shows the results of evaluating a symmetry-aware cache on the different meta-heuristics on different architecture topologies.
+It reports the execution time of the full exploration, separating the overhead from symmetry calculations from the rest of the exploration time for the symmetry-aware cache.
+These relative times are normed such that the regular exploration has a time of $1$. Both variants were executed $10$ times with identical seeds, for each benchmark. 
+Thus, they executed the exact same exploration, evaluating the exact same mappings and returning the same result.
+
+Unsurpisingly, the symmetry-aware cache does not offset the overhead of symmetry calculations for the random walk meta-heuristic.
+Since the mapping space is extremely large, the probability of finding two equivalent mappings at random is quite small. 
+Thus, both a symmetry-aware cache and a regular cache are not very useful for an unstructured random walk.
+The other meta-heuristics are much more structured, and clearly do benefit from the speedup.
+For the Odroid XU4, the symmetry-aware cache consistently yields a large speedup of the exploration time, around $1.4-1.7 \times$.
+For the simple cluster and the \ac{HAEC} architectures, the results are similar.
+The best results are achieved for the MPPA3 Coolidge topology, which despite its complexity has a very well-defined structure we can exploit with our wreath-product construction (cf. Section~\ref{sec:symmetries}).
+For the simulated annealing meta-heuristic, our symmetry-aware cache sped up the simulation in \textbf{average} by $14.5 \times$!
+
+We see that our \mpsym-powered symmetry-aware cache is very useful for speeding up \ac{DSE}.
+It can still be improved, however.
+In~\cite{goens_taco17} we also included application symmetries in the cache, which actually made a significant difference, as we were not using the more optimized algorithms from \mpsym.
+Application symmetries have a much potential, which is also intuitive if we consider the cardinality of the mapping space $|V_A|^{|V_K|}$ grows exponentially with the number of processes.
+However, as explained in Section~\ref{sec:app_arch_symmetries}, we have no systematic method of reliably detecting these application symmetries yet, which is why we do not include them in \mocasin.
+The other improvement comes from partial permutations. While we described them in Section~\ref{sec:partial_symmetries} and have a partial implementation in \mpsym, we still need efficient algorithms on partial permutations for exploiting the partial symmetries of the mapping space.
+This is evident in the comparison between the results of the MPPA3 Coolidge and \ac{HAEC} topologies in Figure\ref{fig:symmetry_cache}.
+The \ac{HAEC} topology has partial symmetries in each of the meshes (cf. Section~\ref{sec:partial_symmetries}), and it also has partial symmetries in the symmetry group of the clusters (the larger group from the wreath product).
+Since the first and last layers cannot communicate with each other directly (the topology is not toric), the symmetries of the clusters are all only partial.
+
+We can also leverage symmetries in \ac{DSE} by changing the underlying space as seen by the meta-heuristic.
+We also implemented this in \mocasin by using the \texttt{SymmetryRepresentation} as described in Section~\ref{sec:representations}.
+In this way, the meta-heuristics see the factor space and are effectively changed in their operations.
+We tested this with the same setup as before, the results of which can be seen in Figure~\ref{fig:symmetries_changed}.
+It shows both, the relative results of the mapper (in terms of the runtime of the best mapping) and the relative exploration times.
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.95\textwidth}{!}{\input{generated/symmetries_changed_operations.tex}}
+	\caption{The effect of a symmetry-aware cache on multiple architecture topologies as evaluated on the \ac{E3S} benchmarks.}
+	\label{fig:symmetry_changed_operations}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.95\textwidth}{!}{\input{generated/symmetries_coolidge_changed_operations.tex}}
+	\caption{The effect of a symmetry-aware cache on multiple architecture topologies as evaluated on the \ac{E3S} benchmarks.}
+	\label{fig:symmetry_coolidge_changed_operations}
+\end{figure}
 
 \subsection{Leveraging Metric Spaces}
 Improving DSE algorithms with metric spaces?
@@ -81,6 +159,7 @@ Talk about gradient descent: why it does not work w/o metric space structure, an
 We can take two observations from these results and combine them.
 The first one is the knowledge that geometry-based heuristics indeed benefit from a better metric, independent of if the resulting heuristics are overall good.
 The second observation is more subtle, it's about the general structure of the design space. 
+The design spaces of mappings seem to consist of multiple islands of performance with similar properties, separated by 
 An observation we can make is that 
 
 \begin{figure*}[t]
