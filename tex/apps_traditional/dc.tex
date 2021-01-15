@@ -20,6 +20,7 @@ This algorithm uses the metric space structure of the mapping space (cf. Section
 For a fixed probability $P$, a design center is a feasible point $m$ in the design space, such that points in a neighborhood of $m$ are feasible with probability at least $P$.
 For the context of this discussion, we consider neighborhoods of the form $B_r(m)$, a ball with radius $r$ around the point $m$.
 The $L_p$-adaptation algorithm seeks to find and $m$ which maximizes the radius $r$ such that the $B_r(m)$ is feasible with probability at least $P$.
+
 \begin{figure*}[t]
   \centering
 	\begin{subfigure}[b]{0.33\textwidth}
@@ -44,6 +45,13 @@ The $L_p$-adaptation algorithm seeks to find and $m$ which maximizes the radius 
 	\label{fig:visualization_design_centering_spaces}
 \end{figure*}
 
+Figure~\ref{fig:visualization_design_centering_spaces} again uses a visualization with the method described in~\cite{visualloss} to illustrate the intuition behind the design centering algorithm.
+We see the mountain landscape of the mapping space, where the height is the execution time of that mapping.
+The figure shows three different possible thresholds (high,medium,low). All peaks that are above the threshold are colored red: these depict infeasible points.
+A robust mapping is a mapping such that we could ``walk'' in any direction from it without reaching one of the red peaks.
+The larger the radius where this is possible, the more robust the mapping.
+This metric interpretation of the design space allows us to use the metric-based algorithm of $L_p$ adaptation to estimate these neighborhoods around which we can walk without reaching a red peak.
+
 The particular principle behind the $L_p$-adaptation algorithm is that it is based on estimating using an $L_p$ ball, i.e. with the $L_p$ norm $||x|| = (\sum_{i=1}^n x_i^p)^{1/p}$.
 The algorithm is inspired on the evolution of robustness in biological systems~\cite{asmus2017lp}.
 The basic principle behind the mapping is a two-step process, where simultaneously to the search for a design center, its robustness is estimated.
@@ -60,8 +68,6 @@ This way, the neighborhoods are not restricted to balls $B_r(m)$ around the poin
 	\label{fig:design_centering_exynos}
 \end{figure}
 
-
-
 These methods all rely on the metric space structure of the mapping space, as distances between mappings and the concept of neighborhoods all rely on the metric space structure.
 Strictly speaking, neighborhoods can be defined on any topology, but not with radii as in the $L_p$ algorithm.
 In~\cite{hempel_scopes17} we used the \texttt{SimpleVector} representation for this algorithm.
@@ -71,26 +77,39 @@ When considering other metrics, this also plays a role in the perturbation analy
 In~\cite{hempel_scopes17} we define a perturbation to be a change in the mapping of exactly one process.\index{perturbations (of mappings)}
 This is equivalent to a point with distance $1$ in the \texttt{SimpleVector} representation from the perturbed mapping.
 Equivalently, if the change is uniformly at random, selecting such a point is equivalent to a uniformly random point in the ball $\overset{\circ}{B}_1(m) = B_1(m) \setminus \{ m \}$ without its center.
-We call this kind of perturbations a \texttt{classic} perturbation.
-Instead of such a perturbation, we can canonically use the distance metric in the used representation to perturb the points, selecting (uniformly) random points from the ball $B_r(m)$ in the corresponding representation.
-We denote these as \texttt{representation} perturbations.
-The validity of the perturbation has to do with the concept of robustness, which is use-case specific.
-In this section we will compare both variants.
+We can generalize this to use the distance metric in the used representation to perturb the points, selecting (uniformly) random points from the ball $B_r(m)$ in the corresponding representation.
 
 To evaluate our methods, we re-implemented the $L_p$ adaptation algorithm and the corresponding perturbation tests in \mocasin. 
 From a $1000$ random iterations we take the $1.,2.$ and $3.$ quartiles of the execution time for each of the three \texttt{CPN} applications on each platform, and we use those as thresholds to have a high, medium and low feasibility threshold level respectively.
 We then execute the bio-inspired design centering flow with $10$ different random seeds for each of the threshold levels and compare centers to other (random) mappings for their stability using a perturbation test.
-We do all of this for both perturbation types, \texttt{classic} and \texttt{representation}.
 
 \begin{figure}[h]
 	\centering
    \resizebox{0.95\textwidth}{!}{\inputTikz{design_centering_exynos.tex}}
-	\caption{Design centering and perturbation stability for multiple threshold levels and perturtabion types.}
+	\caption{Design centering and perturbation stability for multiple threshold levels in the Odroid XU4 platform.}
 	\label{fig:design_centering_exynos}
 \end{figure}
 
 Figure~\ref{fig:design_centering_exynos} shows the results of this method for mapping the \texttt{CPN} applications onto the Odroid XU4 platform.
-TODO: discuss, add coolidge.
+We show the results for each application separately, for each of the three threshold levels. The thresholds are drawn onto the figure as horizontal dotted lines. 
+This means that if after the perturbations mappings stay above the line, then the mapping is robust.
+In almost all cases the design centering strategy indeed produces robust mappings, such that they are more robust than other (randomly chosen) points in a statistically significant manner.
+For the Odroid XU4 platform we can see that the \texttt{MetricSpaceEmbedding} representation yields better results, albeit only slightly so.
+We can see how this compares for the more complex platform, MPPA3 Coolidge.
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.95\textwidth}{!}{\inputTikz{design_centering_coolidge.tex}}
+	\caption{Design centering and perturbation stability for multiple threshold levels in the MPPA3 Coolidge platform.}
+	\label{fig:design_centering_coolidge}
+\end{figure}
+
+Figure~\ref{fig:design_centering_coolidge} shows the results of the design centering via $L_p$ adaptation on the MPPA3 Coolidge.
+In contrast to the simpler Odroid XU4, the \texttt{SimpleVector} representation yields clearly better results in this case.
+Probably the so-called ``curse of dimensionality'' affects the algorithm here more, since it relies on traversing the hypervolume of the space, which is more difficult with a larger dimension.
+Overall the $L_p$ algorithm seems to produce even more robust mappings in this case, yielding generally very good results.
+A possible explanation for this is again the size of the design space.
+In a larger space, with more points, it is plausible to also find larger neighborhoods of feasible points.
 
 In this section we have successfully used metric space interpretations of the mapping space to adapt the $L_p$ adaptation algorithm to find robust mappings.
 The mapping space, however, is a discrete space, while the $L_p$ adaptation assumes a continuous design space.
