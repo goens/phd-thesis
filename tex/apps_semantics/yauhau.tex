@@ -120,4 +120,35 @@ In the example, the two statements become a single \texttt{ff}$_\text{friendsOf}
 
 Through semantics-preserving transformations using \texttt{let} floating we can get independent \ac{I/O} calls batched this way and transform them to dataflow.
 The explicit concurrency in the dataflow transformation allows to execute batched \ac{I/O} calls when they arrive.
+
+
+
+
+\begin{figure}[t]
+    	\centering
+      \resizebox{0.95\textwidth}{!}{
+        \inputTikz{yauhau_baseline}
+      }
+		\caption{Batching \ac{I/O} with \"{Y}auhau compared to Haxl and Muse. Adapted from Figure~11 of~\cite{ertel_cc18}.}	
+		\label{fig:yauhau_baseline}
+\end{figure}
+
+\begin{figure}[t]
+    	\centering
+      \resizebox{0.95\textwidth}{!}{
+        \inputTikz{yauhau_concurrency}
+      }
+		\caption{Concurrent \ac{I/O} with \"{Y}auhau compared to Haxl and Muse. Adapted from Figure~12 of~\cite{ertel_cc18}.}	
+		\label{fig:yauhau_io-imbalance}
+	\end{figure}
+
 An important advantage of this is that it also allows us to transcend the function boundaries
+  
+\begin{figure}[t]
+	\centering
+      \resizebox{0.95\textwidth}{!}{
+        \inputTikz{yauhau_functions}
+      }
+	\caption{Concurrent \ac{I/O} in modular programs with \"{Y}auhau. Adapted from Figure~13 of~\cite{ertel_cc18}.}
+	\label{fig:yauhau_efficient-modularity}
+\end{figure}
