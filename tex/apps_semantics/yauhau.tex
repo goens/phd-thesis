@@ -120,8 +120,8 @@ In the example, the two statements become a single \texttt{ff}$_\text{friendsOf}
 
 Through semantics-preserving transformations using \texttt{let} floating we can get independent \ac{I/O} calls batched this way and transform them to dataflow.
 The explicit concurrency in the dataflow transformation allows to execute batched \ac{I/O} calls when they arrive.
-
-
+The details of the transformation~\cite{ertel_cc18} are beyond the scope of this thesis.
+We discuss how we evaluate the effectiveness of the transformation using the Level Graphs methodology described in Section~\ref{sec:level_graphs}.
 
 
 \begin{figure}[t]
@@ -133,6 +133,25 @@ The explicit concurrency in the dataflow transformation allows to execute batche
 		\label{fig:yauhau_baseline}
 \end{figure}
 
+Figure~\ref{fig:yauhau_baseline} shows a comparison of our framework, \"{Y}auhau, with the two other main alternatives in the public domain, Facebook's Haxl~\cite{marlow2014haxl} and Muse~\cite{muse}.
+We cannot compare with Twitter's Scala-based variant, Stitch\cite{stitch}, which is neither described in a peer-reviewed publication nor open-sourced.
+Since we do not have a real test workload like Facebook does to reproduce the evaluation of~\cite{marlow2014haxl}, we used synthetic graphs with a similar structure to compare the approach.s
+We produced random Level Graphs with code annotations as described in Section~\ref{sec:level_graphs}. 
+We varied the number of levels between $1$ and $20$ in the generated graph.
+An increasing number of levels results in increasingly complex applications and interactions.
+For this baseline comparison we disabled sub-functions by letting the probability of labeling a node as a sub-function be $0$.
+For each number of levels we generated $20$ graphs and produced code for each of the frameworks with the structure of each of these twenty graphs.
+This way the same workload is evaluated for each framework, as equivalent versions are produced from a single graph.
+The number of \ac{I/O} accesses in each individual graph is random nevertheless, which is why we used $20$ graphs per considered number of levels to obtain a statistical assessment of the batching effect of each framework.
+
+The results of Figure~\ref{fig:yauhau_baseline} show that both Haxl and Muse consistently batch \ac{I/O} calls, improving over a sequential execution in a statistically significant fashion.
+The ratio of \ac{I/O} calls compared to a sequential execution improves with increasing code complexity, as measured by the number of levels. 
+Compared to Haxl and Muse, which produce equivalent results, \"{Y}auhau batches significantly more \ac{I/O} calls.
+The reason for \"{Y}auhau beating the other two frameworks is that it can batch across multiple levels, due to the underlying dataflow representation.
+Both Haxl and Muse work in \emph{rounds}, which depend on the code structure.
+Thus, to fully optimize \ac{I/O} in these frameworks, developers need to re-organize their code to maximize batch requests in each round.
+This partially defeats the purpose of the \ac{DSL}, namely to free developers from performance concerns and let them focus solely on the functionality.
+
 \begin{figure}[t]
     	\centering
       \resizebox{0.95\textwidth}{!}{
@@ -142,8 +161,20 @@ The explicit concurrency in the dataflow transformation allows to execute batche
 		\label{fig:yauhau_io-imbalance}
 	\end{figure}
 
-An important advantage of this is that it also allows us to transcend the function boundaries
-  
+Figure~\ref{fig:yauhau_io-imbalance} shows a second experiment, where concurrency in \ac{I/O} is enabled in the dataflow graph.
+Since Haxl and Muse are equivalent in terms of their batching, we just compare to Haxl in this experiment.
+We compare \"{Y}auhau to a variant which blocks computation when performing \ac{I/O} and a concurrent dataflow variant.
+Again we use level graphs to produce benchmarks tailored to our problem, this time we add a fixed (randomly-chosen) execution time for the computation and \ac{I/O} nodes in the graph, to simulate the computation time and \ac{I/O} latency.
+We see how the concurrency of the dataflow \ac{MoC} improves the latency of the service significantly beyond the additional benefits already provided by the round-free batching.
+
+Finally, an important advantage of the dataflow \ac{MoC} we have not evaluated is how it also allows us to transcend the function boundaries.
+To test this we can again leverage the full control we get from our Level Graph benchmarking method.
+We fix the number of levels, controlling the code complexity, and consequently the average number of \ac{I/O} requests.
+Instead of varying the number of levels, we allow sub-function and vary the probability of generating such a sub-function.
+The higher the probability, the more nested functions appear in the code.
+In other words, we can make code with similar levels of complexity be more or less modular.
+This allows us to test directly how modularity affects batching.
+
 \begin{figure}[t]
 	\centering
       \resizebox{0.95\textwidth}{!}{
@@ -152,3 +183,14 @@ An important advantage of this is that it also allows us to transcend the functi
 	\caption{Concurrent \ac{I/O} in modular programs with \"{Y}auhau. Adapted from Figure~13 of~\cite{ertel_cc18}.}
 	\label{fig:yauhau_efficient-modularity}
 \end{figure}
+
+Figure~\ref{fig:yauhau_efficient-modularity} shows the results of the modularity experiment.
+For this case, Haxl and Muse differ, since our Haxl back-end uses applicative-do desugaring, which allows the compiler to optimize more than in Muse.
+Most notably however, both Haxl and Muse significantly increase the amount of \ac{I/O} requests when the program becomes more nested, while in \"{Y}auhau this is not the case.
+This is because of the underlying dataflow \ac{MoC}, which flattens the dependency graph, effectively inlining the sub-function calls and allowing the framework to batch across function boundaries.
+In particular, this means again that the premise of making developers not worry about performance in the \ac{DSL} is partially broken by Haxl and Muse, and this is fixed by \"{Y}auhau.
+
+We have seen how \ac{MoC}-based design can be useful in context different from the \ac{CPS} applications we focused on in the previous chapters.
+In particular, the Ohua approach can be used to make the model more implicit in the computation, which is crucial for developer adoption in many contexts.
+Finally, we have seen in this section as well some of the concrete advantages of random benchmarks with a clearly-defined structure, in the concrete example of the Level Graphs from Section~\ref{sec:level_graphs}.
+They allowed us to tailor experiments to isolate specific features of our dataflow \ac{MoC}-based approach and compare them to the other state-of-the-art approaches.
