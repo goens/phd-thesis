@@ -61,8 +61,8 @@ mapper.labs <- c("genetic" = "genetic", "random_walk"="random walk",
 
 changed_summary <- filter(changed_times_normed,platform == 'MPPA3 Coolidge') %>%
   group_by(representation.canonical_operations,mapper) %>% summarize(best_tot = sum(normed_best_mapping),time_tot = sum(normed_time))
-filter(changed_summary,representation.canonical_operations)$time_tot/filter(summary,!representation.canonical_operations)$time_tot
-filter(changed_summary,!representation.canonical_operations)$best_tot/filter(summary,representation.canonical_operations)$best_tot
+filter(changed_summary,representation.canonical_operations)$time_tot /filter(changed_summary,!representation.canonical_operations)$time_tot
+filter(changed_summary,!representation.canonical_operations)$best_tot/filter(changed_summary,representation.canonical_operations)$best_tot
 
 changed_times_per_file <- filter(clean_names,platform != '') %>%
   group_by(representation.canonical_operations,mapper,tgff.file,kpn.name,platform) %>%

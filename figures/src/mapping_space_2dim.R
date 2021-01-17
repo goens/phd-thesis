@@ -24,6 +24,7 @@ library(tidyverse)
 #Total simulation time: 0.01664626699857763 s
 
 times <- c(0.233821372, 0.241261686, 0.13205, 0.1136255, 0.134881503, 0.267142804) #6 -> 0
+times_orig <- c(2.233821372, 2.241261686, 0.03205, 0.0136255, 0.034881503, 2.267142804) #6 -> 0
 data_matrix <- matrix(c(
   c(times[6], times[1], times[1], times[1], times[2], times[2], times[2], times[2]),
   c(times[1], times[6], times[1], times[1], times[2], times[2], times[2], times[2]),
@@ -34,11 +35,25 @@ data_matrix <- matrix(c(
   c(times[5], times[5], times[5], times[5], times[4], times[4], times[3], times[4]),
   c(times[5], times[5], times[5], times[5], times[4], times[4], times[4], times[3])
 ), nrow=8,ncol=8)
+data_matrix_orig <- matrix(c(
+  c(times_orig[6], times_orig[1], times_orig[1], times_orig[1], times_orig[2], times_orig[2], times_orig[2], times_orig[2]),
+  c(times_orig[1], times_orig[6], times_orig[1], times_orig[1], times_orig[2], times_orig[2], times_orig[2], times_orig[2]),
+  c(times_orig[1], times_orig[1], times_orig[6], times_orig[1], times_orig[2], times_orig[2], times_orig[2], times_orig[2]),
+  c(times_orig[1], times_orig[1], times_orig[1], times_orig[6], times_orig[2], times_orig[2], times_orig[2], times_orig[2]),
+  c(times_orig[5], times_orig[5], times_orig[5], times_orig[5], times_orig[3], times_orig[4], times_orig[4], times_orig[4]),
+  c(times_orig[5], times_orig[5], times_orig[5], times_orig[5], times_orig[4], times_orig[3], times_orig[4], times_orig[4]),
+  c(times_orig[5], times_orig[5], times_orig[5], times_orig[5], times_orig[4], times_orig[4], times_orig[3], times_orig[4]),
+  c(times_orig[5], times_orig[5], times_orig[5], times_orig[5], times_orig[4], times_orig[4], times_orig[4], times_orig[3])
+), nrow=8,ncol=8)
 
 data <- expand.grid(x = seq(1,8),y = seq(1,8)) %>%
   tibble() %>%
   mutate(time = data_matrix[x+8*(y-1)])
 
+data_orig <- expand.grid(x = seq(1,8),y = seq(1,8)) %>%
+  tibble() %>%
+  mutate(time = data_matrix_orig[x+8*(y-1)],
+         time_formated = format(time,digits=2))
 
 tikz("generated/2d_mapping_heatmap.tex",standAlone = FALSE, height = 4, width = 5)
 print(
@@ -50,6 +65,16 @@ ggplot(data=data) +
 )
 dev.off()  
 
+tikz("generated/2d_mapping_heatmap_orig.tex",standAlone = FALSE, height = 4, width = 5)
+print(
+ggplot(data=data_orig) +
+  geom_tile(mapping = aes(x=factor(x),y=factor(y),fill=time),color='black') +
+  geom_text(mapping=aes(x=factor(x),y=factor(y),label=time_formated),size=3.8) +
+  scale_fill_viridis_c(direction=-1) +
+  labs(x="T$_1$ mapping (PE)", y = "T$_2$ mapping (PE)") +
+  theme(legend.text = element_blank(),text=element_text(size=18))  
+)
+dev.off()  
 
 canonical <- set(pair(1L,1L),pair(1L,2L),pair(5L,5L),pair(5L,6L),pair(1L,5L),pair(5L,1L))
 in_canonical <- function(can,x,y){

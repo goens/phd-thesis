@@ -64,7 +64,7 @@ The most striking result here, however, is the extremely good performance of the
 This good performance is misleading at first, a perhaps more honest assessment of the results is that \emph{all other (meta-) heuristics perform poorly}.
 We can interpret this as a consequence of the growing design space and its complexity, which affects the metaheuristics, while the static CFS mapper can still leverage domain-specific knowledge to find fairly good mappings.
 
-TODO: add and test genetic with CFS initials.
+%TODO: add and test genetic with CFS initials.
 
 \subsection{Leveraging Symmetries}
 
@@ -92,6 +92,9 @@ This serves to evaluate our methods on this topology.
 The generic cluster architecture we evaluate is the simplest non-trivial clustered architecture topology.
 It consists of two identical clusters, each of which with two identical cores.
 Each cluster shares a cache, and the two clusters can communicate over main memory.
+
+To manage the sheer amount of experiments ($\gg 10^5$) for this evaluation and the upcoming ones in this chapter, we modified slightly modified the parameters of the meta-heuristics, reducing the overall execution time.
+We reduced the number of generations of the genetic algorithm to $10$, the number of iterations of the random walk to $300$, reduced the initial temperature of the simulated annealing heuristic to $0.1$ and the maximum number of iterations of the tabu search algorithm to $5$, with an increased radius of $2.5$.
 
 \begin{figure}[h]
 	\centering
@@ -128,8 +131,6 @@ Since the first and last layers cannot communicate with each other directly (the
 We can also leverage symmetries in \ac{DSE} by changing the underlying space as seen by the meta-heuristic.
 We also implemented this in \mocasin by using the \texttt{SymmetryRepresentation} as described in Section~\ref{sec:representations}.
 In this way, the meta-heuristics see the factor space and are effectively changed in their operations.
-We tested this with the same setup as before, the results of which can be seen in Figure~\ref{fig:symmetries_changed}.
-It shows both, the relative results of the mapper (in terms of the runtime of the best mapping) and the relative exploration times.
 
 \begin{figure}[h]
 	\centering
@@ -138,6 +139,25 @@ It shows both, the relative results of the mapper (in terms of the runtime of th
 	\label{fig:symmetry_changed_operations}
 \end{figure}
 
+We tested this with the same setup as before, the results of which can be seen in Figure~\ref{fig:symmetries_changed_operations}.
+It shows both, the relative results of the mapper (in terms of the runtime of the best mapping) and the relative exploration times.
+The times shown are relative to the random walk meta-heuristic in the regular implementation, i.e. without symmetries.
+It is not surprising that most times for the best mapping results are thus $<1$, as the random walk meta-heuristic is not as good as the other meta-heuristics.
+The more interesting comparison, however, is between both variants of each mapping algorithm.
+For the simpler platforms, Odroid-XU4 and the simple cluster  the symmetry-enabled variant speeds up the execution in a fashion similar to the symmetry-enabled cache, while yielding similar results.
+For the more complex platforms, \ac{HAEC} and the Kalray MPPA3 Coolidge, the results vary between both.
+The results of the mapping algorithm are considerably better on the MPPA3 Coolidge, while being very similar for both representations in the \ac{HAEC} platform.
+The exploration time was also improved consistently for both platforms.
+The difference between the results for the \ac{HAEC} and MPPA3 Coolidge platform can again be explained by the missing partial symmetry support in the implementation.
+
+The performance improvement for the MPPA3 Coolidge, however, is very impressive.
+For the simulated annealing meta-heuristic, the mappings found for the \ac{E3S} benchmarks were an \emph{average} of $32.4 \times$ better with the symmetries than without them.
+This impressive result is, as we have seen in Figure~\ref{fig:heuristics_vs_metaheuristics}, rather a testament of how badly the meta-heuristic performs without the symmetries in this complex architecture.
+To understand the mapping results for the MPPA3 Coolidge, Figure~\ref{fig:symmetry_coolidge_changed_operations} shows the results for this platform in more detail.
+Instead of separating the benchmark by domain (cf. Table~\ref{tab:e3s}), we separate them by the number of tasks in the task graph.
+The number of tasks is a metric that better describes the complexity of the mapping space. 
+In this case the values are normed to the regular variant of the algorithm for each algorithm, instead of norming all values relative to a single algorithm.
+
 \begin{figure}[h]
 	\centering
    \resizebox{0.95\textwidth}{!}{\input{generated/symmetries_coolidge_changed_operations.tex}}
@@ -145,10 +165,19 @@ It shows both, the relative results of the mapper (in terms of the runtime of th
 	\label{fig:symmetry_coolidge_changed_operations}
 \end{figure}
 
-\subsection{Leveraging Metric Spaces}
-Improving DSE algorithms with metric spaces?
+It is obvious that the symmetries are not advantageous for a random mapping, as explained before due to the sheer size of the mapping space.
+This is clearly visible in Figure~\ref{fig:symmetry_coolidge_changed_operations}.
+For the algorithms based on tabu search and simulated annealing, the advantage comes predominantly for smaller task graphs (with $2-5$ tasks).
+For larger tasks probably the symmetries are not as effective anymore and both variants perform poorly. 
+The genetic algorithm seems to continue to profit from the symmetries for larger task graphs, but it is conceivable that this advantage would still not hold for task graphs larger than those found in the \ac{E3S} benchmarks.
 
-Talk about gradient descent: why it does not work w/o metric space structure, and why it should with it.
+\subsection{Leveraging Metric Spaces}
+
+The same way we used the \texttt{Symmetry} representation to improve \ac{DSE}, we can use the \ac{MetricSpaceEmbedding} representation and see if this improves the performance of mapping algorithms.
+The two meta-heuristics that are primarily based on an underlying metric space structure of the search space are tabu search and simulated annealing.
+We compare the results of these two meta-heuristics on both the \ac{E3S} and \ac{CPN}-based benchmarks.
+For each meta-heuristic, each representation and each benchmark application, we measure the results of $10$ runs with different random seeds.
+
 \begin{figure}[h]
 	\centering
    \resizebox{0.95\textwidth}{!}{\input{generated/geometric_heuristics_coolidge.tex}}
@@ -156,31 +185,60 @@ Talk about gradient descent: why it does not work w/o metric space structure, an
 	\label{fig:coolidge_geometric}
 \end{figure}
 
-We can take two observations from these results and combine them.
+Figure~\ref{fig:coolidge_geometric} shows the results of this experiments for the MPPA3 Coolidge platform, where we have seen before that the metric space structure of our embedding-based representations is better than the canonical metric in the \texttt{SimpleVector} representation.
+We see that the results of the exploration are significantly better for both meta-heuristics with the representations based on this better distance metric.
+This modest improvement does come at a cost in exploration time, which is clearly attributable to the increased dimension of the embedding spaces in these representations.
+We have also seen in the previous results that these meta-heuristics perform poorly for the MPPA3 Coolidge with its complex topology and large design space.
+
+The results still provide some insight into the nature of the design space and the usefulness of the embedding-based representations.
+We can concretely make two observations from these results and combine them to produce a new meta-heuristic.
 The first one is the knowledge that geometry-based heuristics indeed benefit from a better metric, independent of if the resulting heuristics are overall good.
 The second observation is more subtle, it's about the general structure of the design space. 
-The design spaces of mappings seem to consist of multiple islands of performance with similar properties, separated by 
-An observation we can make is that 
+The design spaces of mappings seem to consist of multiple islands of performance with similar properties, separated by poorly-performing mappings.
+This is apparent already in the extremely simple two-task example in Figure~\ref{fig:mapping_space_full}.
+The visualization with the methods from~\cite{visualloss} in Figure~\ref{fig:mapping_space_visualization} or in Figure~\ref{fig:visualization_design_centering_spaces} makes this even more apparent.
+
+The idea behind the representations is leveraging the underlying structure of the design space.
+As such, these ``performance islands'' seem to be reduced by both representation methods discussed here, as is also suggested by Figure~\ref{fig:mapping_space_full}.\index{performance islands}
+We also applied the methods from~\cite{visualloss} to the same design space of the \texttt{audio filter} benchmark on the MPPA3 Coolidge with the \texttt{SymmetryEmbedding} representation.
+Figure~\ref{fig:visualization_simpvec_symemb} shows the results of this visualization alongside the same mapping space visualization for the \texttt{SimpleVector} representation, reinforcing the intuition of these ``performance islands''.
 
 \begin{figure*}[t]
   \centering
 	\begin{subfigure}[b]{0.43\textwidth}
     \includegraphics[width=\textwidth]{figures/coolidge-af-space-sim-vec.png}
 		\caption{SimpleVector}
-		\label{fig:lvars-bench-cores}
 	\end{subfigure}
 	~
 	\begin{subfigure}[b]{0.43\textwidth}
     \includegraphics[width=\textwidth]{figures/coolidge-af-space-emb-sym.png}
 		\caption{SymmetryEmbedding}
-		\label{fig:lvars-bench-overhead}
 	\end{subfigure}
 
 	\caption{Visualization of the same design space of the audio filter benchmark on the MPPA3 Coolidge platform in two different representations.}%
 	\label{fig:visualization_simpvec_symemb}
 \end{figure*}
 
-\subsection{All Representations}
+
+The best indicator of this, however, are the vertical lines in the relative distances from the metric spaces (cf. Figure~\ref{fig:metric_comparison_exynos} and Figure~\ref{fig:metric_comparison_coolidge}).
+Since the abscissa in these two plots represents the (relative) mapping distance in the corresponding metric, vertical lines indicate equidistant points. 
+The fact that there are points with the full range of relative execution times in these equidistant ranges is consistent with such ``performance islands''.
+If the mapping space landscape was more regular, the plots would more closely resemble those where we only considered the maxima (cf. Figure~\ref{fig:metric_comparison_max_exynos} and Figure~\ref{fig:metric_comparison_max_coolidge} respectively).
+
+We can use this observation to derive a new meta-heuristic for exploring the mapping space.
+Our ``performance islands'' hypothesis implies the mapping space is full of local minima.
+Guiding a local search towards an optimum should thus not be as conducive to good results.
+Instead, we can use a simple and fast meta-heuristic to find a local minimum quickly and apply it to multiple points spread around the design space's geometry. 
+As meta-heuristic for finding local minima we use the well-known gradient descent optimization algorithm with the momentum method~\cite{rumelhart1986learning}.
+For the step-size we use the Barzilai-Borwein \cite{barzilai1988two} method.
+In its regular form this heuristic will quickly get stuck in a local minimum and produce poor mapping results, as confirmed by experiments (which we omit here).
+However, we can add a simple additional meta-heuristic to leverage the ``performance islands'' hypothesis.
+We start the heuristic at multiple random points, uniformly distributed in the design space, as defined the distance metric.
+In these spread-out locations we execute (parallel) gradient descent optimizations which we cancel as soon as they reach a local minimum, which empirically happens after a handful of iterations.
+The meta-heuristic returns the fastest mapping found in any of the different starting locations.
+We configure the meta-heuristic to run on $5$ different locations with a maximum of $20$ iterations each, even though this maximum is almost never reached in practice in the experiments.
+
+%\subsection{All Representations}
 \begin{figure}[h]
 	\centering
    \resizebox{0.95\textwidth}{!}{\input{generated/multiple_representations_exynos.tex}}
@@ -188,9 +246,40 @@ An observation we can make is that
 	\label{fig:multiple_representations_exynos}
 \end{figure}
 
+Figure~\ref{fig:multiple_representations_exynos} shows a comprehensive comparison on the Odroid XU4 platform for both benchmarks of all meta-heuristics, including our new islands-based gradient descent method. 
+The results reflect our previous results (cf. figures~\ref{fig:symmetry_changed_operations} and~\ref{fig:heuristics_vs_metaheuristics}).
+We see that the embedding-based representations yield worse results for tabu search and simulated annealing, and require more time in almost all cases.
+These representations are not very useful for this platform, which is consistent with the previous results.
+The more interesting results are for those for the considerably more complex topology of the MPPA3 Coolidge.
+
 \begin{figure}[h]
 	\centering
    \resizebox{0.95\textwidth}{!}{\input{generated/multiple_representations_coolidge.tex}}
 	\caption{Comparison of the effects of multiple representations on the MPPA3 Coolidge platform.}
-	\label{fig:multiple_representations_exynos}
+	\label{fig:multiple_representations_coolidge}
 \end{figure}
+
+Figure\ref{fig:multiple_representations_coolidge} shows the same comprehensive comparison of all meta-heuristics and all representations on all benchmarks, this time for the MPPA3 Coolidge platform. 
+Besides from the results already seen and discussed before in figures~\ref{fig:symmetry_changed_operations},~\ref{fig:heuristics_vs_metaheuristics} and \ref{fig:coolidge_geometric}, the most notable results are the results for our new island-based gradient descent meta-heuristic.
+Despite its simplicity, this meta-heuristic significantly outperforms all the other more sophisticated meta-heuristics.
+The two embedding-based representations yield worse results, which is consistent with our ``performance islands'' hypothesis.
+In a more structured design space it is more difficult to find the better performance islands than in a less structured one which features good mappings in more islands.
+The \texttt{Symmetries} representation yields the best results, which is also consistent with this, as it only reduces the size of the design space without fundamentally changing its topology.
+In a smaller space it is more likely to find an island with a higher local minimum.
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.7\textwidth}{!}{\inputTikz{2d_mapping_heatmap_orig}}
+	\caption{The actual mapping space of  GSM two-task application from \ac{E3S} on the Odroid XU4 that inspired Figure~\ref{fig:mapping_space_example}.}
+	\label{fig:gsm_actual_mapping_space}
+\end{figure}
+
+
+Recall the intuition of Figure~\ref{fig:mapping_space} of all representations for the simple two-task example.
+We can see how the \texttt{Symmetries} representation has two islands, with fast mappings, whereas the \ac{SymmetryEmbedding} representation only has one.
+For such a simple example the symmetries capture all different execution times.
+In the original task graph, a \ac{GSM} application from the \ac{E3S} benchmarks, the differences in execution times were much lower. 
+Figure~\ref{fig:gsm_actual_mapping_space} shows the actual mapping space. Since the differences in execution times are barely visible from the color coding, the times (in ms) are also explicitly written in the figure to show the differences.
+This shows one of the limitations of the symmetries and a possible explanation for the ``performance islands'' hypothesis: many mappings are not equivalent, but very similar.
+In future work we could capture these similarities in mappings in a more formal fashion.
+This should allow us to better explore the design space.
