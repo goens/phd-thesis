@@ -9,7 +9,7 @@ Complementary to these efforts are compilers, which serve as bridge between the 
 Ideally, a compiler translates the abstract human-level expressions into efficient machine-level instructions.
 While we have made significant progress, this task has proven to be dauntingly difficult.
 
-Traditionally, we have put the resarch and effort into optimizing the execution of a single core.
+Traditionally, we have put the research and effort into optimizing the execution of a single core.
 Most of the progress of decades of research in programming language and compilers revolves around this single-core model.
 In the last decade or two, however, with the multicore era, this challenge has increased dramatically.
 Now we have to use and coordinate multiple cores, commonly with different capabilities.
@@ -48,32 +48,32 @@ A programmer writing a piece of C code in the early 1970s would automatically be
 By recompiling her code for a processor $10 \times$ faster, she could very roughly expect her code also to run about $10 \times$ as fast.% Do I want to make this concrete (with Processor names?)
 Nowadays thus, a programmer writing a piece of (sequential) C code in the early 2000s cannot expect anywhere near a $100$-fold increase in performance today when she uses a microchip with $100 \times$ the number of transistors.
 At least not without fundamentally restructuring her code to exploit parallelism.
-Contemporary systems aimed at performance almost ubiqutiously consist of multicore chips, in many cases heterogeneous, which tremendously increases the system complexity.
+Contemporary systems aimed at performance almost ubiquitously consist of multicore chips, in many cases heterogeneous, which tremendously increases the system complexity.
 It is a clear trend that the complexity and heterogeneity will continue to increase~\cite{voelp16_pmes}.
 %The trend is clear, the number of cores, heterogeneity and overall system complexity will only continue to increase.
 
 %something about network-on-chip, emerging memories, and hierarchical topologies
 As the number of cores in a chip keeps increasing, the importance of coordination and communication between the cores raises as well.
 Memory latency and bandwidth has been a bottleneck for many classes of applications for a while.
-In the case of manycores, which are multicores where the number of cores goes over several dozens, even to hunderds or thousands, the on-chip memory subsystem becomes a central design point of the chip.
-Systems based on \ac{NoC} technology become necessary, lest a single bus interconnect becomes the bottleneck of the system when thousands of cores want to communicate simmultaneously through it.
+In the case of manycores, which are multicores where the number of cores goes over several dozens, even to hundreds or thousands, the on-chip memory subsystem becomes a central design point of the chip.
+Systems based on \ac{NoC} technology become necessary, lest a single bus interconnect becomes the bottleneck of the system when thousands of cores want to communicate simultaneously through it.
 
 
 \begin{figure}[h]
 	\centering
    \resizebox{0.5\textwidth}{!}{\input{figures/haec.tex}}
-   \caption{The HAEC architecture~\cite{HAEC} has multiple levels of hierarchy: on-chip, intra-board (optical links) and inter-board (wireless).} 
+   \caption{The \acs*{HAEC} architecture~\cite{HAEC} has multiple levels of hierarchy: on-chip, intra-board (optical links) and inter-board (wireless).} 
 	\label{fig:haec}
 \end{figure}
 
 In fact, for a multitude of reasons, manycores are commonly designed in a hierarchical fashion.
 Smaller clusters of cores locally interconnected communicate between each other and off-chip via a larger \ac{NoC}.
 These clusters and systems are usually heterogeneous as well, like the Karlay MPPA3 Coolidge~\cite{coolidge}, with includes accelerators for cryptography and secure cores, alongside general purpose cores.
-Some systems even propose multiple layers of hierarchy, like the three layers of the HAEC topology~\cite{HAEC}, depicted in Figure~\ref{fig:haec}.
-This is a proposed 3D stacked system with multiple \acp{PCB} each with multiple manycore chips, not a single chip with this complex interconnect.
+Some systems even propose multiple layers of hierarchy, like the three layers of the \ac{HAEC} topology~\cite{HAEC}, depicted in Figure~\ref{fig:haec}.
+This is a proposed 3D-stacked system with multiple \acp{PCB} each with multiple manycore chips, not a single chip with this complex interconnect.
 However, this design could allow for very low latencies, such that challenges of programming it are comparable to those of programming such a topology in an on-chip memory subsystem.
 What happens if the mulicores in this system are similar to the Karlay MPPA3 Coolidge? This would yield more than $5000$ heterogeneous cores connected at five levels of hierarchy in different topologies.
-More generally, complex topologies with possibly multi-level hierachies, add an additional layer of complexity to modern manycore systems besides heterogeneity and concurrency.
+More generally, complex topologies with possibly multi-level hierarchies, add a layer of complexity to modern manycore systems besides heterogeneity and concurrency.
 \todo{JC: great segway to complexity of topologies: be more explicit! (not sure about what?)}
 
 As part of the shift towards memory-centered systems, emerging memory technologies play a significant role.
@@ -92,8 +92,8 @@ Reasoning about concurrency, parallelism and heterogeneity on top of the correct
 In general, the productivity of developers cannot keep up with the pace of developments in hardware.
 We speak of a software productivity gap~\cite{castrillon2014thesis,ecker2009hardware}\index{software productivity gap}. 
 
-When programming multicore systems, abstractions that proved very useful for programming single-cores become inadaquate.
-An universal concept in programming is that of repeating an action multiple times, or looping. 
+When programming multicore systems, abstractions that proved very useful for programming single-cores become inadequate.
+A universal concept in programming is that of repeating an action multiple times, or looping. 
 For example, consider the task of iterating through a bunch of pictures and determining which of them contain cats.
 For instructing a human, we can probably say something like ``look through those pictures and sort out the ones have cats''.
 A modern x86 chip, on the other hand, would understand something closer to this:
@@ -124,11 +124,11 @@ LBB0_4:
 \end{minted}
 
 This snippet is a very oversimplified version of the task, but it serves to make the point.
-Where we abstractly tell a human to look through the pictures and they undestand them as a whole set, interpreting themselves how to go through the set.
+Where we abstractly tell a human to look through the pictures, and they understand them as a whole set, interpreting themselves how to go through the set.
 On the other hand, we instruct the machine to iterate through them by a series of very fine-grained commands.
 We need to set certain registers to contain the right memory addresses, before calling an instruction to operate on them.
 We then call external functions that do the reading and cat identification.
-To then loop through the pictures here, simplified, we repeat this reading and indetifying by jumping to a previous point in the sequence of instructions.
+To then loop through the pictures here, simplified, we repeat this reading and identifying by jumping to a previous point in the sequence of instructions.
 Even this x86 assembly snippet is already an abstraction, not only because it uses human-readable mnemonics for the instructions, but more so because it also abstracts away the concrete memory addresses and the microarchitecture.
 In practice, however, almost no one would write this assembly code. Instead, they could write something closer to this (equivalent) C snippet:
 \begin{minted}{C}
@@ -164,7 +164,7 @@ Compiling Haskell code to an efficient single-core execution is significantly mo
 The lazyness also makes it difficult to reason about time in the computation.
 This is crucial in application domains like \ac{CPS}, where the systems interact with their environment.
 The \texttt{map} abstraction as implemented in Haskell is thus not well-suited to the domain of \ac{CPS}.
-In general, we are faced with trade-offs between abstract expressability and translatability to an efficient execution.
+In general, we are faced with trade-offs between abstract expressivity and translatability to an efficient execution.
 At its core, the challenge is about choosing the right models and corresponding abstractions for a particular domain.
 
 \section{Software Synthesis}
@@ -188,20 +188,20 @@ For \ac{CPS} and, embedded systems in general, there is a family of methods call
 It is a family of methods devised precisely to help with the burden of fully exploiting the capabilities of modern multicores.
 Inspired by hardware design flows, it aims to bridge the ensuing (software) productivity gap by integrating knowledge of the application and target multicore architecture into the compilation process.
 At the core of these methods lies a shift in the programming model.
-Instead of the de-facto sequential, shared-memory model, programmers express the code in diverse \acp{MoC}.
+Instead of the de facto sequential, shared-memory model, programmers express the code in diverse \acp{MoC}.
 This makes the underlying model explicit, not implicit as is the case in most programming languages.
 
-These models expose the structure of the computation in ways that permit a compiler to reason about its parallel execution, even in the prescence of heterogeneous hardware.
-Aided by abstract models of the target archicecture, we can design compilers for multicore systems that devise execution strategies specialized to the target architecture and applications.
-Depending on the flow, the target archicecture can be implicit in the methodology~\cite{ritz1992softwaresynthesis} or be an explicit input to the flow~\cite{maps}
+These models expose the structure of the computation in ways that permit a compiler to reason about its parallel execution, even in the presence of heterogeneous hardware.
+Aided by abstract models of the target architecture, we can design compilers for multicore systems that devise execution strategies specialized to the target architecture and applications.
+Depending on the flow, the target architecture can be implicit in the methodology~\cite{ritz1992softwaresynthesis} or be an explicit input to the flow~\cite{maps}
 This can be realized for example by finding efficient mappings, i.e. allocations of computational and communication resources to the different parts of an application.
 
 As mentioned above, the central principle behind software synthesis is the underlying model of computation. 
 Some approaches~\cite{lin1998softwaresynthesis} use general models, like Petri Nets~\cite{petri1962nets}, while others~\cite{ritz1992softwaresynthesis} more constrained models like \acp{SDF}~\cite{lee1987sdf}.
 Most allow for multiple models~\cite{bhartacharyya2000softwaresynthesis,pino1995softwaresynthesis,bhattacharyya2012softwaresynthesis}, generally dataflow models.
-Making the model explicit just makes it easier to see the trade-off between expressability and translatability to an efficient execution.
-The advantage of models like Petri-Nets is that they can express virtually any computation.
-On the other hand, very constrained models, like \ac{SDF} provide behavioral guarantees that permit several optimization, like static schedules and channel bounds~\cite{Parks:M95/105}.
+Making the model explicit just makes it easier to see the trade-off between expressivity and translatability to an efficient execution.
+The advantage of models like Petri nets is that they can express virtually any computation.
+On the other hand, very constrained models, like \ac{SDF} provide behavioral guarantees that permit several optimizations, like static schedules and channel bounds~\cite{Parks:M95/105}.
 
 Several more modern flows~\cite{thiele2007DOL,maps,pimentel2006systematic,kangas2006uml} have settled at the \ac{KPN} model.
 Originally meant as denotational semantics for parallelism~\cite{kahn74}, the model has been shown to be compatible with dataflow~\cite{lee1995dataflow}.
@@ -225,7 +225,7 @@ The methods of software synthesis are a promising avenue for programming multico
 
 %Mapping structure (Part I)
 The flow depicted in Figure~\ref{fig:software_synthesis_flows} is based on a well-defined model of computation (\ac{KPN}) for specifying and reasoning about applications.
-However, the architecture or the execution, which are comparably important, are commonly modeled in an ad-hoc fashion.
+However, the architecture or the execution, which are comparably important, are commonly modeled in an ad hoc fashion.
 With a specific architecture or topology in mind, the flows encode the architecture model with a series of performance metrics or similar numbers characterizing a specific hardware, while the structural properties are implicit in the problem formulations and algorithms.
 
 \begin{figure}[h]
@@ -240,7 +240,7 @@ With a specific architecture or topology in mind, the flows encode the architect
 \end{figure}
 
 
-Consider the very simple example of mapping two processes $t_1,t_2$ where $t_2$ depends on $t_1$ onto an off-the-shelf multicore like the Exynos 5 chip with an octa-core (4+4) ARM big.LITTLE\texttrademark, as depicted in Figure~\ref{fig:mapping_space_motivation}.
+Consider the very simple example of mapping two processes $t_1,t_2$ where $t_2$ depends on $t_1$ onto an off-the-shelf multicore like the Exynos~5 chip with an octacore (4+4) ARM big.LITTLE\texttrademark, as depicted in Figure~\ref{fig:mapping_space_motivation}.
 The mappings are plotted by encoding the mapping of each of the two tasks as the $x$ and $y$ coordinates of the grid, and the color of the squares in the grid encodes the execution time of the application with that mapping.
 The example is very simple and has deliberately been chosen such that it can be easily visualized. In particular, The actual values of the execution time are irrelevant and have been omitted.
 Still, many of the problems are clear with this simple example already.
@@ -278,7 +278,7 @@ In general, a model-based design approach needs to evolve models according to th
 %Linear flow (transformations)
 Another inherent problem with the flow as formulated is the structure of the flow itself.
 Concretely, an application is described using a concrete model of computation and then this is used to reason about an implementation.
-However, the flow as depicted in Figure~\ref{fig:software_synthesis_flows} (and implemented in practice) disregrads transformations at the level of the application.
+However, the flow as depicted in Figure~\ref{fig:software_synthesis_flows} (and implemented in practice) disregards transformations at the level of the application.
 This could mean a feedback loop back to the application, or perhaps semantics-preserving code transformations at the model level, as part of the exploration.
 
 %Benchmarking
@@ -293,7 +293,7 @@ Tool support and maturity, degree of adoption and knowledge of the models are al
 \section{Contribution}
 
 In this thesis we seek to improve the tools we use for understanding and tackling these problems with software synthesis. 
-We work in a model-based perspective and consider the trade-off we've introduced, between abstract expressability and translatability to an efficient execution
+We work in a model-based perspective and consider the trade-off we've introduced, between abstract expressivity and translatability to an efficient execution
 To consider this we tackle the problem from both sides: the models and the compilers, in a very general sense, that translate to an efficient execution.
 The main idea behind this thesis is that the underlying models endow the problem with structure.
 We can then identify this structure (mathematically) and leverage it to improve our solutions.
@@ -339,7 +339,7 @@ In Chapter~\ref{chap:language} we go beyond the realm of \acp{CPS} and discuss h
 We discuss two distinct ways to exploit language-level abstractions in this domain.
 
 Finally, in Chapter~\ref{chap:benchmarknig} we turn our attention to a seemingly orthogonal aspect: Benchmarking.
-In order to asses the performance of any method or flow, we require benchmarks.
+In order to assess the performance of any method or flow, we require benchmarks.
 However, benchmarks are scarce and of very diverse levels of quality.
 Nevertheless, we can exploit structure again to combat this problem: instead of the structure of the models and architectures, we consider the structure of the applications and their code.
 We show how we can achieve this both with hand-made models, and using machine learning to learn the structure of the applications.
@@ -353,7 +353,7 @@ TODO: Add a figure with the flow of the content and dependencies (ideally, by se
 \begin{figure}[h]
 	\centering
    \resizebox{0.5\textwidth}{!}{\input{figures/contents_dependency_graph.tex}}
-   \caption{Dependencies of Chapters and Sections of this Thesis}
+   \caption{Dependencies of chapters and sections of this thesis.}
 	\label{fig:multicore_era}
 \end{figure}
 
@@ -364,8 +364,8 @@ This thesis presents the fruits of over half a decade of research on the subject
 Research, especially in an interdisciplinary approach like presented here, is much more fruitful when collaborative.
 In the case of joint work, I have made an effort to focus only on my own contributions in this thesis, whenever possible.
 I have also taken care to describe the work of my colleagues as theirs, when I have included it as an indispensable requirement to understand my own work.
-However,  some of these ideas in these thesis are the result of joint work and cannot be credited to a single person.
-In those cases I have also taken care to describe the work as joint and mention other co-authors.
+However, some of these ideas in this thesis are the result of joint work and cannot be credited to a single person.
+In those cases I have also taken care to describe the work as joint and mention other coauthors.
 If in doubt, any idea or result that I have included here which has already been published elsewhere is also due to my coauthors.
 
 %\begin{figure}[h]
