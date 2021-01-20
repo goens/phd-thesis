@@ -5,6 +5,7 @@ library(ggrastr)
 #devtools::install_github("AckerDWM/gg3D")
 #library(gg3D)
 
+if( !file.exists("data/lte_traces_summarized.csv")){
 trace <- read_csv("data/slicedtrace30BS.txt.parsed.csv",
                   col_types = cols(CRNTI = col_integer(), 
                   base_station_id = col_integer(), 
@@ -13,18 +14,22 @@ trace <- read_csv("data/slicedtrace30BS.txt.parsed.csv",
                   modulation_scheme = col_integer(), 
                   rb = col_integer(), subframe = col_integer()))
 #trace$CRNTI <- as.factor(trace$CRNTI)
-sweep <- read_delim("data/lte_analyzes.output.csv", 
-                              "\t", escape_double = FALSE, trim_ws = TRUE)
 by_base_station <- group_by(trace,subframe,base_station_id) %>% 
   summarize(number_of_ues = length(unique(CRNTI)), rb_per_ue = max(rb), rb = sum(rb))
-traces_summarized = group_by(by_base_station,subframe) %>%
+traces_summarized <- group_by(trace,subframe) %>%
   summarize(number_of_ues = length(unique(CRNTI)), rb_per_ue = max(rb), rb = sum(rb))
 #param_combinations_traces <- distinct(traces_summarized[,c("number_of_ues","rb","layers")])
 param_combinations_traces <- group_by(traces_summarized,number_of_ues,rb) %>%
   summarise(count = n())
 param_combinations_traces_per_base_station <- group_by(by_base_station,number_of_ues,rb,rb_per_ue) %>%
   summarise(count = n()) 
+write.csv(param_combinations_traces_per_base_station,"data/lte_traces_summarized.csv")
+} else{
+ param_combinations_traces_per_base_station <- read.csv("data/lte_traces_summarized.csv") 
+}
 
+sweep <- read_delim("data/lte_analyzes.output.csv", 
+                              "\t", escape_double = FALSE, trim_ws = TRUE)
 sweep_filtered <- group_by(sweep,ue,rb) %>%
   filter(layer == max(layer)) %>%
   filter(rxAnt == max(rxAnt)) %>%
@@ -82,6 +87,7 @@ design_points <- mutate(design_points,type = classify_points(number_of_ues,rb_pe
 design_points$type <- factor(design_points$type, levels=c("Dynamic","Static","Impossible"))
 
 
+("data/lte_traces_summarized.csv")
 tikz("generated/lte_statistics.tex", standAlone = FALSE,width=7,height=4)
 #print(
   ggplot(data = arrange(design_points,type)) + 

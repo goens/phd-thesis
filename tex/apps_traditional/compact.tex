@@ -63,7 +63,7 @@ In this iteration it assigns cores such that the distance from a node to its pre
 This greedy algorithm thus minimizes local communication, but it does not ensure that the communication is minimized globally for the whole application.
 
 A central concept behind this algorithm is the set of cores marked as occupied, which can be initialized in particular fashion to enforce the geometry of the mapping.
-To produce compact mappings we mark every core as occupied, except for an $m \times m'$ rectangle such that $m,m' > |V|$, and we choose $\{m,m′\} \subseteq \{ \sqrt{|V|}, \sqrt{|V|}+1\}$ minimal with this property.
+To produce compact mappings we mark every core as occupied, except for an $m \times m'$ rectangle such that $m,m' > |V|$, and we choose $\{m,m'\} \subseteq \{ \sqrt{|V|}, \sqrt{|V|}+1\}$ minimal with this property.
 We compare these mappings to those produced without the additional rectangle constraint, which are low-communication mappings that are not necessarily compact.
 
 To evaluate the concept of compact mappings we again used the Noxim simulation.
