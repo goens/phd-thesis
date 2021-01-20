@@ -47,6 +47,10 @@
 \label{sec:abstract}
 \addcontentsline{toc}{section}{\nameref{sec:abstract}}
 \input{tex/abstract.tex}
+\ifthenelse{\boolean{printversion}}{
+\cleardoublepage
+\tableofcontents
+}{}
 \cleardoublepage
 \section*{Publications}
 \label{sec:publications}
@@ -59,10 +63,6 @@ Some contents of this thesis have been published previously, including ideas and
 \addcontentsline{toc}{section}{\nameref{sec:acks}}
 \input{tex/acknowledgements}
 \cleardoublepage
-\ifthenelse{\boolean{printversion}}{
-\cleardoublepage
-\tableofcontents
-}{}
 \pagenumbering{arabic} 
 \chapter{Introduction}
 \input{tex/intro/introduction}

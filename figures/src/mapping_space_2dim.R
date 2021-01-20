@@ -69,7 +69,7 @@ tikz("generated/2d_mapping_heatmap_orig.tex",standAlone = FALSE, height = 4, wid
 print(
 ggplot(data=data_orig) +
   geom_tile(mapping = aes(x=factor(x),y=factor(y),fill=time),color='black') +
-  geom_text(mapping=aes(x=factor(x),y=factor(y),label=time_formated),size=3.8) +
+  geom_text(mapping=aes(x=factor(x),y=factor(y),label=time_formated),size=4) +
   scale_fill_viridis_c(direction=-1) +
   labs(x="T$_1$ mapping (PE)", y = "T$_2$ mapping (PE)") +
   theme(legend.text = element_blank(),text=element_text(size=18))  
