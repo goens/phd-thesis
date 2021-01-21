@@ -122,7 +122,7 @@ p2 <- filter(summarized,platform == 'exynos') %>%
   scale_fill_manual(values = brewer.pal(name="Greens",n=8)[c(4:8)],na.value='grey50') +
   labs(x=element_blank(),y="Rel. exploration time (log)") +
   scale_x_discrete(labels=mapper_labels) +
-  theme(text=element_text(size=12))+
+  theme(text=element_text(size=12),legend.position='bottom')+
   scale_y_log10() +
   facet_grid(rows=vars(benchmark),scales='free')
 
@@ -144,7 +144,7 @@ p4 <- filter(summarized,platform == 'mppa_coolidge') %>%
   scale_fill_manual(values = brewer.pal(name="Blues",n=8)[c(4:8)],na.value='grey50') +
   labs(x=element_blank(),y="Rel. exploration time (log)") +
   scale_x_discrete(labels=mapper_labels) +
-  theme(text=element_text(size=12))+
+  theme(text=element_text(size=12),legend.position = 'bottom')+
   scale_y_log10() +
   facet_grid(rows=vars(benchmark),scales='free')
 

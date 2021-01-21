@@ -1,7 +1,5 @@
-
-
 In this thesis we will use \mocasin, a tool for the Model-of-Computation-based Analysis and Simulation of applications~\cite{menard_rapido21}.
-This tool, formerly known as \texttt{pykpn}~\cite{goens_mcsoc18}, has been developed as part of a collaborative effort between multiple researchers at the Chair for Compiler Construction at TU Dresden.
+This tool, formerly known as \texttt{pykpn}~\cite{menard_norcas16,goens_mcsoc18}, has been developed as part of a collaborative effort between multiple researchers at the Chair for Compiler Construction at TU Dresden.
 While the tool itself is a joint contribution with the coauthors of~\cite{menard_rapido21}, many concepts introduced in this thesis have been implemented and tested using \mocasin.
 As such, this section will explain the tool in-depth, to enable the description of the different implementations of contributions from this thesis implemented in \mocasin.
 
@@ -21,24 +19,29 @@ The \mocasin architecture is composed of multiple modules that can be combined t
 
 In general, simulating a KPN requires four inputs, as explained in Section~\ref{sec:mappings_background}: the KPN graph, a platform description, execution traces and a mapping.
 \mocasin has data internal structures for these four inputs that reflect the models as explained in Sections~\ref{sec:kpn_basic,sec:traces,sec:arch_models,sec:mapping_problem}.
-The tool boasts multiple readers to generate the internal data structures from established formats like \texttt{tgff}, \texttt{sdf3} or the \texttt{MAPS} formats.
+The tool boasts multiple readers to generate the internal data structures from established formats like \texttt{tgff}, \texttt{sdf3} or the \texttt{MAPS} formats. \index{tgff}\index{\acs*{\SDFFF}}
 Instead of a concrete trace, \mocasin expects a trace generator, which can generate the trace on the fly: this is useful e.g. for non-deterministic models computation, but for KPNs the two are equivalent.
 The \ac{KPN} trace generator, for example, simply reads the trace from a file.
 A mapping, while required for simulation, does not need to be provided: it can be calculated in a design-space exploration.
 This is not surprising, since a significant part of this thesis concerns itself with finding good mappings efficiently.
 
-A central part of \mocasin is a discrete-event simulator that uses the principles outlined above to simulate KPN applications based on their traces (as well as other models of computation).
+A central part of \mocasin is a discrete-event simulator~\cite{menard_norcas16} that uses the principles outlined above to simulate KPN applications based on their traces (as well as other models of computation).\index{discrete-event simulator}
 We will not dwell on the design of the \texttt{simulate} module since it goes beyond the contribution and scope of this thesis.
 In the following, we will describe some other central modules of \mocasin. 
 
 
 \subsubsection{platform designer}
 
+Many concepts developed in this thesis are aimed at emerging technologies and future hardware architectures.
+To model these increasingly complex architectures, we aim at an abstract description of their topologies (cf. Section~\ref{sec:arch_models}).
+As part of \mocasin, with the help of Felix Teweleitt, we designed a modeling infrastructure, in essence a small embedded domain-specific language, to describe hardware topologies.\index{platform designer}
+This infrastructure is the \texttt{platform\_designer} module of \mocasin.
+
 \begin{listing}
 \begin{minted}[]{python}
 designer = PlatformDesigner(self)
 designer.setSchedulingPolicy('FIFO', 1000)
-designer.newElement("exynos5422")
+designer.newElement("Odroid-XU4")
 # cluster 0 with l2 cache
 designer.addPeClusterForProcessor("cluster_a7", processor_0, num_little)
 # Add L1/L2 caches
@@ -65,18 +68,40 @@ designer.finishElement()
 \label{listing:designer_odroid}
 \end{listing}
 
+Listing~\ref{listing:designer_odroid} shows an example of our \texttt{platform\_designer}.
+The code in this listing describes the topology of the Odroid XU4 (see Figure~\ref{fig:odroid}). 
+The main principle innovation behind the \texttt{platform\_designer} is that it works with a stack of clusters.
+The functions \texttt{newElement()} and \texttt{finishElement()} can be nested to describe the topology in a hierarchical fashion.\index{hierarchical topologies}
+Between these functions, the \ac{API} allows us to describe heterogeneous cores and different levels of interconnects with different properties, like their frequency.
+
 \subsubsection{mappers}
+
+The mapping problem (cf. Section~\ref{sec:mapping_problem}) plays an important role in this thesis.
+While we do propose some mapping heuristics for special contexts, many methods in this thesis are orthogonal to the mapping heuristics.
+As part of this thesis we have implemented multiple mapping algorithms from literature in \mocasin.
+These can be found in the \texttt{mapper} module. 
+The heursitics included are the \ac{GBM} heuristic~\cite{castrillon_dac12} and a static variant of the Linux \ac{CFS}.
+We also have some meta-heuristics, which include a random walk, simulated annealing~\cite{simulated_annealig}, tabu search~\cite{tabu_search} and genetic algorithms~\cite{erbas2006multiobjective,goens_mcsoc16}. 
 
 \subsubsection{configuration}
 
-Using Hydra~\ref{yadan2019-hydra}.
+\mocasin is designed to be a tool for tool development.
+As such, one of its main goals is to enable building different scenarios for different contexts, like static mapping of \ac{KPN} applications or hybrid execution of dynamic \ac{LTE} loads~\cite{menard_rapido21}.
+We use the Hydra~\ref{yadan2019-hydra} framework to configure \mocasin and construct different scenarios as different tools.\index{Hydra}
+Figure~\ref{fig:mocasin_arch} depicts this to the right, for an example simulating \ac{tgff} applications with random mappings and storing the execution history in a \texttt{JSON} file.
+This configuration philosophy allows us to work in a modular fashion, with the modules as depicted in the \mocasin toolbox in the figure.
+This allows us to implement different contributions of this thesis as \mocasin modules.
 
-\subsubsection{contribution}
+\subsubsection{contributions}
 
+Many concepts that are central contributions of this thesis are implemented in \mocasin. 
+This is done as modules, using the \mocasin toolbox infrastructure. 
+Figure~\ref{fig:mocasin_kpn_simulation} shows a family of \mocasin flows for mapping and simulating KPN or \ac{tgff} applications.
+Different contributions of this thesis and the corresponding references are described in the figure and marked as such (with light-green coloring).
 
 \begin{figure}[h]
 	\centering
    \resizebox{0.95\textwidth}{!}{\input{figures/mocasin_flow.tex}}
-	\caption{Simulating KPN Applications in \mocasin. TODO: this figure should actually come later}
+	\caption{Mapping and simulating KPN Applications in \mocasin.}
 	\label{fig:mocasin_kpn_simulation}
 \end{figure}
