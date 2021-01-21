@@ -51,7 +51,8 @@ e3s_meta <- read.csv("data/metaheuristics-multiple-representations-e3s.csv")
 slx_data <- full_join(slx_heuristics,slx_meta) %>%
   mutate(benchmark = ifelse(trace == 'slx_default', 'CPN','E3S'))
 e3s_data <- full_join(e3s_heuristics,e3s_meta) %>%
-  mutate(benchmark = ifelse(trace == 'slx_default', 'CPN','E3S'))
+  mutate(benchmark = ifelse(trace == 'slx_default', 'CPN','E3S'),
+         kpn = tgff)
 full_data <- full_join(slx_data,e3s_data)
 
 norm_time_rep <- function(time,mapper,representation){
@@ -78,8 +79,6 @@ relative_times <- group_by(full_data,platform,kpn,mapper,representation,benchmar
          relative_total_min = pmax(relative_time - total_err/norm_time_rep(total_time,mapper,representation), 0), 
          relative_total_max = relative_time + total_err/norm_time_rep(total_time,mapper,representation), 
          ) %>%
-  mutate(relative_best_min = ifelse(relative_best_min <= 0, NA, relative_best_min),
-         relative_total_min = ifelse(relative_total_min <= 0, NA, relative_best_min)) %>%
   ungroup() 
 relative_times$representation <- fct_relevel(relative_times$representation,'SimpleVector','Symmetries','MetricSpaceEmbedding','SymmetryEmbedding')
 
@@ -122,7 +121,7 @@ p2 <- filter(summarized,platform == 'exynos') %>%
   scale_fill_manual(values = brewer.pal(name="Greens",n=8)[c(4:8)],na.value='grey50') +
   labs(x=element_blank(),y="Rel. exploration time (log)") +
   scale_x_discrete(labels=mapper_labels) +
-  theme(text=element_text(size=12),legend.position='bottom')+
+  theme(text=element_text(size=12),legend.position='bottom',legend.title = element_blank())+
   scale_y_log10() +
   facet_grid(rows=vars(benchmark),scales='free')
 
@@ -144,7 +143,7 @@ p4 <- filter(summarized,platform == 'mppa_coolidge') %>%
   scale_fill_manual(values = brewer.pal(name="Blues",n=8)[c(4:8)],na.value='grey50') +
   labs(x=element_blank(),y="Rel. exploration time (log)") +
   scale_x_discrete(labels=mapper_labels) +
-  theme(text=element_text(size=12),legend.position = 'bottom')+
+  theme(text=element_text(size=12),legend.position = 'bottom',legend.title=element_blank())+
   scale_y_log10() +
   facet_grid(rows=vars(benchmark),scales='free')
 
@@ -161,7 +160,7 @@ p5 <- filter(summarized,platform == 'mppa_coolidge' & (mapper == 'tabu_search' |
   geom_col(position="dodge2",mapping = aes(x=mapper,y=relative_best_gmean,fill=representation)) + 
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=relative_best_gmean_min,ymax=relative_best_gmean_max))  +
   scale_fill_manual(values = brewer.pal(name="Blues",n=8)[c(4:8)],guide=F,na.value='grey50') +
-  labs(x=element_blank(),y="Rel. mapper results") +
+  labs(x=element_blank(),y="Rel. mapper results",legend=element_blank()) +
   scale_x_discrete(labels=mapper_labels) +
   theme(text=element_text(size=12))+
   facet_wrap(~benchmark)
