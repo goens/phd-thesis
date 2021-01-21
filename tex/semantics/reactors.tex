@@ -10,7 +10,7 @@ This does not mean that the time it takes is deterministic, as we have studied i
 Especially in the context of \acp{CPS} or real-time systems, the computation time is an essential part of the functional specification of an application.
 In this section we discuss the Reactor model~\cite{lohstroh_dac19}, which aims be a deterministic \ac{MoC} with timed semantics.
 
-The reactor model is inspired by the Hewitt-Agha actor model~\cite{agha}, which is a very widespread and well-known model of concurrent computation.\index{Reactors}
+The reactor model is inspired by the Hewitt-Agha actor model~\cite{Agha:86:Actors}, which is a very widespread and well-known model of concurrent computation.\index{Reactors}
 The actor model is neither deterministic nor timed.\index{actor model}
 We make the reactor model deterministic by combining ideas from multiple paradigms~\cite{lohstroh_fdl19}, notably, through explicit discrete-event time semantics.
 The reactor model thus has two distinct time notions, \emph{physical} and \emph{logical time}, ideal for \ac{CPS}.
@@ -63,13 +63,13 @@ We follow a model of computation based on the Scott model (cf. Section~\ref{sec:
 Data are thus sequences $s \in S = \Sigma^* \cup \Sigma^\omega$ over a finite alphabet $\Sigma$, which we require to include a special symbol $\bot \overset{!}{\in} \Sigma$ that represents absence of data.
 The basic unit of computation in Reactors are reactions, which take a finite number of data tokens as input and return a finite number as output.
 Thus, a \emph{reaction} is simply a Scott-continuous function $r : S^n \rightarrow S^m$\index{Reactors ! reaction}
-Note that this already restricts the definition of reactions.
+Note that this restricts the definition of reactions.
 As defined in~\cite{lohstroh_cyphy19} with an informal \emph{source code} ``object'', they can interpreted in the semantics of the language of that source code.
 As such, they could implement any relation on $S^n \times S^m$.
 In particular, we assume reactions are deterministic (as mathematical functions) and respect causality (being Scott-continuous).
-
 \todo{make sure notation is consistent with Scott definition at beg. of chapter}
 
+We define 
 Actions
 \index{Reactors ! actions}
 

@@ -21,7 +21,7 @@ Does this intuition translate to actual benefits in mappings?
 To test this idea we used a SystemC-based \ac{NoC} simulator, Noxim~\cite{noxim}, which we modified to obtain more detailed statistics about the simulations~\cite{goens_samos19}.
 In particular, we extracted the variance of the package delays in the simulation. 
 We then configured Noxim to simulate a $10 \times 10$ mesh topology with xy routing and worm-hole switching. 
-This choice was made to mimic the routing of commercial platforms like the Tile-Gx series from Mellanox Technologies~\cite{technologies2015-tile-gx36-processor,technologies2015-tile-gx72-processor}, or Intel's Xeon Phi~\cite{tam2018-skylake-sp} or Scalable Platform~\cite{sodani2016knights-landing}, or academic ones like OpenPiton~\cite{balkind2016-openpiton}.
+This choice was made to mimic the routing of commercial platforms like the Tile-Gx series from Mellanox Technologies~\cite{technologies2015-tile-gx36-processor,technologies2015-tile-gx72-processor}, or Intel's Xeon Phi~\cite{tam2018-skylake-sp} or Scalable Platform~\cite{sodani2016-knights-landing}, or academic ones like OpenPiton~\cite{balkind2016-openpiton}.
 
 If we execute the example from Figure~\ref{fig:compact_intro} example, the non-compact example on the left actually outperforms the compact one on the right.
 By closer inspection of the figure, this is because the distances within the application are very high.
