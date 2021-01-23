@@ -1,4 +1,4 @@
-In this chapter we will explore the mathematical structure of symmetry in the software synthesis process, mostly the work published in ~\cite{goens_iess15,goens_taco17,goens_scopes17,goens_tcad21}.
+In this chapter we will explore the mathematical structure of symmetry in the software synthesis process, mostly the work published in ~\cite{goens_iess15,goens_taco17,goens_scopes17,goens_mcsoc18,goens_tcad21}.
 The material in this section makes use of concepts in group theory.
 We assume the basic concepts as seen in any undergraduate course on group
 theory, with the definitions of groups, actions and orbits.
@@ -167,22 +167,137 @@ We this experiment we cannot really conclude nor discard the hypothesis that ene
 \subsection{Calculating Symmetries}
 
 The branch of mathematics known as computational group theory deals with computational aspects of the theory of groups, which we have used here for formalizing the symmetries of applications, architectures and mappings. 
-An overview of the methods of computational group theory can be found in~\cite{seress2003permutation} covering beyond the basics presented in this subsection.
+An overview of the methods of computational group theory can be found in~\cite{holt,seress2003permutation}, which both cover far beyond the basics presented in this subsection.
 Here we will present only the methods necessary for the calculations required of applications to software synthesis.
 
 To leverage the symmetries explained in this theses for software synthesis, we need to methods to calculate the following:
-\begin{itemize}
-\item Given an architecture graph $A$, the group of symmetries $\Aut(A)$.
-\item Given a mapping $m : T \rightarrow A$ and the symmetry group $G := \Aut(T \rightarrow A)$, enumerate the orbit $Gm$.
-\item Given two mappings $m,m' : T \rightarrow A$ and the symmetry group $G := \Aut(T \rightarrow A)$, determine wether $m = gm'$ for a $g \in G$, i.e. if the two mappings are in the same orbit.
-\end{itemize}
+\begin{enumerate}
+\item\label{prob:autgrp} Given an architecture graph $A$, the group of symmetries $\Aut(A)$.
+\item\label{prob:orbit} Given a mapping $m : T \rightarrow A$ and the symmetry group $G := \Aut(T \rightarrow A)$, enumerate the orbit $Gm$.
+\item\label{prob:equiv} Given two mappings $m,m' : T \rightarrow A$ and the symmetry group $G := \Aut(T \rightarrow A)$, determine whether $m = gm'$ for a $g \in G$, i.e. if the two mappings are in the same orbit.
+\end{enumerate}
 
+Mature software exists for computational group theory that can, in principle, solve these problems. 
+The \acs{GAP} system is a \ac{DSL} for computational discrete algebra with a focus on (computational) group theory~\cite{gap}.
+We developed algorithms for dealing with problems \ref{prob:autgrp}-\ref{prob:equiv} in \ac{GAP}~\cite{goens_taco17}.
+We also included naive versions of most algorithms implemented directly in Python in \mocasin.
+
+Using \ac{GAP}-based algorithms in software synthesis tools like \ac{MAPS} in practice, however, comes with a series of complications.
+The largest problem is that it adds a dependency on a whole ecosystem.
+A complete distribution of \ac{GAP} is over $200$ MiB of size and takes around a second to start up in standard commodity hardware of today.
+Additionally, to communicate with a running \ac{GAP} instance we need to use \ac{POSIX} pipes, which is cumbersome and not portable.
+A project existed to use \ac{GAP} as a library, but seems to be unmaintained, and we could not get it to function.
+We thus developed a standalone library~\cite{nicolai_studienarbeit}, \mpsym , which implements the required algorithms to solve problems ~\ref{prob:autgrp}-\ref{prob:equiv} and includes a domain-specific extension for efficiently dealing with hierarchical (e.g. clustered) archictures~\cite{goens_tcad21}.
+
+Calculating the group of symmetries from an architecture graph (Problem~\ref{prob:autgrp}) is very related to the graph isomorphism problem. 
+This is a problem in NP, and it is not known, neither believed to be in P nor NP-complete. 
+In December 2015, L\'{a}sl\'{o} Babai published a pre-print where he claims to have found a quasi-polynomial algorithm~\cite{babai_graph_isomoprhism}, 
+yet at the time of this writing (January 2021) the peer-review is still not complete.
+Regardless of the worst-case complexity, graph isomorphism can be solved efficiently in practice for most instances~\cite{McKay201493}.
+Algorithms for doing so are implemented in nauty/Traces, which \mocasin and \mpsym use to solve Problem~\ref{prob:autgrp}.
+
+Most algorithms in computational group theory use a special data structure describing the group.
+This data structure is called a \emph{\ac{BSGS}}, see~\cite{holt,seress2003permutation} for more details.\index{base and strong generating set}
+The standard algorithm for calculating the \ac{BSGS} for a group is the Schreier-Sims Algorithm\index{Schreier-Sims Algorithm}.
+Multiple variants of this algorithm exist, which are more efficient under different circumstances.
+\acp{CAS} like \ac{GAP} use different variants with sophisticated heuristics for selecting which variant to use.
+In \mpsym we implement some variants of the Schreier-Sims with less sophisticated selection, which do not surpass \ac{GAP}'s performance.
+For all groups investigated in this thesis, however, \mpsym was comparable to \ac{GAP}, without the large ecosystem dependency~\cite{nicolai_studienarbeit,goens_tcad21}.
+
+Problem~\ref{prob:orbit} is a standard problem in computational group theory.
+We solve it using the Orbit algorithm, which can easily be adapted to a lazy variant, described in Algorithm~\ref{label:algo:lazy_orbit}.
+If we use a perfect hash, the algorithm returns exactly the orbit of the mapping.
+If the hash can have duplicates, a smaller orbit might be returned, but the algorithm will clearly never yield elements from outside the orbit.
+This lazy variant is especially useful when looking for any mapping in the orbit which fullfils some properties, instead of being interested in the full orbit.
+This is especially useful in the \acs*{TETRiS} system, which we will describe in Section~\ref{sec:tetris}.
+
+\begin{algorithm}
+	\caption{A lazy variant of the standard orbit algorithm}
+	\label{algo:lazy_orbit}
+	\begin{algorithmic}[1]
+	  \Input{A generating set $X = (g_1, \ldots, g_n), \langle g_1, \ldots, g_n \rangle = \operatorname{AutGrp}(M)$ for the mapping space, a mapping $m_0$. }
+	  \Output{The orbit of $m_0$: $\operatorname{AutGrp}(M)m = \{ g m_0 \mid g \in \operatorname{AutGrp}(M) \}$ }
+     \State H $\leftarrow$ $\{ \operatorname{Hash}(m_0) \}$
+     \State CurElems $\leftarrow$ $\{ g_i m_0,~\operatorname{Hash}(g_i m_0) \notin H \mid i = 1,\ldots,n \}$
+     \State H $\leftarrow$ $H \cup \{ \operatorname{Hash}(m) \mid m \in \text{CurElems} \}$
+     \While{ CurElems $\neq \emptyset$}
+	     \For{ $m \in \text{CurElems}$}
+		         \State \textbf{yield }$m$
+	     \EndFor 
+     \State CurElems $\leftarrow$ $\{ g_i m,~\operatorname{Hash}(g_i m) \notin H \mid m \in \text{CurElems}, i = 1,\ldots,n \}$
+     \State H $\leftarrow$ $H \cup \{ \operatorname{Hash}(m) \mid m \in \text{CurElems} \}$
+   \EndWhile
+	\end{algorithmic}
+\end{algorithm}
+
+Finally, to solve Problem~\ref{prob:equiv}, we could simply solve Problem~\ref{prob:orbit} for both elements and see if the orbits are identical.
+Orbits form a partition of the mapping space $M$, meaning that two orbits are either identical or dijsoint (and the union of all orbits yields $M$).
+This is a very inefficient way of solving Problem~\ref{prob:equiv}, since it means we have to enumerate the whole orbit for each element.
+Using the same principle of the Orbit's partition, we can also just enumerate the orbit for one element and see if the other element is in it.
+While this is also an improvement, it is still very inefficient. Orbits can be very large when the problem has much symmetry.
+By default, \mpsym uses this variant as a fall-back method to solve Problem~\ref{prob:equiv} when correctness needs to be guaranteed.
+
+Another alternative for this which works without enumerating any orbits is based on the fact that the symmetries of the mapping $\operatorname{AutGrp}(M) \leq \operatorname{Sym}(M)$, the symmetric group on $M$ (i.e. the group of all permutations on $M$).
+Thus, if two mappings $m, m'$ are in the same orbit under $\operatorname{AutGrp}(M)$, then they are also in the same orbit under $\operatorname{Sym}(M)$: there exists a permutation $\sigma \in S_{|M|}$ which takes $m$ to $m'$.
+However, $|M|$ as we have seen can be very large, as it grows (at least) as $|V_A|^|V_K|$ and $\operatorname{Sym}(M) \cong S_{|M|}$ is thus unimaginably large, namely $|\operatorname{Sym}(M)| = |M|! \geq (|V_A|^|V_K|)!$.
+If we consider only architecture symmetries, this all works over the much smaller $\operatorname{AutGrp}(A)$.  We obviously do not have to iterate over the group to construct $\sigma$, since we know both $m,m'$ we can construct it directly.
+Knowing $\sigma$, we can efficiently solve the \emph{group membership problem}~\cite{seress2003permutation} for these permutation groups, using the \ac{BSGS}. \index{group membership problem}
+We know, namely, that $\sigma$ is in $\operatorname{AutGrp}(M)$ if and only if $\operatorname{AutGrp}(M)m = \operatorname{AutGrp}(M)m'$, by the definitions of the orbit and $\sigma$.
+On the other hand, if we cannot construct $\sigma$ from $m,m'$, because it leads to contradictions, then, obviously, the orbits are different.
+
+We did not implement this variant based on the group membership problem.
+The reason for this is that we implemented an alternative which also allows us to select a mapping to work with, e.g. for \ac{DSE}.
+It is based on canonical representatives~\cite{goens_taco17,goens_mcsoc18}.
+A canonical representative of an orbit $Gm$ is an element $m_0 \in Gm$ such that there is a function
+$f : G \setminus \setminus M \rightarrow M$ which maps $Gm$ to $m_0$.
+In other words, the function $f$ selects a unique element of every orbit, this element is the canonical representative.
+
+For constructing our canonical representatives, we order mappings using the \emph{lexicographical ordering}.
+For two mappings $m = (m_1,m_2,\ldots,m_k), m' = (m'_1,\ldots,m'_k)$ we say that $m \leq m'$ if and only if there exists a $j \leq k$ such that $m_i = m'_i$ for all $i < j$ and $m_j \leq m'_j$.\index{lexicographical ordering}
+The function $f$ for the canonical element of the orbit thus maps $Gm$ to $\min Gm$.
+In other words, we choose canonical elements to be the lexicographical-minimal elements of the orbits.
+
+\begin{algorithm}
+   \caption{Local search for finding canonical representatives. Adapted from Algorithm~1 of~\cite{goens_mcsoc18}.}
+   \label{algo:canonical_representatives}
+   \begin{algorithmic}[1]
+     \Input{A mapping $m$, a generating set $S$, with $\langle S \rangle = \operatorname{AutGrp}(M)$.}
+     \Output{A mapping $m_\text{canonical} = gm$ with $m_\text{canonical} < m'$ for all $m' \in Gm$}
+     \State $F \gets \{m\}$
+     \State $F_\text{old} \gets \emptyset$
+     \While {$F \neq F_\text{old}$}
+     \State $F_\text{old} \gets F$
+     \ForAll{ $s \in S$ }
+     \ForAll{ $m' \in F$ }
+     \If {$sm < m$}
+     \State $F \gets sm$
+     \EndIf
+     \EndFor
+     \EndFor
+     \State \label{line:optional} \textbf{(optional)} $F \gets \{ \operatorname{min}_{ m' \in F} m' \}$
+     \EndWhile
+     \Return $\operatorname{min}_{ m' \in F} m'$
+   \end{algorithmic}
+ \end{algorithm}
+ 
+To find the lex-minimal canonical representatives we use a local-search algorithm based on an iteration similar to the Orbit Algorithm. 
+Algorithm~\ref{algo:canonical_representatives} shows this local-search heuristic. 
+This algorithm to returns the lex-minimal element of the orbit if the generating set has a particular property, which we called being a \emph{strictly order-preserving generating set}~\cite{goens_mcsoc18}.
+We say $S$ is a strictly order-preserving generating set if for two mappings $m' < m$ in the same orbit, i.e. $m \in \langle S \rangle m'$, there exists a word $s_1,\ldots,s_n$ in the generators $s_i \in S$, such that $m' = s_1 \ldots s_n m$ with $s_i (s_{i+1}\ldots s_n)m < (s_{i+1} \ldots s_n)m$ for all $i = 1,ldots,n-1$.\index{stricly order-preserving generating set}
+For example, for the symmetric group $S_n$, the set of all transpositions $S = \{ (i,j) \mid i \neq j \in \{1,\ldots,n\} \}$ is such a strictly order-preserving generating set.
+Without this property, the local search could yield an element which is not the lex-minimal element.
+If we remove the optional reduction in Line~\ref{line:optional}, we significantly speed up this search and make the probability of finding only a local minimum instead of the global one higher.
+Since all mappings in the orbit are equvialent, such a local minimum will always have the same objective properties $\Theta$ as the real canonical representative (cf. Section~\ref{sec:mapping_problem}).
+Thus, finding a local minimum instead of the canonical representative is tantamount to considering a smaller group of symmetries, and thus a very acceptable risk for a considerable speed-up.
+Both \mpsym and \mocasin implement this heuristic and use it by default for design-space exploration, as we will see in Section~\ref{sec:dse}. 
+We also integrated \mpsym into \mocasin , using the simple Python versions of the algorithms in \mocasin only as fall-back. 
 
 \subsection{Partial Symmetries}
 \label{sec:partial_symmetries}
 
 The symmetries we have considered so far can be considered as ``global'' symmetries: they are transformations of the complete structure (e.g. architecture, mapping).
-The intuitive notion of symmetry, however, is more general than this. What we consider as symmetry also inlcludes the relationship of as tructure to each parts.
+The intuitive notion of symmetry, however, is more general than this.
+What we consider as symmetry also includes the relationship of a structure to its parts.
 In particular, a symmetry can be local to a part of the structure, without being global. A general discussion of this can be found in~\cite{lawson_inverse_semigroups}, as well as a detailed exposition of the mathematical background of this section.
 
 We can see what we mean by local structures in the example depicted in Figure~\ref{fig:motivation_partial_symmetries}.
@@ -367,12 +482,14 @@ We can't compare them, as they deal with different objects, functions vs partial
 We can see it through the following argument: the group $\Aut(M_2) \cong D_4$ acts canonically on the power set of $M_2$, $\operatorname{Pow}(M_2)$, simply by acting element-wise:
 For $M \subseteq M_2$ and $g \in \Aut(M_2)$, the (canonical) action is defined as follows: $g \cdot M := \{ g \cdot m \mid m \in M \}$.
 In this action, the orbits $G \\ \operatorname{Pow}(M_2)$ are in obvious bijection to the s.c.c. of the orbit of $\AutSemi(M_2) \\ \operatorname{M_2}$.
-Concretely
 
+We have seen how to describe partial symmetries, a natural question is how how to calculate them?
+This can be accomplished with the methods of~\cite{east2019semigroups}, and our applications of it in joint work with S. Siccha and J. Castrillon~\cite{goens_taco17}.
+In fact, \mpsym implements Algorithm~2 from~\cite{goens_taco17}.
+We worked with Sebastian Krammer in his bachelor thesis~\cite{krammer_bachelor} on finding more efficient algorithms. 
+Unfortunately, the algorithms as implemented so far are not efficient enough to be useful in the context of mappings and \ac{dse}.
 
-
-
-\subsection{Calculating Semigroups of Symmetries}
-
-Now that we have seen how to describe partial symmetries, we can proceed to explain how to calculate them.
-This subsection is a simplification of the methods of~\cite{east2019semigroups}, and our applications of it in joint work with S. Siccha and J. Castrillon~\cite{goens_taco17}.
+In future work, we believe we should be able to find explicit generating systems for an $n \times n$ mesh for an arbitrary $n$, which would significantly improve the performance of the algorithms, which is limited by finding a good generating set.
+Using inverse semigroups also opens up an additional avenue for future work, where \emph{similarities} can be described instead of precise symmetries. \index{mapping similarities}
+For example, mapping an edge between two cores in a mesh to a different edge type with a \emph{smaller} number of hops is sure to not worsen the performance of the application, although we cannot say if it will improve it or not.
+Such a transformation can also be described with semigroups, and the directed graph structure of the orbits nicely encompasses such one-way transformations.
