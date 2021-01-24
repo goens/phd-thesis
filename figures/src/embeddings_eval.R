@@ -112,31 +112,34 @@ increased_scenarios <- increased  %>%
   distinct()
 increased_scenarios$scenario <- fct_relevel(increased_scenarios$scenario,'MetricSpaceEmbedding\nNo-ED', 'SymmetryEmbedding\nNo-ED', 'MetricSpaceEmbedding\nED', 'SymmetryEmbedding\nED','SimpleVector\n')
 
-tikz(file="generated/metric_spaces_comparison_exynos.tex",standAlone = F,width=12,height=4)
+tikz(file="generated/metric_spaces_comparison_exynos.tex",standAlone = F,width=12,height=6)
 print(
   filter(increased_scenarios,platform == 'exynos') %>%
   #sample_n(min(200,length(rel_runtime))) %>% #to make it easier on latex
   ggplot(mapping = aes(x=rel_distance,y=rel_runtime,color=factor(representation.target_distortion))) +
   geom_point_rast() +
-  facet_wrap(~scenario,scale='free') +
-  scale_color_brewer(palette = "Greens",na.value="grey50",name="(target)\ndistortion") +
+  facet_wrap(~scenario,scale='free',ncol=2) +
+  scale_color_brewer(palette = "Greens",na.value="grey50",name="   (target) distortion") +
+  guides(color=guide_legend(ncol=3))   +
   labs(x="relative distance",y="relative runtime")  +
   theme(text=element_text(size=18),
-        legend.position = c(0.8,0.2)) 
+        legend.position = c(0.7,0.15)) 
   
 )
 dev.off()
-tikz(file="generated/metric_spaces_comparison_coolidge.tex",standAlone = F,width=12,height=4)
+
+tikz(file="generated/metric_spaces_comparison_coolidge.tex",standAlone = F,width=12,height=6)
 print(
   filter(increased_scenarios,platform == 'mppa_coolidge') %>%
   #sample_n(min(200,length(rel_runtime))) %>% #to make it easier on latex
   ggplot(mapping = aes(x=rel_distance,y=rel_runtime,color=factor(representation.target_distortion))) +
   geom_point_rast() +
-  facet_wrap(~scenario,scale='free') +
-  scale_color_brewer(palette = "Blues",na.value="grey50",name="(target)\ndistortion") +
+  facet_wrap(~scenario,scale='free',ncol=2) +
+  scale_color_brewer(palette = "Blues",na.value="grey50",name="   (target) distortion") +
+  guides(color=guide_legend(ncol=3))   +
   labs(x="relative distance",y="relative runtime")  +
   theme(text=element_text(size=18),
-        legend.position = c(0.8,0.2)) 
+        legend.position = c(0.7,0.15)) 
   
 )
 dev.off()
@@ -159,32 +162,34 @@ only_max <- increased_scenarios %>%
   summarize(max_rel_runtime = max(max_rel_runtime)) %>%
   mutate(representation.target_distortion = factor(representation.target_distortion))
 
-tikz(file="generated/metric_spaces_comparison_max_exynos.tex",standAlone = F,width=12,height=4)
+tikz(file="generated/metric_spaces_comparison_max_exynos.tex",standAlone = F,width=12,height=6)
 print(
   filter(only_max,platform == 'exynos') %>%
 #sample_n(min(50,length(rel_runtime))) %>% #to make it easier on latex
 ggplot(mapping = aes(x=rel_distance,y=max_rel_runtime,color=representation.target_distortion)) +
-  scale_color_brewer(palette = "Greens",na.value="grey50",name="(target)\ndistortion") +
+  scale_color_brewer(palette = "Greens",na.value="grey50",name="   (target) distortion") +
   geom_smooth(formula=y~x,method = 'lm') +
   geom_point_rast() +
   labs(x="relative distance",y="relative runtime") +
-  facet_wrap(platform~scenario,scale="free") + 
+  facet_wrap(~scenario,scale="free",ncol=2) + 
+  guides(color=guide_legend(ncol=3))   +
   theme(text=element_text(size=18),
-        legend.position = c(0.8,0.2)) 
+        legend.position = c(0.7,0.15)) 
 )
 dev.off()
-tikz(file="generated/metric_spaces_comparison_max_coolidge.tex",standAlone = F,width=12,height=4)
+tikz(file="generated/metric_spaces_comparison_max_coolidge.tex",standAlone = F,width=12,height=6)
 print(
 filter(only_max,platform == 'mppa_coolidge') %>%
 #sample_n(min(50,length(rel_runtime))) %>% #to make it easier on latex
 ggplot(mapping = aes(x=rel_distance,y=max_rel_runtime,color=representation.target_distortion)) +
-  scale_color_brewer(palette = "Blues",na.value="grey50",name="(target)\ndistortion") +
+  scale_color_brewer(palette = "Blues",na.value="grey50",name="   (target) distortion") +
   geom_smooth(formula=y~x,method = 'lm') +
   geom_point_rast() +
   labs(x="relative distance",y="relative runtime") +
-  facet_wrap(~scenario,scale="free") + 
+  facet_wrap(~scenario,scale="free",ncol=2) + 
+  guides(color=guide_legend(ncol=3))   +
   theme(text=element_text(size=18),
-        legend.position = c(0.8,0.2)) 
+        legend.position = c(0.7,0.15)) 
 )
 dev.off()
 
