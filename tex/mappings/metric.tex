@@ -61,7 +61,7 @@ For this, we propose to norm the metric distance function such that the average 
 Put together, these principles yield the following definition:
 \begin{defn}[Architecture Metric Space]
 	\label{defn:metric_simple}
-Let $A = (P,E)$ be an architecture graph and $\operatorname{lat} : P -> P$ be the expected latency between PEs.
+Let $A = (P,E)$ be an architecture graph and $\operatorname{lat} : P \rightarrow P$ be the expected latency between PEs.
 Then we set
 \begin{align}
   d_A : P \times P, (p,q) \mapsto \left\{
@@ -172,7 +172,8 @@ Given an embedding $\iota : A \hookrightarrow \mathbb{R}^k$ with distortion $D$ 
 Let $\iota: (\mathcal{M}, d) \hookrightarrow (\mathbb{R}^n, \| \cdot \|_p)$ be an embedding with distortion $D$ and define $\iota^{k} : (\mathcal{M}^k,d_p) \hookrightarrow (\mathbb{R}^{nk}, \| \cdot \|_p)$ as
 $\iota^k ( (x_1,\ldots,x_k)) = (\iota(x_1),\ldots,\iota(x_k))$. Then $\iota^k$ is an embedding with distortion of at most $D$.
 \begin{proof}
-It is clear why $\iota^k$ is an embedding (well-defined and injective), since $\iota$ is one. The distortion follows from the homogeneity of the $\| \cdot \|_p$-norm applied to Equation~\ref{eqn:distortion}.
+It is clear why $\iota^k$ is an embedding (well-defined and injective), since $\iota$ is one.
+The distortion follows from the homogeneity of the $\| \cdot \|_p$-norm applied to Equation~\ref{eqn:distortion}.
 \end{proof}
 \end{theorem}
 	  
@@ -188,7 +189,7 @@ We do this with an iterative method, described in Algorithm~\ref{algo:jl-iterati
 	  \Input{A discrete metric space $M$, a low-distortion embedding $\iota : M \hookrightarrow \mathbb{R}^n$ and a target distortion $D$.}
 	  \Output{An embedding with dimension $\leq n$ and distortion at most $D$.}
 	 \State dim $\leftarrow$ 1
-	 \While dim $\leq n$
+	 \While $\text{dim} \leq n$
 	   \For{ $\_ \in \text{numIterationsPerDim}$}
 		       \State $\tilde \iota \leftarrow \operatorname{JLReduction}(\iota,\text{dim})$
 			   \State $\tilde D \leftarrow \operatorname{CalculateDistortion}(\tilde \iota)$
@@ -225,6 +226,7 @@ Figure~\ref{fig:metric_comparison_exynos} shows the comparison of the different 
 In the figure, the metrics described in this section are labeled as follows: We call \texttt{SimpleVector} the Euclidean norm on the mappings described as simple vectors. 
 The metric based on the latencies as motivated from Figure~\ref{fig:intuition_metric} we denote as \texttt{MetricSpaceEmedding}, whereas we add the annotation \texttt{ED} for the metric with extra dimensions which accounts for heterogeneous \acp{PE}.
 The variants described as \texttt{SymmetryEmbedding} and \texttt{SymmetryEmbedding ED} are the two respective metrics combined with the symmetries, as described above. 
+These names and details of how we included the symmetries will be explained in more detail in Section~\ref{sec:representations}.
 
 The results from the figure show that there is basically no correlation between mappings distance and the (relative) runtimes.
 A mapping can be very far apart and have (almost) the same execution time. 
@@ -257,7 +259,7 @@ We can see that indeed, most of the metrics are pretty good as a \emph{bound} on
 \end{figure}
 
 The Odroid XU4 architecture is comparatively small, which obviously has consequences for the mapping space.
-There is, for example, less problems with the curse of dimensionality and overall a smaller (discrete) space.
+There are, for example, fewer problems with the curse of dimensionality and overall a smaller (discrete) space.
 How does the situation change for the MPPA3 Coolidge?
 Figure~\ref{fig:metric_comparison_coolidge} shows the same comparison as above for the MPPA3 Coolidge. 
 We can see that the space is more complex.
@@ -272,7 +274,7 @@ We will discuss these vertical lines further in Section~\ref{sec:dse}.
 \end{figure}
 
 Similar to the case for the Odroid XU4, Figure~\ref{fig:metric_comparison_max_coolidge} shows the same comparison with the maximal run-time difference for the MPPA3 Coolidge.
-Again we see that many metrics seem to be a decent bound for the difference in execution time, although less so than for the simple Odroid XU4 paltform.
+Again we see that many metrics seem to be a decent bound for the difference in execution time, although less so than for the simple Odroid XU4 platform.
 The Euclidean norm on the simple vector mappings, for example, is considerably worse than in this case than in the Odroid XU4.
 We can quantify more precisely how good metrics are as a bound for the execution time by comparing the $R^2$ value as goodness of fit assessment of the depicted linear regressions.
 
