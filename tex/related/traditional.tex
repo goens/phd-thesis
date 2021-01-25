@@ -11,21 +11,17 @@ In most chapters and sections we discuss related work directly.
 While we will systematically go over related work here, we will refer to the according sections for discussion.
 
 \paragraph{Dataflow-based Software Synthesis}
-We used and discussed the \ac{MAPS} framework and its spinoff in Silexica, as well as the \mocasin tool where we implemented many contributions of this thesis.
+We used and discussed the \ac{MAPS} framework~\cite{maps} and its spinoff in Silexica, as well as the \mocasin tool where we implemented many contributions of this thesis.
 These tools are both closely related, \ac{MAPS} focusing more on application developers and \mocasin on tool developers (for developing tools like \ac{MAPS}).
-There are many closely related tools, like Sesame~\cite{pimentel2006systematic}, DOL~\cite{thiele2007DOL}, SystemCoDesigner~\cite{haubelt2008systemcodesigner}, DAARM~\cite{weichslgartner2014daarm}, PREESM~\cite{pelcat2014preesm}, Spider~\cite{heulot2014spider} and Turnus~\cite{casale2013turnus}, among others.
+There are many closely related tools, like Sesame~\cite{pimentel2006systematic}, DOL~\cite{thiele2007DOL}, SystemCoDesigner~\cite{haubelt2008systemcodesigner}, DAARM~\cite{weichslgartner2014daarm}, PREESM~\cite{pelcat2014preesm}, Spider~\cite{heulot2014spider}, CAPH~\cite{serot2013caph} and Turnus~\cite{casale2013turnus}, among others.
 Section~\ref{sec:software_synthesis_flows} discusses these tools more in-depth.
 
 \paragraph{Other software synthesis tools}
 The tools above focus on software synthesis in a flow similar to the one described in this thesis, using \ac{KPN} or dataflow models and \ac{DSE} to find profitable mappings for executing applications in modern hardware.
 There are other tools which are focused more in the model's semantics, like Ptolemy~\cite{Ptolemaeus:14:SystemDesign} or CAL~\cite{eker2003cal} or synchronous languages like LUSTRE~\cite{pilaud1987lustre} or ESTEREL~\cite{boussinot1991esterel} which have discrete-event semantics, perhaps more closely related to Reactors than to dataflow.
 Even hardware description languages like VHDL or Verilog, and even SystemC~\cite{semantics_systemc} can be seen as related, in this case it being \ac{HLS}, which is in fact the inspiration for the term software synthesis.
-O
-Also on the commercial side, Signal Processing WorkSystem and Synopsys System Studio both from Synopsis join the LabVIEW Communications System Design Suite or Matlab Simulink as model-based design tools with well-defined \acp{MoC}.
-tools 
+Also on the commercial side, Signal Processing Work System and Synopsys System Studio both from Synopsis join the LabVIEW Communications System Design Suite or Matlab Simulink~\cite{klikpo2016modeling} as model-based design tools with well-defined \acp{MoC}.
 In Section~\ref{sec:general_dataflow_tools} we review and discuss many of these tools and programming languages based on \acp{MoC}.
-
-
 
 \paragraph{Mapping Representations}
 Symmetries have been explored in software synthesis implicitly in many cases, e.g. in~\cite{singh2010communication,thompson2013exploiting}. 

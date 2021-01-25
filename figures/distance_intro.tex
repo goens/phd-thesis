@@ -1,0 +1,28 @@
+\begin{scope}[name prefix=m1-, scale=0.25,every node/.append style={scale=0.25},]
+\input{figures/odroid}
+\node[ellipse,fill=red!60] (t1) at (pe2) {\Huge t$_1$};
+\node[ellipse,fill=red!60] (t2) at (pe1) {\Huge t$_2$};
+\draw (t1) edge[-{latex},line width=0.2mm, color=red!80] (t2);
+\end{scope}
+
+\begin{scope}[xshift=125,name prefix=m2-, scale=0.25,every node/.append style={scale=0.25},]
+\input{figures/odroid}
+\node[ellipse,fill=red!60] (t1) at (pe2) {\Huge t$_1$};
+\node[ellipse,fill=red!60] (t2) at (pe4) {\Huge t$_2$};
+\draw (t1) edge[-{latex},line width=0.2mm, color=red!80] (t2);
+\end{scope}
+
+\begin{scope}[xshift=250,name prefix=m3-, scale=0.25,every node/.append style={scale=0.25},]
+\input{figures/odroid}
+\node[ellipse,fill=red!60] (t1) at (pe2) {\Huge t$_1$};
+\node[ellipse,fill=red!60] (t2) at (pe5) {\Huge t$_2$};
+\draw (t1) edge[-{latex},line width=0.2mm, color=red!80] (t2);
+\end{scope}
+
+
+   
+\draw [decorate,decoration={brace,amplitude=5pt,mirror,raise=8ex}]
+(m1-L2-little.south) -- (m2-L2-little.south) node[midway,yshift=-8em]{dist $ = \sqrt{(4 - 1)^2} = 3$ };
+
+\draw [decorate,decoration={brace,amplitude=5pt,mirror,raise=8ex}]
+(m2-L2-big.south) -- (m3-L2-big.south) node[midway,yshift=-8em]{dist $ = \sqrt{(4 - 5)^2} = 1$ };

@@ -1,4 +1,26 @@
-Other flows: CAL, DOL, Daedalus, Ptolemy, CAPH, sdf3, preesm, systemcodesigner, ...
+Many flows exist that enable model-based design in a software synthesis flow.
+SystemCoDesigner~\cite{haubelt2008systemcodesigner} is based on SystemC and aimed at \acsp{FPGA}, as is the case with CAPH~\cite{serot2013caph}, which is based on dataflow and the actor model.
+Although the flows are based on \acp{MoC}, their goal is not software but rather an \acsp{FPGA} implementation, and as such these flows are closer to \ac{HLS} than the rest. 
+Coincidentally, the term software synthesis is inspired on the much better-known \ac{HLS}.
+
+Also based on a more general dataflow model is the Turnus~\cite{casale2013turnus} flow.
+It builds on top of RVC-CAL, which is in turn based on the CAL actor language~\cite{cal}.
+
+More specific is the \ac{\SDFFF}\cite{sdf3} framework, which does much more than generating random \ac{SDF} graphs.
+As a software synthesis tool~\cite{stuijk2010predictable}, it focuses on the more restricted \ac{SDF} \ac{MoC}, allowing much more sophisticated analysis of the applications.
+Similarly, PREESM~\cite{pelcat2014preesm} works with parametrized extensions of \ac{SDF}~\cite{desnos2013pimm} that provide a greater trade-off between expressiveness and analyzability.
+
+On the other side of the \ac{MoC} spectrum, many related flows use \ac{KPN}.
+The static-mapping-based flows of \ac{DOL}\cite{thiele2007dol}, Sesame~\cite{pimentel2006systematic} or \ac{MAPS}~\cite{maps} use different levels of abstraction to derive an efficient execution form a \ac{KPN}-based application description.
+
+Going beyond static mapping, the DAARM~\cite{weichslgartner2014daarm} flow maps dataflow applications using a hybrid approach.
+Similarly, the work of~\cite{quan2015hybrid} extends the Sesame approach to hybrid mappings, and Spider~\cite{heulot2014spider} extends the work of PREESM to hybrid mappings.
+
+This thesis and the contributions included in it are \textbf{not} aimed at proposing (yet another) software synthesis design flow.
+Instead, we propose methods to improve existing flows, with the ambitious goal of being general enough that the improvements would benefit most of the flows discussed. 
+Perhaps a good way to think of this is that just as these flows help users write more efficent applications, we aim to help the flow designers improve their flows.
+For chapters~\ref{chap:mapping_structures} and \ref{chap:mapping_applications}, we focus on one flow to do this.
+We choose the \ac{MAPS} flow~\cite{maps}, which resulted in the commercial spinoff Silexica, who kindly allowed us to use their tools for our research.
+Some contributions, on the other hand, go beyond these flows. This is particularly the case in chapters~\ref{chap:mocs} and~\ref{chap:pl}, and in part Chapter~\ref{chap:benchmarking} 
 
 \subsection{The \ac{MAPS} Maping flow}
-Here we talk about SLX as a commercial implementation of the discussed flow~\cite{maps}.
