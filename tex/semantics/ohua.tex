@@ -6,8 +6,8 @@ These kinds of ``freedom from choice'' in general-purpose languages are beyond t
 As such, we will survey languages focused on these paradigms.
 
 \subsection{Dataflow and Actors}
+\label{sec:general_dataflow_tools}
 
-Discuss commercial ones.
 
 Most well-known languages that follow \acp{MoC} like the ones described here are based on the actor model.
 Compared to more sophisticated
@@ -26,6 +26,22 @@ Ptolemy
 \end{figure}
 
 The one from Pimientel
+
+Many of the flows discussed above and in Section~\ref{sec:software_synthesis_flows} are academic and deal with more sophisticated models. 
+Many ideas that seem good in academia do not hold up in a practical development environment, where the learning curve of the models and time-to-market considerations change the field.
+It is therefore not surprising that the more sophisticated models have seen less adoption.
+Nevertheless, some commercial tools do ...
+
+
+The designers of these tools explicitly restricted the expressivity of the model
+to ensure deterministic execution, thus allowing users to focus on the algo-
+rithmic aspects of signal processing. The LabVIEW Communications System
+Design Suite also relies on dataow to model communication algorithms, re-
+stricting the more expressive language of general LabVIEW. Matlab Simulink
+also uses a model, that at the surfaces resembles dataow. The semantics of
+Simulink includes time-triggering and thus goes beyond pure dataow, but a
+mappings to dataow have been reported in the literature, see for example
+[102].
 
 \subsection{Discrete-Events Languages}
 

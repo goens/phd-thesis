@@ -45,9 +45,15 @@ The second reason for the deviation is the level of detail. The formalization of
 The aim of the formalization here is to isolate the abstract model's semantics and leave implementation details out.
 
 \paragraph{Restrictions}
-We explicitly restrict ourselves to a subset of the model, leaving out mutations, startup and shutdown. These are discussed in Chapter~2 of~\cite{lohstroh_phdthesis}.
+We explicitly restrict ourselves to a subset of the model, leaving out mutations, startup and shutdown.
+These are discussed in Chapter~2 of~\cite{lohstroh_phdthesis}.
 We also leave out cycles in the graphs for simplicity of the exposition, for a thorough discussion about cycles and causality loops see Chapter~2 of~\cite{lohstroh_phdthesis}.
-We do not model state in reactors or reactions either. This is not a strong restriction, since it can be modeled as self-edge (with an action).
+We do not model state in reactors or reactions either.
+This is not a strong restriction, since it can be modeled as self-edge.
+
+These restrictions are also due to this being ongoing work.
+At the time of this writing we have not finished the formalization to include these aspects, and extending a simple model is easier than changing a complete model that is problematic.
+Clearly, the restricted model is not as useful in practice, e.g. startup, shutdown and state are very important for the model to work at all.
 
 \paragraph{Formalization}
 Reactors are based on logical time model of discrete events.
@@ -57,6 +63,17 @@ For this, we use \emph{superdense time}~\cite{superdense,Ptolemaeus:14:SystemDes
 Thus, time tags $\tau \in \mathbb{N} \times \mathbb{N}$ are lexicographically ordered tuples of natural numbers, where the first number represent the time ticks (in some specific unit of time), and the second number represents microsteps.
 Physical time, on the other hand, we define as real numbers $\mathbb{R}$ to allow continuous-time physical models (e.g. Newtonian mechanics).
 However, computation only can interact with physical time at discrete time intervals ($\mathbb{N} \hookrightarrow \mathbb{R}$).
+We compose these two types of time in a unique time object, a \emph{tag}
+
+\begin{defn}[tag]
+    \label{defn:tags}
+   A (time) tag $\tau \in \mathbb{T}$ is a value in the sum (type) $\mathbb{T} := (\mathbb{N} \times \mathbb{N}) \oplus \mathbb{R} = \mathbb{N} \times \mathbb{N} \dot{\cup} \mathbb{R}$, which is commonly also called the disjoint sum\footnote{In the language of set theory, that we use by convention in this thesis.}.
+   The embedding for the first component $\mathbb{N} \times \mathbb{N} \hookrightarrow \mathbb{T}$ is called \emph{logical} time, and the embedding from the second component $\mathbb{R} \hookrightarrow \mathbb{T}$ is called physical time.
+   We say that $\tau$ is a \emph{logical} or \emph{physical} time tag respectively.
+\end{defn}
+
+Note that Definition~\ref{defn:tags} differs from~\cite{lohstroh_cyphy19,lohstroh_phdthesis}.
+The rationale for this is that this definition gives us a uniform way of referring to time while still distinguishing between logical and physical time.
 
 As computation is the manipulation of data, models are built and defined by how they manipulate data.
 We follow a model of computation based on the Scott model (cf. Section~\ref{sec:mocs_overview}).
@@ -64,14 +81,59 @@ Data are thus sequences $s \in S = \Sigma^* \cup \Sigma^\omega$ over a finite al
 The basic unit of computation in Reactors are reactions, which take a finite number of data tokens as input and return a finite number as output.
 Thus, a \emph{reaction} is simply a Scott-continuous function $r : S^n \rightarrow S^m$\index{Reactors ! reaction}
 Note that this restricts the definition of reactions.
-As defined in~\cite{lohstroh_cyphy19} with an informal \emph{source code} ``object'', they can interpreted in the semantics of the language of that source code.
+As defined in~\cite{lohstroh_cyphy19} with an informal \emph{source code} ``object'', they can be interpreted in the semantics of the language of that source code.
 As such, they could implement any relation on $S^n \times S^m$.
 In particular, we assume reactions are deterministic (as mathematical functions) and respect causality (being Scott-continuous).
+
+To communicate between reactors (or perhaps more precisely, between reactions), we need to send and receive data.
+We do this using ports of a particular type, which we model as edges in a graph that we map to the sequences $S$ that define the domains and codomains of reactions.
+There are other objects which we map to these sequences, actions and state, and special types of ports, triggers, which are required to execute a reaction.
+We will thus defer the formalization of ports to later, when we have the proper formalism to define them.
+
 \todo{make sure notation is consistent with Scott definition at beg. of chapter}
 
-We define 
+Reactions are, in a sense, controlled functions we compute from incoming data. 
+Some data we have no control over, like incoming input (e.g. from a sensor), or an asynchronous computation we scheduled.
+To model these we use \emph{actions}.
+Note that these actions are more a model of (tagged) data, as opposed to reactions which are a model of computation.
+This creates a false dichotomy, since actions are thus fundamentally different from reactions.
+Actions are more closely related to the input and output ports, and the naming confusion might be thus easier to resolve when thinking that reactions thus react to actions.
+
+Actions are central to the model, since they are the mapping between the functional world of reactions and the time semantics. \index{Reactors ! actions}
+Definition~\ref{defn:action} ensures actions do not mix the two different time types, and respect causality (i.e. an action cannot change the past).
+
+\begin{defn}
+    \label{defn:action}
+An action $A$ is a family of partial functions $A \ni a : \mathbb{T} \rightarrow S$ from tags to sequences such that the following is true:
+\begin{itemize}
+    \item There is a set $T \subset \mathbb{T}$ which is either a subset of the logical times, $T \subseteq \mathbb{N} \times \mathbb{N}$, or the physical times $T \subseteq \mathbb{R}$, such that for all $a \in A$ the domain $\operatorname{dom}(a) = \{ \tau \in \mathbb{T} \mid a \text{ is defined on } \tau \} \subseteq T$.
+    In these cases we call $A$ a \emph{logical} or \emph{physical} action, respectively.
+    \item For all $a \in A$, the (total) function $a_{\big| \operatorname{dom}(a)}:\operatorname{dom}(a) \rightarrow S$ is a monotone (i.e. order-preserving) function.
+\end{itemize}
+\begin{defn}
+
+For an action $A$ we call $d(A) = \operatorname{inf}_{a \in A} \operatorname{inf}_{\tau < \tau' \in \operatorname{dom}(a)} \tau' - \tau$ the minimum delay or spacing of the action $A$.
+Note that~\cite{lohstroh_phdthesis} distinguishes between the minimum delay as specified by the programmer and the minimum (time) spacing as acceptable for the runtime system.
+We consolidate both here, since, for simplicity, we disregard policies for when this spacing is violated and error handling in general.
+Consequently, we also do not model the spacing violation policy included in~\cite{lohsroh_phdthesis}. 
+
+At this point it is important mentioning a limitation of our model which might not be immediately obvious.
+The way we define time $\mathbb{T}$ we exclude infinity. Thus, while $\mathbb{T}$ is a \ac{poset}, it is not ($\omega$)-complete.
+This is apparent in the definition of actions, since we cannot require the restriction $a_{\big| \operatorname{dom}(a)}$ to be Scott-continuous, i.e. a morphism of $\omega$-complete partial orders, since $\mathbb{T}$ is not complete. 
+This means we cannot model some asymptotic time behavior, but for any finite execution, as will always be the case in practice, this should not be problematic.
+In future work we could extend the definition of time to include infinity, provided we find a use-case where this distinction is relevant in practice.
+
+Reactors read and write to ports, actions  
+\begin{defn}[(co)-dependences]
+A (co-)dependence set is a set of the form $D_1 \oplus D_2 \oplus \ldots \oplus D_n = D_1 \dot{\cup} \ldots \dot{\cup} D_n$, where $P_i$ is either a sequence $S$ or an action $a : \mathbb{T} \rightarrow S$.
+\end{defn}
+triggered from data in the channels We define an action
 Actions
-\index{Reactors ! actions}
+
+A reader familiar with the formalization published in~\cite{lohstroh_cyphy19} might notice that we have consistently left out identifiers in this formalization.
+This is a deliberate choice: Identifiers are crucial for constructing a reactor network, but they do not affect its semantics. 
+A goal of this alternative formalization is to be simpler, wherever possible without compromising the semantics.
+In particular, anything that is central to any implementation but not to the semantics, like identifiers, is separated and left to the language definition.
 
 Atomic reactors
 
@@ -81,4 +143,32 @@ Reactors
 
 Reactor Networks
 
-Execution
+Both our original description in~\cite{lohstroph_cyphy19} and the updated one in~\cite{lohstroh_phdthesis} are very explicit about reaction and event queues, scheduling and mutexes.
+These are very important aspects for any implementation of the model, yet they conflate the implementation and the semantics, not entirely unlike the explicit identifiers.
+Here we are interested mostly in the general concepts behind reactors, the implementation is outside the scope of this thesis.
+As a consequence, we will err on the side of abstraction, by preferring to abstract away details and clarify them in future work. 
+In particular, we do not specify the tags for 
+Execution: discuss tags for non-action ports (when will they be empty?)
+
+The execution of a reactor network is not modeled as a process: the computation itself is modeled through the sequences $S$ in the Scott semantics of computation.
+Actions $a \in A$ are chosen (non-deterministically) for an execution, modeling the non-determinism from the environment.
+
+This formalization allows us to reason more explicitly about determinism and its definition.
+The definition of determinism for the model is not as canonical in this context.
+If we disregard time, it is simple to see how model reduces to a special case of \ac{KPN} and can be shown to be deterministic as such: 
+given the same inputs it produces the same outputs.
+
+We should not disregard time, however, since time is a defining feature of the model!
+In the formalization it is clear how actions are the interface between the functional and timed parts of the model, as described above.
+To define and understand determinism in terms of time thus, we should focus on actions.
+Clearly, given the same action instances $a \in A$ the network will behave in the same way.
+An intuitive notion of determinism is that given two instances $a, a' \in A$ with identical image sequences $\{ a(\tau) \mid \tau in \operatorname{dom}(a) \} \operatorname{im}(a) = \operatorname{im}(a') = \{ a(\tau) \mid \tau in \operatorname{dom}(a') \}$ then all sequences in the network are identical.
+This would mean that the outputs only depend on the values of the inputs and not on their timings.
+
+We can go further, however, and distinguish between logical and physical actions for determinism. 
+If we define scheduling algorithms for logical actions as done in~\cite{lohstroh_cyphy19,lohstroh_phdthesis}, we can define a reactor network to be deterministic if they only dependend of the image sequences of \emph{physical} actions $A$.
+In other words, we can define a reactor network to be time-deterministic if for every physical action $A$ and for every $a, a' \in A$ with $\operatorname{im}(a) = \operatorname{a'}$ all sequences of the resulting network are identical.
+The non-determinism from the physical world is outside our control, but with this definition we are also ensuring logical actions to behave deterministically as a function of the physical ones. 
+
+In future work we plan to precisely identify conditions for these different possible definitions of determinism and verify them, using the Lean theorem prover~\cite{lean} and a formalization similar to the one described here.
+As mentioned above, this is ongoing (unpublished) work in collaboration with Marcus Rossel.

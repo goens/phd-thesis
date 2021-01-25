@@ -70,3 +70,9 @@ For each mapping we executed the four concurrent instances of the application an
 We see that the execution of applications with \ac{TETRiS} is indeed significantly more predictable than with the dynamic approach of \ac{CFS}.
 This is especially clear for the execution times, where the variance of \ac{CFS} of around $1.3 \cdot 10^{-1} s$ is two orders of magnitude higher than that of \ac{TETRiS}, which for example for $T_3$ is only  $2.7 \cdot 10^{-3}s$.
 However, the difference is also very clearly visible for the energy consumption. The variance of \ac{CFS} is around $2.9 J$, whereas that of \ac{TETRiS} for $T_3$ is around $6.9 \cdot 10^{-1} J$, about an order of magnitude lower.
+
+We have already implemented the symmetries and some of the algorithms of~\cite{khasanov_date20} in \mocasin.
+ In future work we want to integrate the whole flow as depicted in Figure~\ref{fig:tetris_flow} for this.
+In~\cite{menard_rapido21} we showed in preliminary results how this could yield an improvement over static mapping approaches.
+There we evaluated the methods on a 5G use-case. This use-case will be discussed further in Section~\ref{sec:5g}.
+Another avenue for future work is supporting OpenMP applications.

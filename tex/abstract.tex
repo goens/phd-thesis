@@ -1,1 +1,19 @@
-Add an abstract.
+Computer hardware keeps increasing in complexity.
+Software design needs to keep up with this with the right abstractions to empower developers to leverage the novelties of modern hardware.
+This thesis deals primarily with models of computation as a basis for software design, in a family of methods called software synthesis.
+
+We focus on Kahn Process Networks and dataflow applications as abstractions, both for programming and for deriving an efficient execution on heterogeneous multicores.
+The latter we accomplish by exploring the design space of possible mappings of computation and data to hardware resources.
+Mapping algorithms are not at the center of this thesis, however.
+Instead, we examine the mathematical structure of the mapping space, leveraging its inherent symmetries or geometric properties to improve mapping methods in general.
+
+This thesis thoroughly explores the process of model-based design, aiming to go beyond the more established software synthesis on dataflow applications.
+Starting at the problem of assessing these mehtods through benchmarking, we examine the general goals of benchmarks formally, as well as the role modern machine learning methods play in them.
+
+We explore different established semantics, taking them to their limits with the MacQueen gap in Kahn Process Networks.
+We also discuss novel models, like Reactors which are designed to be a deterministic, adaptive model with time as a first-class citizen.
+By investigating abstractions and transformations in the Ohua language for implicit dataflow programming, we also focus on programmability.
+
+The focus of the thesis is in the models and methods, but we evaluate them in diverse use-cases, generally centered around cyber-physical systems.
+From the 5G telecommunication standard, through the automotive and signal processing domains.
+We even go beyond embedded systems and discuss use-cases in \acs*{GPU} programming and microservice-based architectures.
