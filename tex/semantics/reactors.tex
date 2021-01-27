@@ -41,13 +41,13 @@ In~\cite{lohstroh_cyphy19} we laid the groundwork for an operational formalizati
 As part of an ongoing project, the reactor model is a moving target and has been refined since.
 At the time of this writing, the most thorough and up-to-date account is in~\cite{lohstroh_phdthesis}.
 Here we will deviate from the formalization both in~\cite{lohstroh_cyphy19} and \cite{lohstroh_phdthesis}, however, and attempt a denotational approach to semantics.
-A reason for this is that the original formalization has some mathematical inaccuracies and unspecified behavior.
-Clarifying or correcting these inaccuracies is necessary for having a well-defined model.
 In ongoing unpublished work with Marcus Rossel we are using the Lean theorem prover~\cite{lean} to formaly verify reactors, proving properties like determinism under certain conditions.
+A reason for this denotational approach is that the original formalization has some mathematical inaccuracies and unspecified behavior.
+Clarifying or correcting these inaccuracies is necessary for having a well-defined model.
 The second reason for the deviation is the level of detail.
 We want to simplify the formalization of~\cite{lohstroh_cyphy19,lohstroh_phdthesis}.
 The aim of the formalization here is to isolate the abstract model's (denotational) semantics and leave implementation-specific details out as much as possible.
-An andvantag of this formalization is that it relates \acp{KPN} and rectors formally.
+An advantage of this formalization is that it relates \acp{KPN} and rectors formally.
 
 \paragraph{Restrictions}
 
@@ -70,10 +70,10 @@ We follow a model of computation based on Scott's semantics of computation (cf. 
 Data is modeled as sequences $s \in S = \Sigma^* \cup \Sigma^\omega$ over a finite alphabet $\Sigma$, which we require to include a special symbol $\bot \overset{!}{\in} \Sigma$ that represents absence of data.
 %\todo{make sure notation is consistent with Scott definition at beg. of chapter}
 The basic unit of computation in Reactors are reactions, which take a finite number of data tokens as input and return a finite number as output.
-Thus, to define a reaction we simply consider a Scott-continuous function $n : S^k \rightarrow S^m$
-Sequences can have different lengths (both finite or infinite), yet reactor networks execute in discrete ticks.
+Thus, to define a reaction we simply consider a Scott-continuous function $n : S^k \rightarrow S^m$.
+Sequences can have different lengths (both finite or infinite), yet reactor networks execute in discrete ticks, which result in sequences of the same length.
 To model this we add a ``padding'' using the special symbol $\bot \in \Sigma$ to a finite sequence $s \in \Sigma^* = S \setminus \Sigma^\omega$, by defining $\hat s  = s.(\bot^\omega)$. 
-Similarly, we define $\hat n = n_{\big| \Sigma^\omega}$ as the restriction of $n$ to infinite sequences. 
+%Similarly, we define $\hat n = n_{\big| \Sigma^\omega}$ as the restriction of $n$ to infinite sequences. 
 Finally, an important restriction is that we want reactions not to take multiple inputs before producing an output. 
 
 \begin{defn}[Reaction]\index{Reactors ! reaction}
@@ -82,7 +82,7 @@ Let $n : S^k \rightarrow S^m$ be a Scott continuous function.
 We call $n$ a \emph{reaction} if for any two $s, s' \in S$ with $s' \sqsubsetneq s$ it holds that $n(s') \sqsubsetneq n(s)$.
 \end{defn}
 
-Note that our definition restricts is a restriction on the definition of reactions.
+Note that our definition is a restriction on the definition of reactions.
 As defined in~\cite{lohstroh_cyphy19} with an informal \emph{source code} ``object'', they can be interpreted in the semantics of the language of that source code.
 As such, they could implement any relation on $S^k \times S^m$.
 In particular, we assume reactions are deterministic (as mathematical functions) and respect causality (being Scott-continuous).
@@ -94,7 +94,7 @@ Definition~\ref{defn:reaction} also has strong theoretical consequences.
 It implies that every monotone reaction is Scott-continuous, since it is equivalent with $|f(s)| \geq |s|$ for all $s \in S$, which avoids the pathological cases that distinguish monotone and Scott-continuous functions.
 Proving this fact is beyond the scope of this thesis.
 
-Modeling reactions as Scott-continuous functions  we do not specify anything about the \emph{length} of the sequences.
+Modeling reactions as Scott-continuous functions, we do not specify anything about the \emph{length} of the sequences.
 A reaction might produce a longer output sequence than its input sequence. At this stage this is not important, as we model the complete computation with a single function.
 We will come back to this later, in the timed model, when we relate these sequences to concrete times.
 
@@ -115,20 +115,22 @@ A reactor this has a series of reactions with input and output ports, and reacto
 \label{defn:reactor}
 Let $I$ be an index set. A reactor is a tuple $r = (N,D,D^\vee)$  where $N$ is a finite \ac{poset} of reactions $n : S^{k_n} \rightarrow S^{m_n}$ and
  \begin{align*} D : & N \rightarrow (\{1, \ldots, k_n\} \rightarrow I), \\
-     D^\vee : & N \rightarrow (\{1, \ldots, m_n\})
+     D^\vee : & N \rightarrow (\{1, \ldots, m_n\} \rightarrow I)
  \end{align*} the sources and effects respectively.
-We call the set $\operatorname{Input}(r) = \cup_{ n \in N} \operatorname{im}(D(n))$ the set of input ports and 
-similarly $\operatorname{Output}(r) = \cup_{ n \in N} \operatorname{im}(D^\vee(n))$ the set of output ports.
-We require that $\operatorname{Input}(r) \cap \operatorname{Output}(r) = \emptyset$ as part of the definition of a reactor.
+We call the set $\operatorname{Input}(r) = \bigcup_{ n \in N} \operatorname{im}(D(n))$ the set of input ports and 
+similarly $\operatorname{Output}(r) = \bigcup_{ n \in N} \operatorname{im}(D^\vee(n))$ the set of output ports.
+%We require that $\operatorname{Input}(r) \cap \operatorname{Output}(r) = \emptyset$ as part of the definition of a reactor.
 \end{defn}
 \index{Reactors ! reactor }
 \index{Reactors ! sources }
 \index{Reactors ! effects }
 
 The sources $D$ make a correspondence between the indices in the tuple of input streams of a reaction and the (port) identifiers $I$.
-For example, if a reaction $n : S^2 \rightarrow S$ takes two inputs, the sources $D(n) : 1 \mapsto c, 2 \mapsto b$ means that the ports $c$ and $b$ are the two input ports of $n$, in that order.
+For example, if a reaction $n : S^2 \rightarrow S$ takes two inputs, $D(n) : 1 \mapsto c, 2 \mapsto b$ means that the ports $c$ and $b$ are the two input ports of $n$, in that order.
 The effects $D^\vee$ are analogous but for the outputs of the reaction.
-Thus, the condition $\operatorname{Input}(r) \cap \operatorname{Output}(r) = \emptyset$ ensures that input and output ports are distinct.
+We do not require that input and output ports are distinct ($\operatorname{Input}(r) \cap \operatorname{Output}(r) = \emptyset$).
+A port that is both an input and output port models the state of that reactor. 
+We thus define $\operatorname{State}(r) = \operatorname{Input}(r) \cap \operatorname{Output}(r)$.
 
 We require $N$ to be a \ac{poset} for two reasons.
 Firstly, we want to be able to specify an order in which reactions are always executed.
@@ -141,7 +143,7 @@ For simplicity, we assume they have a single (shared) input and output port: $(D
 Recall that $\hat s = s.(\bot)^\omega$ for $s \in S \setminus \Sigma^\omega$ is a ``padding'' of a sequence with absent values.
 We say that a function $f : S \rightarrow S$ is a \emph{priority-preserving execution} if for all $s \in S$, it holds that:
 \begin{align}
-\label{eqn:nleqns} \hat f(\hat s)_i &  =  \hat n(\hat s)_i, & \text{ if } n \leq n', \hat n(\hat s)_i \neq \bot \\
+\label{eqn:nleqns} \hat{ f(\hat s)_i} &  =  \hat n(\hat s)_i, & \text{ if } n \leq n', \hat n(\hat s)_i \neq \bot \\
 \label{eqn:nleqnsbot} \hat f(\hat s)_i &  =  \hat n'(\hat s)_i, & \text{ if } \hat n(\hat s)_i = \bot \\
 \label{eqn:nsleqn} \hat f(\hat s)_i &  =  \hat n'(\hat s)_i, & \text{ if } n' \leq n, \hat n(\hat s)_i \neq \bot \\
 \label{eqn:nleqnsbot} \hat f(\hat s)_i &  =  \hat n(\hat s)_i, & \text{ if } \hat n'(\hat s)_i = \bot \\
