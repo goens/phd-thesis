@@ -12,66 +12,93 @@ In this section we discuss the Reactor model~\cite{lohstroh_dac19}, which aims b
 
 The reactor model is inspired by the Hewitt-Agha actor model~\cite{Agha:86:Actors}, which is a very widespread and well-known model of concurrent computation.\index{Reactors}
 The actor model is neither deterministic nor timed.\index{actor model}
-We make the reactor model deterministic by combining ideas from multiple paradigms~\cite{lohstroh_fdl19}, notably, through explicit discrete-event time semantics.
+We make the reactor model deterministic by combining ideas from multiple paradigms~\cite{lohstroh_fdl19}, notably, through explicit discrete-event semantics.
 The reactor model thus has two distinct time notions, \emph{physical} and \emph{logical time}, ideal for \ac{CPS}.
-Physical time refers to the time as elapsing in the physical part of the system, and while part of the model is thus not part of the digital logic.\index{physical time}
+Physical time refers to the time as elapsing in the physical part of the system, and that part of the model is thus not part of the digital logic.\index{physical time}
 Logical time, on the other hand, is the digital counterpart of physical time, and is the time that governs the computation of the reactor network.\index{logical time}
-Every \ac{CPS} has physical and logical time, by their very definitions. The novelty of the reactor models is making the separation explicit.
+Every \ac{CPS} has physical and logical time, by their very definitions. A novelty of the reactor models is making both time concepts and their separation explicit.
 Just as in any other timed \ac{MoC} for \acp{CPS}, the two times are tightly coupled and intended to be synchronized. 
 Making the separation explicit allows us to control the synchronization of both time models and have better control over a deterministic execution of the time logic.
 
-Just as in the dataflow models discussed in Section~\ref{sec:mocs_overview} the actor model divides computation into isolated \emph{actors} that communicate solely over explicit messages.
-The main difference to models like \ac{SDF} or \ac{KPN} is that actors and channels are not fixed, but can rather me dynamically created and destroyed.
+Just as in the dataflow models discussed in Section~\ref{sec:mocs_overview}, the actor model divides computation into isolated \emph{actors} that communicate solely over explicit messages.
+The main difference to models like \ac{SDF} or \ac{KPN} is that actors and channels are not fixed.
+Instead,they can be dynamically created and destroyed.
 In the reactor model we aim to combine good ideas from multiple established \acp{MoC}.
-We permit dynamic re-configuration of the network through \emph{mutations} which are well-defined, not arbitrary~\cite{lohstroh_cyphy19}, which permits to reason about determinism more explicit. \index{Reactors ! mutation}
-At the time of this writing, mutations are only defined in principle.
+We permit dynamic re-configuration of the network through \emph{mutations} which are well-defined (not arbitrary~\cite{lohstroh_cyphy19}) transformations of the network's topology.
+This permits us to reason about determinism more explicitly. \index{Reactors ! mutation}
+At the time of this writing, mutations are only defined astractly.
 Specifying a set of well-defined mutations that allow us to reason about determinism and time, while still providing enough flexibility as need by the applications, is ongoing work.
 We will discuss this in an example use case for 5G in Section~\ref{sec:fiveg}.
 
 This thesis deals with model-based design in general.
 As such, Reactors are part of the contribution as yet another model with distinct advantages and disadvantages.
-Thus, apart from the design choices discussed, we only briefly outline the formalization of reactors as well as some applications leveraging particular features of this model as opposed to other \acp{MoC}.
+Thus, apart from the design choices discussed, we only briefly outline the concepts behind reactors and a simplified formalization of them, as well as some applications leveraging particular features of this model as opposed to other \acp{MoC}.
 The detailed design and implementation of Reactors as runtime systems and the corresponding polyglot coordination language, Lingua Franca\footnote{\url{https://github.com/icyphy/lingua-franca}}, are outside the scope of this thesis~\cite{lingua_franca,lohstroh_phdthesis}.
 
-\subsubsection{Reactors}
+\subsubsection{Alterative Formalization}
 
-The work in~\cite{lohstroh_cyphy19} laid the groundwork for a formalization of reactors.
-As an ongoing project, the reactor model has been refined since.
+In~\cite{lohstroh_cyphy19} we laid the groundwork for a formalization of reactors.
+As part of an ongoing project, the reactor model is a moving target and has been refined since.
 At the time of this writing, the most thorough and up-to-date account is in~\cite{lohstroh_phdthesis}.
-However, we will deviate slightly from the formalization both in~\cite{lohstroh_cyphy19} and \cite{lohstroh_phdthesis} for two reasons.
-The first reason is that the original formalization attempt has some mathematical inaccuracies and unspecified behavior.
+We will deviate slightly from the formalization both in~\cite{lohstroh_cyphy19} and \cite{lohstroh_phdthesis}, however, for two reasons.
+The first reason is that the original formalization has some mathematical inaccuracies and unspecified behavior.
 Clarifying or correcting these inaccuracies is necessary for having a well-defined model.
-In ongoing unpublished work with Marcus Rossel we are using the Lean theorem prover~\cite{lean} to formalize reactors and use this to prove that the model is deterministic.
+In ongoing unpublished work with Marcus Rossel we are using the Lean theorem prover~\cite{lean} to formaly verify reactors, proving properties like determinism under certain conditions.
 The second reason for the deviation is the level of detail.
 We want to simplify the formalization of~\cite{lohstroh_cyphy19,lohstroh_phdthesis}.
-The aim of the formalization here is to isolate the abstract model's semantics and leave implementation specific details out as much as possible.
-
+The aim of the formalization here is to isolate the abstract model's semantics and leave implementation-specific details out as much as possible.
+With this alternative formalization, we also relate \acp{KPN} and rectors precisely.
 \paragraph{Restrictions}
-We explicitly restrict ourselves to a subset of the model, leaving out mutations and any kind of exception handling policies.
+
+We explicitly restrict ourselves to a subset of the model, leaving out mutations and any kind of exception-handling policies.
 A more comprehensive model, including some of these concepts, is discussed in Chapter~2 of~\cite{lohstroh_phdthesis}.
 These restrictions are in part for simplicity, but also due to this being ongoing work.
-At the time of this writing we have not finished the formalization to include these aspects, and extending a simple model is easier than changing a complete model that is problematic.
-Clearly, the restricted model is not as useful in practice, e.g. startup, shutdown and state are very important for the model to work at all.
+At the time of this writing, we have not finished the Lean-based formalization to include these aspects.
+Extending a simple model is easier than changing a complete model that is problematic.
+It is important to note that as ongoing work, this alternative formulation has not yet undergone peer-review (as opposed to~\cite{lohstroh_cyphy19}) and is subject to change.
 
-\paragraph{Formalization}
+\paragraph{Timeless model}
+
 Reactors are a timed model, with specific semantics of how the time progresses and what can happen when.
 The logical (functional) semantics of a reactor network are complex as well, however.
-We thus first begin defining the computational semantics of the network in a timeless fashion, and then extend the model to include time.
+We first begin defining the computational semantics of the network in a timeless fashion, and then extend the model to include time.
 
-As computation is the manipulation of data, models are built and defined by how they manipulate data.
-We follow a model of computation based on the Scott model (cf. Section~\ref{sec:mocs_overview}).
-Data are thus sequences $s \in S = \Sigma^* \cup \Sigma^\omega$ over a finite alphabet $\Sigma$, which we require to include a special symbol $\bot \overset{!}{\in} \Sigma$ that represents absence of data.
-\todo{make sure notation is consistent with Scott definition at beg. of chapter}
+Computation is essentially manipulation of data.
+Models are thus built and defined by how they manipulate data.
+We follow a model of computation based on Scott's semantics of computation (cf. Section~\ref{sec:mocs_overview}).
+Data is modeled as sequences $s \in S = \Sigma^* \cup \Sigma^\omega$ over a finite alphabet $\Sigma$, which we require to include a special symbol $\bot \overset{!}{\in} \Sigma$ that represents absence of data.
+%\todo{make sure notation is consistent with Scott definition at beg. of chapter}
 The basic unit of computation in Reactors are reactions, which take a finite number of data tokens as input and return a finite number as output.
-Thus, a \emph{reaction} is simply a Scott-continuous function $n : S^k \rightarrow S^m$\index{Reactors ! reaction}
-Note that this restricts the definition of reactions.
+Thus, to define a reaction we simply consider a Scott-continuous function $n : S^k \rightarrow S^m$
+Sequences can have different lengths (both finite or infinite), yet reactor networks execute in discrete ticks.
+To model this we add a ``padding'' using the special symbol $\bot \in \Sigma$ to a finite sequence $s \in \Sigma^* = S \setminus \Sigma^\omega$, by defining $\hat s  = s.(\bot^\omega)$. 
+Similarly, we define $\hat n = n_{\big| \Sigma^\omega}$ as the restriction of $n$ to infinite sequences. 
+Finally, an important restriction is that we want reactions not to take multiple inputs before producing an output. 
+\begin{defn}[Reaction]\index{Reactors ! reaction}
+Let $n : S^k \rightarrow S^m$ be a Scott continuous function. 
+We call $n$ a \emph{reaction} if for any two $s, s' \in S$ with $s' \sqsubsetneq s$ it holds that $n(s') \sqsubsetneq n(s)$.
+\end{defn}
+
+Note that our definition restricts is a restriction on the definition of reactions.
 As defined in~\cite{lohstroh_cyphy19} with an informal \emph{source code} ``object'', they can be interpreted in the semantics of the language of that source code.
 As such, they could implement any relation on $S^k \times S^m$.
 In particular, we assume reactions are deterministic (as mathematical functions) and respect causality (being Scott-continuous).
+Note that this does not mean they are stateless, state can be formalized as a ``self-edge'' i.e. an $i,j$ such that
+\[ f(*,\underbrace{s}_{i},*) = (*,\underbrace{s'}_{j},*) \text{ with } s \sqsubseteq s' \text{ for all } s,s' \in S, \]
+the $*$ being other sequences we don't care about here.
 
-If a reaction $f : S^k \rightarrow S^m$ has the property that $f(s_1,\ldots,s_{i-1},\bot,s_{i+1},\ldots,s_k) \sqsupseteq (\bot^\omega,\ldots,\bot^\omega)$ for all $s_1,\ldots,s_{i-1},s_{i+1},\ldots,s_k \in S$, we say that $f$ has a trigger on the input $i$.
-Besides triggers, the original definition also has other components as part of reactions, namely sources and effects (or dependencies and anti-dependencies),  scheduleable actions and a deadline.
-We move most of these as part of the reactor definition, not the reaction.
+Modeling reactions as Scott-continuous functions  we do not specify anything about the \emph{length} of the sequences.
+A reaction might produce a longer output sequence than its input sequence. At this stage this is not important, as we model the complete computation with a single function.
+We will come back to this later, in the timed model, when we relate these sequences to concrete times.
+
+If a reaction $f : S^k \rightarrow S^m$ has the property that
+\[ f(s_1,\ldots,s_{i-1},\bot,s_{i+1},\ldots,s_k) \sqsubseteq (\bot^\omega,\ldots,\bot^\omega)\text{ for all }s_j \in S, 1 \leq j \leq k, j \neq i,\]
+ we say that $f$ has a trigger on the input $i$.
+Recall that the symbol $\bot$ represents the absence of values.
+Intuitively, thus, a reaction that triggers on $i$ will not execute if there is no input on $i$.
+In other words, the values in $i$ trigger the reaction, hence the name.\index{Reactors ! triggers }
+Besides triggers, the original definition also has other components as part of reactions, namely sources and effects (or dependencies and anti-dependencies), scheduleable actions and a deadline.
+We include most of these concepts in other definitions, e.g. the reactor or the network.
 
 To communicate between reactors (or perhaps more precisely, between reactions), we need to send and receive data.
 We do this using input and output ports, which we model simply as identifiers in an index or identifier set $I$. 
@@ -79,30 +106,99 @@ A reactor this has a series of reactions with input and output ports, and reacto
 
 \begin{defn}[Reactor]
 \label{defn:reactor}
-An atomic reactor is a tuple $r = (N,D,D^\vee)$  where $N$ is a finite \ac{poset} of reactions $n : S^{k_n} \rightarrow S^{m_n}$ and $D : N \rightarrow (\{1, \ldots, k_n\} \rightarrow I), D^\vee : N \rightarrow (\{1, \ldots, m_n\})$ the sources and effects respectively.
-We call the set $\operatorname{Input}(r) = \cup_{ n \in N} \operatorname{im}(D(n))$ the set of input ports and similarly $\operatorname{Output}(r) = \cup_{ n \in N} \operatorname{im}(D^\vee(n))$ the set of output ports.
-We require that $\operatorname{Input}(r) \cap \operatorname{Output}(r) = \emptyset$ as part of the definition of an atomic reactor.
+Let $I$ be an index set. A reactor is a tuple $r = (N,D,D^\vee)$  where $N$ is a finite \ac{poset} of reactions $n : S^{k_n} \rightarrow S^{m_n}$ and
+ \begin{align*} D : & N \rightarrow (\{1, \ldots, k_n\} \rightarrow I), \\
+     D^\vee : & N \rightarrow (\{1, \ldots, m_n\})
+ \end{align*} the sources and effects respectively.
+We call the set $\operatorname{Input}(r) = \cup_{ n \in N} \operatorname{im}(D(n))$ the set of input ports and 
+similarly $\operatorname{Output}(r) = \cup_{ n \in N} \operatorname{im}(D^\vee(n))$ the set of output ports.
+We require that $\operatorname{Input}(r) \cap \operatorname{Output}(r) = \emptyset$ as part of the definition of a reactor.
 \end{defn}
 \index{Reactors ! reactor }
 \index{Reactors ! sources }
 \index{Reactors ! effects }
 
-For a reaction $r$ triggers
- We define the set $\mathcal{T}$
-We 
-
-We require $N$ to be a \ac{poset} for two reasons. Reactions are always executed in order, which is why we require an ordering for them. 
-However, we want to allow explicitly making the model non-deterministic by making reactions incomparable. 
-When two reactions are incomparable, they are executed in a non-deterministic order.
-By the order-extension principle, it is always possible to execute reactions while respecting the partial order.
-
 The sources $D$ make a correspondence between the indices in the tuple of input streams of a reaction and the (port) identifiers $I$.
 For example, if a reaction $n : S^2 \rightarrow S$ takes two inputs, the sources $D(n) : 1 \mapsto c, 2 \mapsto b$ means that the ports $c$ and $b$ are the two input ports of $n$, in that order.
 The effects $D^\vee$ are analogous but for the outputs of the reaction.
 Thus, the condition $\operatorname{Input}(r) \cap \operatorname{Output}(r) = \emptyset$ ensures that input and output ports are distinct.
-The triggers $\mathcal{T}(n)$ of a reaction $n \in N$ are the ports $i \in I$ which, when a value is present, make the reaction execute.
-They trigger it, hence the name.\index{Reactors ! triggers }
 
+We require $N$ to be a \ac{poset} for two reasons.
+Firstly, we want to be able to specify an order in which reactions are always executed.
+However, we also want to allow explicitly making the model non-deterministic by making reactions incomparable. 
+When two reactions are incomparable, they are executed in a non-deterministic order.
+By the order-extension principle, it is always possible to execute reactions while respecting the partial order.
+
+More formally, let $n, n' : S \rightarrow S$ be two reactions.
+For simplicity, we assume they have a single (shared) input and output port: $(D(n))(1) = (D(n'))(1)$ and similarly $(D^\vee(n))(1) = (D^\vee(n'))(1)$.
+We say that a function $f : S \rightarrow S$ is a \emph{priority-preserving execution} if for all $s \in S$, it holds that:
+\begin{align}
+\label{eqn:nleqns} f(s)_i &  =  n(s)_i, & \text{ if } n \leq n' \text{ and } |n(s)| \geq i  \\ 
+\label{eqn:nsleqn} f(s)_i &  =  n'(s)_i, & \text{ if } n' \leq n \text{ and } | n(s)| \\
+\label{eqn:nondet} f(s)_i &  \in \{ n(x)_i \mid x \in \{s,s'\} \} & \text{ if } \{ n(x)_i \mid x \in \{s,s'\} \} \neq \emptyset \\
+\end{align}
+
+In this case we write $f \in n \sqcup_{D,D^\vee} n'$.
+Equations~\ref{eqn:nleqns} and~\ref{eqn:nsleqn} formalize the reaction priority when the two reactions are ordered, and Equation~\ref{eqn:nondet} the non-deterministic ordering when $n$ and $n'$ are incomparable.
+Note that $n \sqcup_{D,D^\vee} n'$ contains exactly one function in both cases, where $n \leq n'$ or $n' \leq n$, and for $n = n', \sqcup{D,D^\vee} = \{ n \}$.
+This definition can be trivially generalized to more than one (shared) input or output sequence (componentwise), and to non-shared input or output sequences by requiring equations~\ref{eqn:nleqns}-\ref{eqn:nondet} to hold quantified over all non-shared sequences.
+Finally, for a \ac{poset} $N$ of reactions, we define $\sqcup_{D,D^\vee} N$ analogously (componentwise), requiring equations~\ref{eqn:nleqns}-\ref{eqn:nondet} to hold paairwise for any two $n, n' \in N$.
+
+\begin{lem}
+    Let $r = (N,D,D')$ be a reactor and let $N$ be totally ordered.
+    Then, there is a unique function $f \in \sqcup_{D,D^\vee} N$ and $f$ is Scott-continuous.
+    \begin{proof}
+        For simplicity, we show the case for $ N = \{n, n' \}, n, n': S \rightarrow S$ each with a shared sequence, i.e. $(D(n))(1) = (D(n'))(1)$ and $(D^\vee(n))(1) = (D^\vee(n'))(1)$.
+        The general case works in the same way.
+        Since $N$ is totally ordered, one of $n < n'$ or $n' < n$ holds. Without loss of generality, let $n < n'$.
+        Then, for every $f \in \sqcup_{D,D^\vee}, s \in S$ we have \[ f(s) = \left\{
+            \begin{array}{ll}
+                n(s)_i, & i \leq |n(n)| \\
+                n'(s)_i, & \text{ otherwise.}
+            \end{array} 
+        \right. \] 
+        This is uniquely determines a single (well-defined) function $f$.
+        We thus need to show that $f$ is Scott-continous.
+        For this we first show that $f$ is monotone.
+        Let $s' \sqsubseteq s \in S$. 
+        We distinguish between two cases:
+        \begin{enumerate}
+        \item Let $|n(s)| \geq  |n'(s)|$. Then $f(s) = n(s)$ and by the monotonicity of $n$ we have $f(s') = n(s') \sqsubseteq n(s) = f(s).$
+        \item Let $|n(s)| = k < |n'(s)|$. Then there exist $t_1,t_2 \in S$ such that $n'(s) = t_1.t_2$ and $|t_1| = k.$
+        In particular, we know that $f(s) = n(s).t'$.
+        Consider $s' \in D, (s \sqsubseteq s)$. We again distinguish two cases:
+        Then $f(s') = $'We get: 
+         \begin{align*}
+             \sqcup f(D) = \sqcup \{ f(s') \mid s' \in D \})  \\ 
+             \underbrace{=}_{s' \sqsubseteq s} \sqcup \{ n(s) \mid s' \in D\} = n(\sqcup D) = n(s) = f(s).
+             \end{align*}
+
+        \end{enumerate}
+
+        
+        Let $D$ be a directed subset of $S$.
+        As such, it has a least upper bound $S \ni s = \sqcup D$. Again, we distinguish two cases:
+        \begin{enumerate}
+        \item Let $|n(s)| \geq  |n'(s)|$. Then $f(s) = n(s)$ and by the Scott-continuity of $n$ we have
+         \begin{align*}
+             \sqcup f(D) = \sqcup \{ f(s') \mid s' \in D \})  \\ 
+             \underbrace{=}_{s' \sqsubseteq s} \sqcup \{ n(s) \mid s' \in D\} = n(\sqcup D) = n(s) = f(s).
+             \end{align*}
+        \item Let $|n(s)| = k < |n'(s)|$. Then there exist $t,t' \in S$ such that $n'(s) = t.t'$ and $|t| = k.$
+        In particular, we know that $f(s) = n(s).t'$.
+        Consider $s' \in D, (s \sqsubseteq s)$. We again distinguish two cases:
+        Then $f(s') = $'We get: 
+         \begin{align*}
+             \sqcup f(D) = \sqcup \{ f(s') \mid s' \in D \})  \\ 
+             \underbrace{=}_{s' \sqsubseteq s} \sqcup \{ n(s) \mid s' \in D\} = n(\sqcup D) = n(s) = f(s).
+             \end{align*}
+
+        \end{enumerate}
+        We distins
+        By the Scott con
+
+    \end{proof}
+\end{lem}
 Reactors are connected in networks.
 Here, we distinguish between two cases: an untimed one, which we call timeless and represents the purely logical execution of the network, and a timed one, which is the general case and is built on top of the former.\index{Reactors ! timeless network}
 \begin{defn}[Timeless reactor network]
@@ -170,7 +266,7 @@ Let $X := \{ T \subset \mathbb{T} \mid T \text{ is discrete }  \} $
     In these cases we call $A$ a \emph{logical} or \emph{physical} action, respectively.
     \item For all $a \in A$, the (total) function $a_{\big| \operatorname{dom}(a)}:\operatorname{dom}(a) \rightarrow S$ is a monotone (i.e. order-preserving) function.
 \end{itemize}
-\begin{defn}
+\end{defn}
 
 For an action $A$ we call $d(A) = \operatorname{inf}_{a \in A} \operatorname{inf}_{t < t' \in \operatorname{dom}(a)} t' - t$ the minimum delay or spacing of the action $A$.
 Note that~\cite{lohstroh_phdthesis} distinguishes between the minimum delay as specified by the programmer and the minimum (time) spacing as acceptable for the runtime system.
@@ -257,7 +353,7 @@ An action $A$ is a family of partial functions $A \ni a : \mathbb{T} \rightarrow
     In these cases we call $A$ a \emph{logical} or \emph{physical} action, respectively.
     \item For all $a \in A$, the (total) function $a_{\big| \operatorname{dom}(a)}:\operatorname{dom}(a) \rightarrow S$ is a monotone (i.e. order-preserving) function.
 \end{itemize}
-\begin{defn}
+\end{defn}
 
 For an action $A$ we call $d(A) = \operatorname{inf}_{a \in A} \operatorname{inf}_{t < t' \in \operatorname{dom}(a)} t' - t$ the minimum delay or spacing of the action $A$.
 Note that~\cite{lohstroh_phdthesis} distinguishes between the minimum delay as specified by the programmer and the minimum (time) spacing as acceptable for the runtime system.
