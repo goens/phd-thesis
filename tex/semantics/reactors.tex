@@ -283,7 +283,7 @@ For physical time we cannot have two events with identical timestamps, but the t
     \label{defn:reactor_network}
     A reactor network is a tuple $(\mathcal{R},\tau)$, where $\mathcal{R} = (V,E,r)$ is a timeless reactor network and $\tau : I_\mathcal{R} \rightarrow mathcal{A}$ is a partial function of the identifier set (of ports) of $\mathcal{R}$ to a set of actions $\mathcal{A}$, such that the following holds:
     \begin{itemize}
-        For every $i \in I$, exactly one of the following is true: $i \in \operatorname{dom}(\tau)$ or there exist an edge $e$ in $E_{\mathcal{R}}$, such that $e = (i,j)$ or $e = (j,i)$ for a $i \neq j \in I$.
+        \item For every $i \in I$, exactly one of the following is true: $i \in \operatorname{dom}(\tau)$ or there exist an edge $e$ in $E_{\mathcal{R}}$, such that $e = (i,j)$ or $e = (j,i)$ for a $i \neq j \in I$.
     \end{itemize}
 \end{defn}
 
