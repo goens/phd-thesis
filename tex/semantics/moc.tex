@@ -22,18 +22,75 @@ In particular, a crucial abstraction introduced by his theory is that of partial
 His theory makes it possible to express a computation as a series of partial results, without regarding the actual implementation of these.
 We will now introduce the basics of Scott's mathematical theory of computation.
 
+Two related concepts define computation in Scott's formulation, $\omega$-complete partial orders~\cite{gunter} or complete semi-lattices~\cite{lee_matsikoudis_semantics}. \index{$\omega$-complete partial order}
+We will use the latter.
+Let $\langle A, \leq \rangle$ be a \ac{poset}. For a subset $B \subseteq A$, we say $a$ is an upper or lower bound of $B$ if $a \geq b$ (resp. $\leq$) for all $b \in B$. 
+Similarly, we say $a$ is a \emph{greatest lower bound}/\emph{least upper bound} of $B$ if $a$ is a lower/upper bound of $B$ and for all other lower/upper bounds $a'$ we have $a \leq/\geq b$.\index{(greatest) lower bound}\index{(least) upper bound}
+A nonempty set $D \subseteq A$ is then called \emph{directed} if every nonempty subset of $D$ has an upper bound \index{directed set}. If every such set $D$ has a least upper bound, we say that $A$ is directed-complete.
+If $A$ additionally has a least element $\bot \in A$ with $\bot \leq a$ for all $a \in A$, we say that $A$ is a complete partial order.
+If, instead, $A$ is directed-complete and every non-empty subset has a greatest lower bound, we say $A$ is a complete semilattice.\index{complete semilattice}
 
-A Domain is a particular type of \ac{poset} ... 
+The canonical example of this are sequences, which are a generalization of strings. Let $\Sigma$ be an alphabet (a set). 
+We call $\Sigma^*$ the set of words (Kleene star) over $\Sigma$, and $\Sigma^\omega = \mathbb{N} \rightarrow \Sigma$ is the set of (countably) infinite sequences over $\Sigma$.\index{Kleene star}
+We then define $S = \Sigma^* \cup \Sigma^\omega$ as the set of (finite or infinite) sequences over the alphabet $\Sigma$.\index{sequences}
+The set of sequences $S$ is obviously a \ac{poset} with the prefix relation $\sqsubseteq$, where $s \sqsubseteq s'$ iff there exists a $t \in S$ with $s.t = s'$.
+Here, $(.) : S \rightarrow S$ denotes the concatenation operator (which coincidentally makes $S$ a monoid with neutral element $\epsilon$, the empty string).
+In fact, $S$ is a complete semilattice with regards to $\sqsubseteq$ (cf.~\cite{lee_matsikoudis_semantics}).
+In Scott's model, these sequences describe the partial steps of a computation, which generate data in discrete steps (not necessarily all at once). 
 
-For example ...
+A function $f : S \rightarrow S$ is called monotone if for $s \sqsubseteq s'$ it holds that $f(s) \sqsubseteq s'$.\index{Scott ! monotone function}
+As a model of computation, this means models causality: having more input data cannot change the data that has already been output.
+In other words, the future cannot change the past.
+A more technical term is continuity.\index{Scott ! continuity}
+A monotone function $f : S \rightarrow S$ is called continuous if for all directed sets $D$ in $S$, it holds that $f (\sqcup D) = \sqcup f(D) := \sqcup \{ f(s) \mid s \in D \}$.
+This is distinct from monotone only for infinite sequences. It means that a function will not produce its output only after reading an infinite amount of input.
+We call this continuous because the prefix relation defines a topology on the set $S$, the Scott topology.\index{Scott ! topology}
 
-
+\subsection{Concurrent Computation}
 Scott's computation model implicitly assumed a sequential computation and Scott-continuous functions are a powerful method for describing partial sequential computations.
 Can we also use this model to describe parallel computation?
 Gilles Kahn did precisely this, four years after Scott published his mathematical theory of computation. 
-He used the formalism of Scott to define a model of parallel computation, based on what he coined as process networks, now known as Kahn Process Networks.
+He used the formalism of Scott to define a model of parallel computation, based on what he coined as process networks, now known as \acf{KPN}\cite{kahn74}.
 
-The basic idea to generalize the Scott theory of computation is simple
+The basic idea to generalize the Scott theory of computation for concurrent (parallel) execution is simple.
+We compose functions in networks of Scott functions, these are the \ac{KPN}.
+These composed functions yield a system of equations.
+For example, we can compose a Scott continuous function $f$ with itself by applying it to its output.
+This yields an equation: $f(s) = f(f(s))$, which is solved by a fixed point of $f$ (i.e. a sequence $s \in S$ with $f(s)= s$).
+A series of related results on such systems of equations and fixed-points by Tarski, Kleene show that such a system always has a least fixed point.
+This defines the semantics of \ac{KPN}.
+For example, for the case of the single function $f$ as above, if $f$ is the identity function, this least fixed point is $\epsilon$.
+This solves problems with loops in the system by giving well-defined semantics, and even yields a procedure to find the fixed points, by recursively applying the functions.
+In particular, this means that \ac{KPN} are deterministic (as per their fixed-point semantics).
+
+There are other related models that span from the same time period, like the Hewitt-Agha actor model\index{actor model}~\cite{DBLP:conf/ijcai/HewittBS73,Agha:86:Actors}.
+This was also a model of parallell computation. In it, actors communicate with other actors via mailboxes in a non-deterministic fashion. 
+Actors can also be dynamically created and the connections between them are also dynamic.
+While this yields much more flexibility, it comes with a high price: deteriminism. 
+
+Other models of parallel computation include Petri Nets\index{Petri nets}~\cite{petri1962nets}, in which a bipartite graph of places and transitions models the distributed execution of a system.
+Transitions in petri nets are very flexible as well, but they are also non-deterministic, the order in which multiple activated transitions fire is non-deterministic in general.
+
+A series of more abstract models are the Process Calculi\index{Process Calculi}, which includes the well-known $\Pi$-calculus\index{Process Calculi ! Pi-Calculus} and \ac{CSP}.\index{Process Calculi ! CSP}
+These models are called calculi because they define specific composition rules, like parallel composition $A | B$ or $A \| B$ for processes with clear semantics. 
+They are well-known for describing systems and specifying their behavior, e.g. in the context of model checking~\cite{baier_mc}.
+Technically, however, these are also very abstract models of computation.
+
+\subsection{Dataflow Models of Computation}
+
+A series of models stands out in the context of software synthesis and also in the domain of embedded system software, these are dataflow models of computation.
+While virtually countless dataflow models have been proposed with diverse semantics, the original idea arguably goes back to Dennis~\cite{dennis1974first,dennis1986data}\index{Dennis Dataflow}
+These dataflow models were also related with \ac{KPN}, in so-called dataflow process networks~\cite{lee1995dataflow,lee_matsikoudis_semantics}
+
+
+
+In~\cite{Parks:M95/105} 
+\ac{CSDF}\index{Dataflow ! CSDF}~\cite{bilsen1996cycle}
+\ac{SADF}\index{Dataflow ! SADF}~\cite{theelen2006scenario}
+\ac{SDF}\index{Dataflow ! SDF}~\cite{lee1987sdf}
+
+
+
 
 \begin{figure}[h]
 	\centering
@@ -41,20 +98,3 @@ The basic idea to generalize the Scott theory of computation is simple
 	\caption{Relationships between different dataflow models of computation.}
 	\label{fig:dataflow_mocs}
 \end{figure}
-
-
-
-\subsection{Concurrent Computation: Kahn Process Networks}
-Discuss related: Hewitt-Agha actor model\index{actor model}~\cite{DBLP:conf/ijcai/HewittBS73,Agha:86:Actors}, Petri Nets\index{Petri nets}~\cite{petri1962nets}, Process Calculi\index{Process Calculi} (\index{Process Calculi ! Pi-Calculus}$\Pi$-calculus, \index{Process Calculi ! CSP}\ac{CSP})
-\index{Kahn Process Networks}\ac{KPN}~\cite{kahn74}
-
-\subsection{Dataflow Models of Computation}
-Dennis dataflow \index{Dataflow ! Dennis}~\cite{dennis1974first,dennis1986data}
-\cite{Parks:M95/105}
-Dataflow process networks~\cite{lee1995dataflow,lee_matsikoudis_semantics}
-\ac{CSDF}\index{Dataflow ! CSDF}~\cite{bilsen1996cycle}
-\ac{SADF}\index{Dataflow ! SADF}~\cite{theelen2006scenario}
-\ac{SDF}\index{Dataflow ! SDF}~\cite{lee1987sdf}
-
-
-
