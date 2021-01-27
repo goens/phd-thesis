@@ -1,42 +1,52 @@
-Let $G$ be a (finite\footnote{Groups are not finite by definition, but all groups we discuss in this thesis are.}) set and $ \circ : G \times G \rightarrow G$ be a mapping. 
+\begin{defn}
+ Let $G$ be a (finite\footnote{Groups are not finite by definition, but all groups we discuss in this thesis are.}) set and $ \circ : G \times G \rightarrow G$ be a mapping. 
 We say that $(G, \circ)$ is a \emph{group}\index{group} if the following hold:
 \begin{itemize}
 \item The mapping $\circ : G \times G$ is \emph{associative}, i.e. for any $f,g,h \in G$ we have $f \circ (g \circ h) = (f \circ g) \circ h$.
 \item There exists a neutral element $e \in G$ with $g \circ e = e \circ g = g$ for all $g \in G$.
 \item For every $g \in G$ there is an \emph{inverse} element $g^{-1} \in G$ such that $g \circ g^{-1} = g^{-1} g = e$.
 \end{itemize}
+\end{defn}
 By abuse of notation we normally identify the structure $(G,\circ)$ with the set $G$ and say $G$ is a group.
 Similarly, when the operation $\circ$ is understood from context we commonly abbreviate it as multiplication, without writing it explicitly: $g \circ h =: gh$.
 Groups are ubiquitous in mathematics. For example the natural numbers form a group with addition $(\mathbb{N},+)$, as do the reals (without 0) with multiplication $(\mathbb{R}\setminus{0},\cdot)$.
 
 An important example is the so-called \emph{symmetric group}\index{symmetric group}\index{$S_n$}
+\begin{ex}
 Let $X$ be a finite set, then the set of bijections $X \rightarrow X$ from $X$ to itself is a group with regard to function composition.
 Indeed, if $f,g : X \rightarrow X$ are bijections, then so is $f \circ g :  \rightarrow X$, the identity function $\operatorname{Id}_X : x \mapsto x$ is the neutral element and the inverse function $f^{-1}$ is the group inverse of $f$,
 since $f \circ f^{-1} = f^{-1} f = \operatorname{Id}_X.$ We call the group of bijections on $X$ the symmetric group on $X$ and write $\operatorname{Sym}(X)$.
 If $n \in \mathbb{N}$ is a natural number and $X = \{ 1 ,\ldots, n \}$, then we write $S_n$ to refer to $\operatorname{Sym}(\{1,\ldots,n\}).$
+\end{ex}
 This is an important example because every finite group can be found in $S_n$ for some $n$, as we will see shortly.
 
 dihedral group, cyclic group
 
+\begin{defn}
 Let $H \subseteq G$ be a subset of a group $G$.
 We say that $H$ is a subgroup if $H$ is a group with respect to the restriction of the multiplication on $G$.
 Equivalently, if $e \in H$ and for every $g, h \in G$ we have $g h^{-1} \in G$.
+\end{defn}
 
-
+\begin{defn}
 For two groups $G, G'$, a mapping $\varphi : G \rightarrow G'$ is called a group homomorphism\index{group homomoprhism} (or a morphism of groups) if it respects the groups structure, i.e. 
-if $\varphi(gh) = \varphi(g) \varphi(h)$ for all $g,h \in G$ and $\varphi(e_G) = e_G'$. This already implies that $\varphi(g^{-1}) = \varphi(g)^{-1}$.
+if $\varphi(gh) = \varphi(g) \varphi(h)$ for all $g,h \in G$ and $\varphi(e_G) = e_G'$. 
+\end{defn}
+This already implies that $\varphi(g^{-1}) = \varphi(g)^{-1}$.
 These structure-preserving mappings are very important in the theory of groups, as they are used to relate different mappings. 
 A group homomorphism $\varphi : G \rightarrow H$ is called a \emph{monomorphism} (or embedding) if it is injective, \emph{epimorphism} if it is surjective and \emph{isomorphism} if it is bijective.\index{group isomorphism}
 A group isomorphism from a group $G$ to itself, $\varphi : G \rightarrow G$ is called an \emph{automorphism}\index{group automorphism}.
 
-
 Groups of structure-preserving mappings are common in mathematics, not only group automorphism but also other structures (e.g. homeomoprhisms in topological spaces, graph isomorphisms in graphs, invertible matrices in vector spaces).
 In this case there is a direct relationship between this structure and the structure preserving mappings, as the mappings can transform these structures.
-This concept is generalized with group \emph{actions}. Let $G$ be a group and $X$ be a set.\index{group action}
+This concept is generalized with group \emph{actions}. 
+\begin{defn}
+    Let $G$ be a group and $X$ be a set.\index{group action}
 We say that $G$ acts on $X$ if there is a group homomorphism $G \rightarrow \operatorname{Sym}(X)$ from the group $G$ to the symmetric group on $X$. 
 Equivalently, if there is an $\alpha : G \times X \rightarrow X$ which is associative and respects the group operation (in particular $\alpha(e,x) = x$ for all $x \in X$)\footnote{We
 call this a \emph{left} action, and a right action similarly $\beta  : X \times G \rightarrow X$, where we write the action of the group on the set from the right.}. 
 We also say that $X$ is a $G$-set.
+\end{defn}
 
 Direct products, semidirect products, wreath product.
 
