@@ -119,7 +119,7 @@ Let $I$ be an index set. A reactor is a tuple $r = (N,D,D^\vee)$  where $N$ is a
  \end{align*} the sources and effects respectively.
 We call the set $\operatorname{Input}(r) = \bigcup_{ n \in N} \operatorname{im}(D(n))$ the set of input ports and 
 similarly $\operatorname{Output}(r) = \bigcup_{ n \in N} \operatorname{im}(D^\vee(n))$ the set of output ports.
-%We require that $\operatorname{Input}(r) \cap \operatorname{Output}(r) = \emptyset$ as part of the definition of a reactor.
+We require that $\operatorname{Input}(r) \cap \operatorname{Output}(r) = \emptyset$ as part of the definition of a reactor.
 \end{defn}
 \index{Reactors ! reactor }
 \index{Reactors ! sources }
@@ -128,9 +128,6 @@ similarly $\operatorname{Output}(r) = \bigcup_{ n \in N} \operatorname{im}(D^\ve
 The sources $D$ make a correspondence between the indices in the tuple of input streams of a reaction and the (port) identifiers $I$.
 For example, if a reaction $n : S^2 \rightarrow S$ takes two inputs, $D(n) : 1 \mapsto c, 2 \mapsto b$ means that the ports $c$ and $b$ are the two input ports of $n$, in that order.
 The effects $D^\vee$ are analogous but for the outputs of the reaction.
-We do not require that input and output ports are distinct ($\operatorname{Input}(r) \cap \operatorname{Output}(r) = \emptyset$).
-A port that is both an input and output port models the state of that reactor. 
-We thus define $\operatorname{State}(r) = \operatorname{Input}(r) \cap \operatorname{Output}(r)$.
 
 We require $N$ to be a \ac{poset} for two reasons.
 Firstly, we want to be able to specify an order in which reactions are always executed.
@@ -150,10 +147,11 @@ We say that a function $f : S \rightarrow S$ is a \emph{priority-preserving exec
 \label{eqn:nondet} \hat f(\hat s)_i &  \in \{ \hat n(\hat x)_i \mid x \in \{s,s'\} \} & \text{ otherwise }\\
 \end{align}
 
-In this case we write $f \in n \bigsqcup_{D,D^\vee} n'$.
+In this case we write $f \in \bigsqcup_{D,D^\vee} \{n, n'\}$.
 Equations~\ref{eqn:nleqns} and~\ref{eqn:nsleqn} formalize the reaction priority when the two reactions are ordered, and Equation~\ref{eqn:nondet} the non-deterministic ordering when $n$ and $n'$ are incomparable.
 If a reaction returns an absent value $\bot$, then the value of the other reaction is written on the output sequence.
-Note when $n \leq n'$ or $n' \leq n$ (which trivially includes the case $n = n'$), all functions in $\bigsqcup_{D,D^\vee} n'$ are equivalent up to padding with $\bot$. 
+Note when $n \leq n'$ or $n' \leq n$ (which trivially includes the case $n = n'$), all functions in $\bigsqcup_{D,D^\vee} \{n,n'\}$ are equivalent up to padding with $\bot$. 
+
 This definition can be trivially generalized to more than one (shared) input or output sequence (componentwise), and to non-shared input or output sequences by requiring equations~\ref{eqn:nleqns}-\ref{eqn:nondet} to hold quantified over all non-shared sequences.
 Finally, for a \ac{poset} $N$ of reactions, we define $\bigsqcup_{D,D^\vee} N$ analogously (componentwise), requiring equations~\ref{eqn:nleqns}-\ref{eqn:nondet} to hold paairwise for any two $n, n' \in N$.
 
@@ -177,7 +175,7 @@ Finally, for a \ac{poset} $N$ of reactions, we define $\bigsqcup_{D,D^\vee} N$ a
 %    \end{proof}
 %\end{lem}
 
-Reactors are connected in networks, which we model explicitly, separate from reactors themselves.
+Reactors are connected in networks. We model these networks explicitly, separate from reactors themselves.
 In the original definition, this is avoided by building reactors hierarchically.
 There is no semantic distinction between a hierarchical model and a ``flat'' model, where all contained reactors are ``inlined'' a network\footnote{Note
  that this might change if we extend the model to include mutations.}.
@@ -187,18 +185,18 @@ and a timed one, which is the general case and is built on top of the former.\in
 
 \begin{defn}[Timeless reactor network]
     \label{defn:timeless_network}
-A timeless reactor network is a multigraph $(V,E,r)$ with a set of reactors as nodes $V$,
-a set of edges $E$, which we require to be pairs of indices, $E \subseteq I \times I$ and $r : E \rightarrow \{ \{r_1, r_2\} \mid r_1, r_2 \in V \}$,
-such that for any two distinct reactors $r_1 \neq r_2 \in V$ the input and output ports are paairwise disjoint,
+A timeless reactor network is a multigraph $\mathcal{R} = (V,E,r)$ with a set of reactors as nodes $V$,
+a set of edges $E$, which we require to be pairs of indices, $E \subseteq I \times I$ and $r : E \rightarrow \{ \{r_1, r_2\} \mid r_1, r_2 \in V \}$.
+For this multigraph we require that for any two distinct reactors $r_1 \neq r_2 \in V$ the input and output ports are paairwise disjoint,
 i.e. $\operatorname{Input}(r_i) \cap \operatorname{Output}(r_j) = \emptyset$ for all $i,j \in \{ 1, 2 \}$ and every edge is a tuple consisting of an output port and an input port,
 i.e. for all $(i,j) = e \in E \subseteq I \times I$ there exist $r_1,r_2 \in V$ such that $i \in \operatorname{Output}(r_1)$ and $j = \operatorname{Input}(r_2)$.
 \end{defn}
 
 Recall that a multigraph is a graph that can have multiple edges, and the function $r : E \rightarrow \{ \{r_1, r_2\} \mid r_1, r_2 \in V \}$ defines which vertices are connected by each edge.
 Here, the edges themselves carry semantics as well. They define which ports specifically they connect in the reactor.
-Note that while the graph itself is not directed, the edges in their additional structure are ordered tuples.
+We denote the set $I(\mathcal{R}) = \bigcup_{r \in V}(\operatorname{Input}(r) \cup \operatorname{Output}(r))$ as the set of ports of $\mathcal{R}$.
 
-We make some additional remarks from Definition~\ref{defn:timeless_network}. 
+We make some additional remarks about Definition~\ref{defn:timeless_network}. 
 There is nothing preventing self edges in the definition.
 Indeed, a self edge in a timeless reactor network can be used to model state in the reaction functions.
 This differs from the original definition where state is made explicit and separate, but does not fundamentally change the model's semantics.
@@ -241,28 +239,28 @@ Definition~\ref{defn:action} ensures actions do not mix the two different time t
 
 \begin{defn}
     \label{defn:action}
-Let $X := \{ T \mid T \subseteq \mathbb{N} \times \mathbb{N} \text{ or } T \subset \mathbb{R}, T \text{ is discrete.}  \} \subset \mathbb{T}.$ be a set of discrete subsets of $\mathbb{T}$.
-An action is a mapping $A : X \rightarrow S$ such that
+Let $\mathbb{T}_\text{discrete} := \{ T \mid T \subseteq \mathbb{T}, T \text{ is discrete.}  \}$ be the set of discrete subsets of $\mathbb{T}$.
+An action is a partial mapping $A : X \rightarrow S$ such that
 \begin{itemize}
-    \item For all $T \in X$, the discrete set of tags $T$ and the corresponding sequence $A(T)$ are order-isomorphic (in particular, $|T| = |A(T)|$).
-    \item all $T \in X$ are either $T \subseteq \mathbb{N} \times \mathbb{N}$ or $T  \subset \mathbb{R}$. We call $A$ a \emph{logical} or \emph{physical} action, respectively.
+    \item For all $T \in \operatorname{dom}(A)$, the discrete set of tags $T$ and the corresponding sequence $A(T)$ are order-isomorphic (in particular, $|T| = |A(T)|$).
+    \item All $T \in \operatorname{dom}(A)$ are either $T \subseteq \mathbb{N} \times \mathbb{N}$ or $T  \subset \mathbb{R}$. We call $A$ a \emph{logical} or \emph{physical} action, respectively.
 \end{itemize}
 \end{defn}
 
 For a discrete set of times $T \in X$, with $X$ as in Definition~\ref{defn:action}, we call $d(T) = \operatorname{inf}_{t < t' \in \operatorname{dom}(a)} t' - t$ the minimum delay or spacing of the time set $T$. 
-Note that~\cite{lohstroh_phdthesis} defines this for the action, and distinguishes between the minimum delay as specified by the programmer and the minimum (time) spacing as acceptable for the runtime system.
+For an action $A$ we define $d(A) = \operatorname{inf}_{T \in \operatorname{dom}(A)} d(T)$
+Note that~\cite{lohstroh_phdthesis} distinguishes between the minimum delay as specified by the programmer and the minimum (time) spacing as acceptable for the runtime system.
 We consolidate both here, since, for simplicity, we disregard policies for when this spacing is violated and error handling in general.
 Consequently, we also do not model the spacing violation policy included in~\cite{lohsroh_phdthesis}. 
 We define it also for the time set and not the action, since our semantics are denotational and not operational.
 
-At this point it is important mentioning a limitation of our model which might not be immediately obvious.
-The way we define time $\mathbb{T}$ we exclude infinity. Thus, while $\mathbb{T}$ is a \ac{poset}, it is not ($\omega$-)complete.
-This is apparent in the definition of actions, since we cannot require the restriction $a_{\big| \operatorname{dom}(a)}$ to be Scott-continuous, i.e. a morphism of $\omega$-complete partial orders, since $\mathbb{T}$ is not complete. 
-This means we cannot model some asymptotic time behavior, but for any finite execution, as will always be the case in practice, this should not be problematic.
-In future work we could extend the definition of time to include infinity, especially if we find a use-case where this distinction is relevant in practice.
+%At this point it is important mentioning a limitation of our model which might not be immediately obvious.
+%The way we define time $\mathbb{T}$ we exclude infinity. Thus, while $\mathbb{T}$ is a \ac{poset}, it is not ($\omega$-)complete.
+%This means we cannot model some asymptotic time behavior, but for any finite execution, as will always be the case in practice, this should not be problematic.
+%In future work we could extend the definition of time to include infinity, especially if we find a use-case where this distinction is relevant in practice.
 
 Definition~\ref{defn:action} allows us to associate any given subset of times to a different sequence of values.
-In particular, this allows us to model the timestamps themselves being part of the value in the sequence.
+In particular, this allows us to model the timestamps themselves being part of the value in the sequence, e.g. for a reaction that stores the current time to a log file.
 
 The order-preserving bijection between a discrete set of tags and sequences ensures a causal execution.
 Since the mapping is order-preserving, a going forward in timestamps can only increase the port's history (the sequence of values).
@@ -278,31 +276,35 @@ This is not different from e.g. adding a small enough $\epsilon > 0$ in this mod
 
 \begin{defn}[Reactor network]
     \label{defn:reactor_network}
-    A reactor network is a tuple $(\mathcal{R},\tau)$, where $\mathcal{R} = (V,E,r)$ is a timeless reactor network and $\tau : I_\mathcal{R} \rightarrow mathcal{A}$ is a partial function of the identifier set (of ports) of $\mathcal{R}$ to a set of actions $\mathcal{A}$, such that the following holds:
-    For every $i \in I$, exactly one of the following is true: $i \in \operatorname{dom}(\tau)$ or there exist an edge $e$ in $E_{\mathcal{R}}$, such that $e = (i,j)$ or $e = (j,i)$ for a $i \neq j \in I$.
+    A reactor network is a tuple $(\mathcal{R},\tau)$, where $\mathcal{R} = (V,E,r)$ is a timeless reactor network and $\tau : I(\mathcal{R}) \rightarrow \mathcal{A}$ is a partial function of the identifier set (of ports) of $\mathcal{R}$ to a set of actions $\mathcal{A}$, such that 
+    for every $i \in I$, exactly one of the following is true: $i \in \operatorname{dom}(\tau)$ or there exist an edge $e$ in $E_{\mathcal{R}}$, such that $e = (i,j)$ or $e = (j,i)$ for an $i \neq j \in I$.
 \end{defn}
 
 We call $\operatorname{im}(\tau) \subseteq \mathcal{A}$ the set of actions of the reactor network $(\mathcal{R},\tau)$.
 Here, the mapping $\tau$ relates actions with all dangling ports in the timeless network.
 
-Both our original description in~\cite{lohstroph_cyphy19} and the updated one in~\cite{lohstroh_phdthesis} are very explicit about reaction and event queues, scheduling and mutexes.
+Both our original description in~\cite{lohstroh_cyphy19} and the updated one in~\cite{lohstroh_phdthesis} are very explicit about reaction and event queues, scheduling and mutexes.
 These are very important aspects for any implementation of the model, yet they conflate the implementation and the semantics.
 Here we are interested mostly in the general concepts behind reactors, the implementation is outside the scope of this thesis.
-As a consequence, we will err on the side of abstraction, by preferring to abstract away details and clarify them in future work. 
+As a consequence, we rather err on the side of abstraction, by preferring to abstract away details and clarify them in future work if necessary. 
 
 \begin{defn}[Execution of reactor networks]
+    \label{defn:execution_reactors}
 Let $T \subseteq \mathbb{T}$ be a discrete set of time tags and let $(\mathcal{R},\tau)$ be a reactor network.
-We denote by $\mathcal{R}_\tau(T)$ the network obtained by setting in each port $i \in I$ in the timeless network $\mathcal{R}$ the sequence $(\tau(i))(T)$ (recall that $\tau(i)$ is an action).
+We denote by $\mathcal{R}_\tau(T)$ the network obtained by substituting in the timeless network $\mathcal{R}$ for each port $i \in \operatorname{dom}(\tau)$ the sequence $(\tau(i))(T)$ (recall that $\tau(i)$ is an action).
 An execution of $\mathcal{R}$ with discrete set of time tags $T$ is a sequence $s_i$ for every port $i \in I$ such that: 
-\begin{itemize}
-    \item For every reactor $r = (N,D,D^\vee)$ in $V_\mathcal{R}$ there exists a function $f \in \bigsqcup_{D,D^\vee}N$ with $f(s_{i_1},\ldots,s_{i_k}) = (s_{j_1},\ldots,s_{j_m})$ where $i_1,\ldots,i_k,j_1,\ldots,j_m$ are the corresponding ports of $r$ according to the edges $E$ of $\mathcal{R}_\tau(T)$.
-    \item For every $f$ as above, the sequences ${s_i \mid i \in I}$ are a fix-point of the set of equations defined by the network $\mathcal{R}_\tau(T)$.
-    \item For every time value $t \in T$, exactly one action is non-absent, i.e. $| \{ A(t) \neq \bot \mid A \in \operatorname{im}(\tau) \}| = 1$.
-\end{itemize}
+\begin{enumerate}
+    \item\label{cond:reactions} For every reactor $r = (N,D,D^\vee)$ in $V_\mathcal{R}$ there exists a function $f \in \bigsqcup_{D,D^\vee}N$ with $f(s_{i_1},\ldots,s_{i_k}) = (s_{j_1},\ldots,s_{j_m})$ where $i_1,\ldots,i_k,j_1,\ldots,j_m$ are the corresponding ports of $r$ according to the edges $E$ of $\mathcal{R}_\tau(T)$.
+    \item\label{cond:fixpoint} For every $f$ as above, the sequences $s_i, i \in I(\mathcal{R})}$ are a fix-point of the set of equations defined by the network $\mathcal{R}_\tau(T)$.
+    \item\label{cond:actionsunique} For every time value $t \in T$, exactly one action is non-absent, i.e. $| \{ A(t) \neq \bot \mid A \in \operatorname{im}(\tau) \}| = 1$.
+\end{enumerate}
 \end{defn}
 
-The execution of a reactor network is not modeled as a process: the computation itself is modeled through the sequences $S$ in the Scott semantics of computation.
+The execution of a reactor network in this way is not modeled as an iterative process.
+The computation itself is modeled through the sequences $S$ in the Scott semantics of computation.
 The time values of actions $A$ are chosen (non-deterministically) for an execution, modeling the non-determinism from the environment.
+Condition~\ref{cond:reactions} in Definition~\ref{defn:execution_reactors} defines the execution priority of reactions. This, together with Condition~\ref{cond:fixpoint} ensure that reactions have well-defined semantics.
+Finally, Condition~\ref{cond:actionsunique} ensures that only one action is scheduled at a time.
 
 A central idea behind reactors is to split logical and physical time conceptually.
 However, these two time concepts are conceptually linked, since logical time is just a digital estimation of physical time.
@@ -313,10 +315,12 @@ Physical time could go far beyond logical time.
 In an implementation, and indeed in the formalization of~\cite{lohstroh_phdthesis}, a deadline in the reactions controls how far away logical time can lag behind physical time. 
 
 Note that the definition of reactor networks does not exclude any loops.
-The fixpoint-based definition allow us to have well-defined semantics with such loops (cf. ~\cite{kahn_74,lee_matsikoudis_semantics}).
-In some cases, however, the least fixpoint of the network might result in an empty sequence.
+The fixpoint-based definition allow us to have well-defined semantics with such loops (cf. ~\cite{kahn74,lee_matsikoudis_semantics}),
+as ensured by Condition~\ref{cond:fixpoint} in Definition~\ref{defn:execution_reactors}.
+In some cases, however, the least fix-point of the network might result in an empty sequence.
 This can be the case when the ordering in reaction causes a so-called causality loop.
 See Section~2.6 of~\cite{lohstroh_phdthesis} for a more thorough discussion.
+Note that Condition~\ref{cond:fixpoint} does not require the fix-point to be minimal, but this is given by the order-isomorphism condition on actions.
 
 In~\cite{lohstroh_phdthesis}, reactors are explicitly required to have two special actions, a startup and a shutdown action.
 We do not require these two actions explicitly.
@@ -324,7 +328,7 @@ An empty reactor network, that does nothing, is also a well-defined reactor netw
 
 \begin{conjecture}[Reactors are deterministic]
     \label{conjecture_reactors_deterministic}
-Given a reactor network $(\mathcal{R},\tau)$ such that for every reactor $r = (N,D,D^\vee)$ the set $N$ is totally ordered.
+Let $(\mathcal{R},\tau)$ be a reactor network such that for every reactor $r = (N,D,D^\vee)$ the set $N$ is totally ordered.
 Then for every execution $\mathcal{R}_\tau(T)$ with a discrete time set $T$ the values of $s_i$ for every port $i \in I$ are uniquely specified.
 \end{conjecture}
 
@@ -332,11 +336,20 @@ Our formalization has allowed us to specify determinism in reactors in a mathema
 We believe we can prove Conjecture~\ref{conjecture_reactors_deterministic} with fixpoint theorems on the Scott topology.
 
 This also gives us the language to discuss different kinds of determinism: can the values be independent of the set of time tags $T$?
-In general it cannot work: consider a network which prints the timestamps it sees, this will never be independent of the timestamps.
+In general, it cannot work. Consider a network which prints the timestamps it sees, this will never be independent of the timestamps.
 On the other hand, if every discrete sequence of timestamps is mapped to the same sequence of values, i.e. $A(T) = A(T')$ for all actions $A$ and (valid) sequences of timestaps $T, T'$, then the behavior is trivially time-deterministic.
 
 We can go further, however, and distinguish between logical and physical actions for determinism. 
 For example, we can define a reactor network to be time-deterministic if it only dependends on the image sequences of \emph{physical} actions $A$.
 The non-determinism from the physical world is outside our control, but with this definition we are also ensuring logical actions to behave deterministically as a function of the physical ones. 
-In future work we plan to precisely identify conditions for these different possible definitions of determinism and verify them, using the Lean theorem prover~\cite{lean} and a formalization similar to the one described here.
+
+A final word on distributed execution, which we have ignored so far, is due here. 
+Our semantics are denotational, they are meant to describe what is computed, not how. 
+In particular, a distributed execution should adhere to these semantics just as a sequential one.
+A fundamental problem with using our model for distributed execution, however, are time tags, which are uniform in the model.
+Strictly speaking, we could replace our Newtonian model of time with a relativistic one and consider different frames of reference and transformations. 
+The model, as is, can thus be considered a model for a fixed (inertial) frame of reference.
+
+In future work we plan to consider distributed execution and its consequences (or lack thereof) on our denotational semantics. 
+We also plan to precisely identify conditions for these different possible definitions of determinism and verify them, using the Lean theorem prover~\cite{lean} and a formalization similar to the one described here.
 As mentioned above, this is ongoing (unpublished) work in collaboration with Marcus Rossel.
