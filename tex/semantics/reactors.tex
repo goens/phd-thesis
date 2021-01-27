@@ -140,7 +140,7 @@ For simplicity, we assume they have a single (shared) input and output port: $(D
 Recall that $\hat s = s.(\bot)^\omega$ for $s \in S \setminus \Sigma^\omega$ is a ``padding'' of a sequence with absent values.
 We say that a function $f : S \rightarrow S$ is a \emph{priority-preserving execution} if for all $s \in S$, it holds that:
 \begin{align}
-\label{eqn:nleqns} \hat{ f(\hat s)_i} &  =  \hat n(\hat s)_i, & \text{ if } n \leq n', \hat n(\hat s)_i \neq \bot \\
+\label{eqn:nleqns} \hat f(\hat s)_i &  =  \hat n(\hat s)_i, & \text{ if } n \leq n', \hat n(\hat s)_i \neq \bot \\
 \label{eqn:nleqnsbot} \hat f(\hat s)_i &  =  \hat n'(\hat s)_i, & \text{ if } \hat n(\hat s)_i = \bot \\
 \label{eqn:nsleqn} \hat f(\hat s)_i &  =  \hat n'(\hat s)_i, & \text{ if } n' \leq n, \hat n(\hat s)_i \neq \bot \\
 \label{eqn:nleqnsbot} \hat f(\hat s)_i &  =  \hat n(\hat s)_i, & \text{ if } \hat n'(\hat s)_i = \bot \\
@@ -240,7 +240,7 @@ Definition~\ref{defn:action} ensures actions do not mix the two different time t
 \begin{defn}
     \label{defn:action}
 Let $\mathbb{T}_\text{discrete} := \{ T \mid T \subseteq \mathbb{T}, T \text{ is discrete.}  \}$ be the set of discrete subsets of $\mathbb{T}$.
-An action is a partial mapping $A : X \rightarrow S$ such that
+An action is a partial function $A : \mathbb{T}_\text{discrete} \rightarrow S$ such that
 \begin{itemize}
     \item For all $T \in \operatorname{dom}(A)$, the discrete set of tags $T$ and the corresponding sequence $A(T)$ are order-isomorphic (in particular, $|T| = |A(T)|$).
     \item All $T \in \operatorname{dom}(A)$ are either $T \subseteq \mathbb{N} \times \mathbb{N}$ or $T  \subset \mathbb{R}$. We call $A$ a \emph{logical} or \emph{physical} action, respectively.
@@ -251,7 +251,7 @@ For a discrete set of times $T \in X$, with $X$ as in Definition~\ref{defn:actio
 For an action $A$ we define $d(A) = \operatorname{inf}_{T \in \operatorname{dom}(A)} d(T)$
 Note that~\cite{lohstroh_phdthesis} distinguishes between the minimum delay as specified by the programmer and the minimum (time) spacing as acceptable for the runtime system.
 We consolidate both here, since, for simplicity, we disregard policies for when this spacing is violated and error handling in general.
-Consequently, we also do not model the spacing violation policy included in~\cite{lohsroh_phdthesis}. 
+Consequently, we also do not model the spacing violation policy included in~\cite{lohstroh_phdthesis}. 
 We define it also for the time set and not the action, since our semantics are denotational and not operational.
 
 %At this point it is important mentioning a limitation of our model which might not be immediately obvious.
@@ -295,7 +295,7 @@ We denote by $\mathcal{R}_\tau(T)$ the network obtained by substituting in the t
 An execution of $\mathcal{R}$ with discrete set of time tags $T$ is a sequence $s_i$ for every port $i \in I$ such that: 
 \begin{enumerate}
     \item\label{cond:reactions} For every reactor $r = (N,D,D^\vee)$ in $V_\mathcal{R}$ there exists a function $f \in \bigsqcup_{D,D^\vee}N$ with $f(s_{i_1},\ldots,s_{i_k}) = (s_{j_1},\ldots,s_{j_m})$ where $i_1,\ldots,i_k,j_1,\ldots,j_m$ are the corresponding ports of $r$ according to the edges $E$ of $\mathcal{R}_\tau(T)$.
-    \item\label{cond:fixpoint} For every $f$ as above, the sequences $s_i, i \in I(\mathcal{R})}$ are a fix-point of the set of equations defined by the network $\mathcal{R}_\tau(T)$.
+    \item\label{cond:fixpoint} For every $f$ as above, the sequences $s_i, i \in I(\mathcal{R})$ are a fix-point of the set of equations defined by the network $\mathcal{R}_\tau(T)$.
     \item\label{cond:actionsunique} For every time value $t \in T$, exactly one action is non-absent, i.e. $| \{ A(t) \neq \bot \mid A \in \operatorname{im}(\tau) \}| = 1$.
 \end{enumerate}
 \end{defn}
