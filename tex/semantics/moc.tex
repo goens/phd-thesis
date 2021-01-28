@@ -1,14 +1,5 @@
 This section will survey some of the most important concurrent models of computation. Before diving into the models, we will first discuss the mathematical semantics\footnote{Nowadays we call these semantics denotational} of computation by Scott.
 
-\begin{figure}[h]
-	\centering
-   \resizebox{0.95\textwidth}{!}{\input{figures/mocs.tex}}
-	\caption{Overview of different models of computation.}
-	\label{fig:dataflow_mocs}
-\end{figure}
-
-
-
 \subsection{Partial Computation: Scott Domains}
 
 When Dana Scott proposed his mathematical theory of computation~\cite{scott1970}, he used the term mathematical to contrast it with operational computation.
@@ -73,8 +64,20 @@ Transitions in petri nets are very flexible as well, but they are also non-deter
 
 A series of more abstract models are the Process Calculi\index{Process Calculi}, which includes the well-known $\Pi$-calculus\index{Process Calculi ! Pi-Calculus} and \ac{CSP}.\index{Process Calculi ! CSP}
 These models are called calculi because they define specific composition rules, like parallel composition $A | B$ or $A \| B$ for processes with clear semantics. 
-They are well-known for describing systems and specifying their behavior, e.g. in the context of model checking~\cite{baier_mc}.
+They are well-known for describing systems and specifying their behavior, e.g. in the context of model checking~\cite{baier_model_checking}.
 Technically, however, these are also very abstract models of computation.
+
+Figure~\ref{fig:dataflow_mocs} shows an overview of the different models of computation and their properties.
+Timed models, like reactors, will be discussed in Section~\ref{sec:reactors}, and dataflow models in the section below.
+This figure was inspired by Figure~1.6 in~\cite{Ptolemaeus:14:SystemDesign}.
+
+\begin{figure}[h]
+	\centering
+   \resizebox{0.95\textwidth}{!}{\input{figures/mocs.tex}}
+	\caption{Overview of different models of computation.}
+	\label{fig:dataflow_mocs}
+\end{figure}
+
 
 \subsection{Dataflow Models of Computation}
 
