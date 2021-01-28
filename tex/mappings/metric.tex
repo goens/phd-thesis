@@ -158,7 +158,7 @@ For this we need to iterate over all $m \in M$ and calculate if $d_M(m_0,m) \leq
 
 To deal with this, we use established methods from discrete geometry to calculate \emph{low-distortion embeddings}\index{low-distortion embeddings}.
 A mapping $\iota : M \hookrightarrow \mathbb{R}^n$ such that there exists a $D > 0$ with
-\begin{align}\label{eqn:distortion} 1/D d(x,y) \leq \| \iota(x) - \iota(y) \| \leq d(x,y) \end{align}
+\begin{align}\label{eqn:distortion} D^{-1} d(x,y) \leq \| \iota(x) - \iota(y) \| \leq d(x,y) \end{align}
 is called an embedding with distortion $D$.
 In other words, the \emph{relative error} of the distances is at most $D$.
 We can calculate a low-distortion embedding for a finite metric space using convex optimization~\cite{matouvsek} (cf. Appendix~\ref{appendix:metric}).

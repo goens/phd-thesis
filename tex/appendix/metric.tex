@@ -1,1 +1,80 @@
-Metric spaces and low-distortion embeddings.
+Here we discuss (discrete) metric spaces and low-distortion embeddings.
+A metric space is the mathematical formalization of distances. 
+We define a metric to be able to measure distances in a particular space. 
+
+\begin{defn}
+Let $M$ be a set and let $d : M \times M \rightarrow \mathbb{R}_{\geq 0}$ be a mapping.
+We say that $d$ is a metric on $M$ and, equivalently, $(M,d)$ is a metric space, if the following hold:
+\begin{enumerate}
+\item\label{ax:zero} For all $m,m' \in M, d(m,m') = 0 \Leftrightarrow m = m'$.
+\item\label{ax:symm} For all $m,m' \in M$, we have $d(m,m') = d(m',m)$.
+\item\label{ax:triangle} For all $k,l,m \in M$ we have $d(k,m) \leq d(k,l) + d(l,m)$
+\end{enumerate}
+\end{defn}
+
+These properties are intuitively clear.
+Property~\ref{ax:zero} says two things, first that there is no distance from an element to itself, and second, that no two equal elements are in the same place (have no distance between them).
+If we don't require the second property (i.e. replace $\Leftrightarrow$ with $\Rightarrow$ in Property~\ref{ax:zero}, we get what is called a pseudo-norm (or a degenerate norm).
+The second property, Property~\ref{ax:symm} states that distance is symmetric.
+Finally, Property~\ref{ax:triangle} is the triangle inequality: it states that the shortest path between two elements is always the direct path, their distance.
+
+The canonical metric spaces are $\mathbb{R}^n$ with different norms, like the $p$-norms.
+A norm is a more restrictive concept than a metric, but we will not define norms here further.
+\begin{ex}
+    For $p \geq 1$, the function $(x,y) \mapsto \| x -y \|_p : \mathbb{R}^n \times \mathbb{R}^n \rightarrow \mathbb{R}_{\geq 0}$ is a metric, where 
+    $\| (x_1,\ldots,x_n) \|_p := (\sum_{i=1}^n|x_i^p|)^{1/p}$ is the $p$-norm.
+\end{ex}
+
+The case for $p = 2$ is the well-known Euclidean distance in vector spaces.
+Also well-known is the case of of $p=1$, which is sometimes called the Mahattan norm or Taxi distance, in allusion to the distance when moving through the streets of a neighborhood that look like a regular mesh, like in Manhattan.
+
+In this thesis we are particularly interested in the case where $M$ is finite, which we will assume from here on. 
+If $M = \{ m_1, \ldots, m_n \}$ is finite, we can write $d$ as a matrix, such that $d(m_i,m_j) = D_{i,j}$.:
+\begin{equation*}
+    D = 
+\left(
+\begin{array}{cccc}
+d(m_1,m_1) & d(m_1,m_2) & \ldots & d(m1,m_n) \\
+d(m_2,m_1) & d(m_2,m_2) & \ldots & d(m2,m_n) \\
+\vdots & \vdots & \ddots & \vdots \\
+d(m_n,m_1) & d(m_n,m_2) & \ldots & d(m_n,m_n) \\
+\end{array}
+\right)
+\end{equation*}
+
+The structure preserving mappings (moprhisms) of metric spaces are called \emph{isometries}\index{isometry}. They have the particular property that they are always injective, due to Property~\ref{ax:zero}.
+\begin{defn}
+Let $M,M'$ be We say that a mapping $\varphi : M \rightarrow M'$ is an \emph{isometry} if for all $m,m' \in M$, $d_M(m,m') = d_{M'}(\varphi(m),\varphi(m'))$.
+\end{defn}
+An isometry is thus always an embedding (monic), since for any two points $m,m' \in M$ with $\varphi(m) = \varphi(m')$ we have $0 = d_{M'}(\varphi(m),\varphi(m')) = d_{M}(m,m')$.
+
+In the case of groups, embeddings into a particular group $S_n$ are useful for computing.
+While we did not discuss it as thoroughly, the basis of all computation we are concerned with in this thesis are these embeddings into permutation groups 
+$S_n$\footnote{In computational group theory there are other branches like matrix groups or black-box groups, where embedding into an $S_n$ is infeasible,
+but we are not concerned with these in this thesis.}.
+The question is, can we find an equivalent method for metric spaces, using isometries to (finite subsets of) $\mathbb{R}^n$? 
+The unfortunate answer is that no, in general there for a finite metric space $M$ there is not always $n,p$, such that there exists an isometry from $M$ to $(\mathbb{R}^n,\|\cdot\|_p)$ (see~\cite{matouvsek} for a proof).
+Fortunately, however, when dealing with real numbers we can always look for approximations.
+
+\begin{defn}
+Let $M$ be a metric space and $\iota: M \hookrightarrow \mathcal{R}^n$ be an embedding onto $\mathcal{R}^n$. 
+We say that $\iota$ has distortion $D > 0$ if 
+\begin{align}\label{eqn:distortion} \frac{1}{D} d(x,y) \leq \| \iota(x) - \iota(y) \| \leq d(x,y) \end{align}
+\end{defn}
+
+While, in general, we cannot find an isometry, we can search for an embedding with a low distortion.
+There is a particularly useful result in this context:
+we can use convex optimization to find an embedding of $M$ onto $\mathbb{R}^n$ with the Euclidean ($p=2$) norm~\cite{matouvsek}.
+This is unfortunately only the case for this norm, e.g. for $p=1$ finding such an embedding is known to be NP-complete~\cite{matouvsek}
+
+A problem with the convex optimization method above is that it yields an embedding with dimension $|M|$, which might be very high.
+The dimension of the vector space strongly affects algorithmic properties of the problem. 
+It would be ideal to find an embedding into a mapping with a lower dimension, without increasing the distortion much.
+In~\cite{johnson_lindenstrauss}, Johnson and Lindenstrauss describe this precise problem and its solution as follows: 
+``Given $n$ points in Euclidean space, what is the smallest $k = k(n)$ so that these points can be moved into $k$-dimensional Euclidean space via a transformation that expands or contracts all paairwise distances by a factor of at most $1 + \epsilon$? The answer, that $k \leq c(\epsilon) \operatorname{Log} n$, is a simple consequence of the isoperimetric inequality for the $n$-sphere studied in~\cite{figiel1977dimension}.''
+They proceed to formalize and prove this fact, which we will not restate here more precisely.
+This  result is known as the Johnson-Lindenstrauss Lemma. \index{Johnson-Lindenstrauss lemma}
+
+An intuitive albeit sometimes misleading interpretation of the proof of this lemma is that a projection onto a \textbf{random} subspace will have a low distortion with high probability.
+In practice, the distribution does give a very useful ``transform'' for dimensionality reduction, simply by projecting onto a random subspace.
+However, we should be careful when using this and ideally check the distortion, if possible.
