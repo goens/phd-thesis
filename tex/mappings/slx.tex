@@ -23,4 +23,15 @@ For chapters~\ref{chap:mapping_structures} and \ref{chap:mapping_applications}, 
 We choose the \ac{MAPS} flow~\cite{maps}, which resulted in the commercial spinoff Silexica, who kindly allowed us to use their tools for our research.
 Some contributions, on the other hand, go beyond these flows. This is particularly the case in chapters~\ref{chap:mocs} and~\ref{chap:pl}, and in part Chapter~\ref{chap:benchmarking} 
 
-\subsection{The MAPS Maping flow}
+\subsection{The MAPS flow}
+
+The \acl{MAPS} is a software synthesis flow. It was developed at RWTH Aachen and spun-off into a company, Silexica\footnote{\url{https://www.silexica.com/}}, which kindly allowed us to use the \ac{KPN} mapping flow of \ac{MAPS}.
+\ac{MAPS} is very comprehensive, it does much more than \ac{KPN}-based software synthesis.
+It has analysis algorithms to suggest parallelization of sequential code, both as OpenMP annotations as well as \ac{CPN} annotations. We will not discuss these here.
+It also has detailed platform models which are used in simulation and performance estimation flows, we will very briefly outline these, only as they pertain the \ac{KPN}-based software synthesis flow. 
+
+Figure~\ref{fig:maps_flow} describes the \ac{MAPS} flow. 
+Applications are written in \ac{CPN}.
+
+A performance estimation flow is used to 
+A Clang-based compiler 
