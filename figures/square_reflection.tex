@@ -1,0 +1,9 @@
+
+\node [ellipse] (v1) {$2$};
+\node [ellipse, right=of v1] (v2) {$1$};
+\node [ellipse, below=of v2] (v3) {$4$};
+\node [ellipse, below=of v1] (v4) {$3$};
+\path [draw] (v1) -- (v2);
+\path [draw] (v2) -- (v3);
+\path [draw] (v3) -- (v4);
+\path [draw] (v4) -- (v1);
