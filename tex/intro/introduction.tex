@@ -1,10 +1,10 @@
 Programming computers is notoriously difficult.
 Indeed, people learning to program usually struggle, paradoxically, with the fact that the computer does precisely what they tell it to do. 
-This is confusing not because a computer program is executed faithfully, but rather, because humans think at a very different level of abstraction.
+This is confusing, not because a computer program is executed faithfully, but rather, because humans think at a very different level of abstraction.
 
 It is certainly true that instructions in computer architectures are at a completely different level of abstraction than the instructions we give each other.
 However, most programs are also not written at the level of the architecture.
-Programming languages are designed with increasingly improving abstractions, to make it easier for programmers to express themselves.
+Programming languages are designed with increasingly improving abstractions, making it easier for programmers to express themselves.
 Complementary to these efforts are compilers, which serve as bridge between the levels of abstraction.
 Ideally, a compiler translates the abstract human-level expressions into efficient machine-level instructions.
 While we have made significant progress, this task has proven to be dauntingly difficult.
@@ -19,7 +19,8 @@ There is probably no universal solution to these emerging problems, as different
 This thesis thus focuses mostly a particular domain, that of \acfp{CPS} or generally, embedded systems.
 In this domain, a family of methods called software synthesis seeks to enable efficient programming of complex multicore systems.
 Central to these methods is a focus on using models for describing computation.
-Following the idea of letting theory inform practice, we strive to improve methods of software synthesis to new problems by identifying and exploiting mathematical structures in those problems.
+We follow the idea of letting theory inform practice, in striving to improve methods of software synthesis.
+We do this by identifying and exploiting mathematical structures in the problems in software synthesis.
 
 \section{The Multicore Era}
 
@@ -38,18 +39,18 @@ This increasing complexity brings about an increasing challenge in taming it.
 %Multicore Era
 Both the execution frequency and the closely intertwined single-core processing speed of computing systems increased exponentially up until the early 2000s (cf. Figure~\ref{fig:multicore_era}), an empirical fact observed by Gordon Moore in 1965~\cite{moore}.
 Since the early 2000s, however, while transistor sizes continue to decrease, the exponential frequency scaling has stopped (cf. Figure~\ref{fig:multicore_era}).
-Individual and clever designs have continued to improve single-processor speed, albeit at a significantly slower rate.
+Individual and clever designs have continued to improve single-core performance, albeit at a significantly slower rate.
 Instead, most improvements in microchips in raw processing power have come from a paradigm switch.
 Hardware designers resorted to develop multicores, microchips composed of multiple cores that can execute in parallel.
 Additionally, since different use-cases benefit from different computing core architectures, the inclusion of multiple chips has paved the way for heterogeneity.
 This has resulted in a multicore era of computing.
 
 A programmer writing a piece of C code in the early 1970s would automatically benefit from the increasing processing speeds.
-By recompiling her code for a processor $10 \times$ faster, she could very roughly expect her code also to run about $10 \times$ as fast.% Do I want to make this concrete (with Processor names?)
-Nowadays thus, a programmer writing a piece of (sequential) C code in the early 2000s cannot expect anywhere near a $100$-fold increase in performance today when she uses a microchip with $100 \times$ the number of transistors.
+By recompiling her code for a processor $10 \times$ faster, she could very roughly expect her code also to run about $10 \times$ as fast. % Do I want to make this concrete (with Processor names?)
+This has changed. A programmer writing a piece of (sequential) C code in the early 2000s cannot expect anywhere near a $100$-fold increase in performance today when she uses a microchip with $100 \times$ the number of transistors.
 At least not without fundamentally restructuring her code to exploit parallelism.
 Contemporary systems aimed at performance almost ubiquitously consist of multicore chips, in many cases heterogeneous, which tremendously increases the system complexity.
-It is a clear trend that the complexity and heterogeneity will continue to increase~\cite{voelp16_pmes}.
+It is a clear trend that the complexity and heterogeneity will continue to increase~\cite{voelp16_pmes,castrillon_tmscs17}.
 %The trend is clear, the number of cores, heterogeneity and overall system complexity will only continue to increase.
 
 %something about network-on-chip, emerging memories, and hierarchical topologies
@@ -61,7 +62,7 @@ Systems based on \ac{NoC} technology become necessary, lest a single bus interco
 
 \begin{figure}[h]
 	\centering
-   \resizebox{0.5\textwidth}{!}{\input{figures/haec.tex}}
+   \resizebox{0.85\textwidth}{!}{\input{figures/haec.tex}}
    \caption{The \acs*{HAEC} architecture~\cite{HAEC} has multiple levels of hierarchy: on-chip, intra-board (optical links) and inter-board (wireless).} 
 	\label{fig:haec}
 \end{figure}
@@ -69,33 +70,35 @@ Systems based on \ac{NoC} technology become necessary, lest a single bus interco
 In fact, for a multitude of reasons, manycores are commonly designed in a hierarchical fashion.
 Smaller clusters of cores locally interconnected communicate between each other and off-chip via a larger \ac{NoC}.
 These clusters and systems are usually heterogeneous as well, like the Karlay MPPA3 Coolidge~\cite{coolidge}, with includes accelerators for cryptography and secure cores, alongside general purpose cores.
-Some systems even propose multiple layers of hierarchy, like the three layers of the \ac{HAEC} topology~\cite{HAEC}, depicted in Figure~\ref{fig:haec}.
+Some systems even propose multiple layers of hierarchy, like the \ac{HAEC} topology~\cite{HAEC}, depicted in Figure~\ref{fig:haec}.
 This is a proposed 3D-stacked system with multiple \acp{PCB} each with multiple manycore chips, not a single chip with this complex interconnect.
-However, this design could allow for very low latencies, such that challenges of programming it are comparable to those of programming such a topology in an on-chip memory subsystem.
+However, this design could allow for very low latencies, such that challenges of programming it are comparable to those of programming such a topology as part of an on-chip memory subsystem.
 What happens if the mulicores in this system are similar to the Karlay MPPA3 Coolidge? This would yield more than $5000$ heterogeneous cores connected at five levels of hierarchy in different topologies.
-More generally, complex topologies with possibly multi-level hierarchies, add a layer of complexity to modern manycore systems besides heterogeneity and concurrency.
-\todo{JC: great segway to complexity of topologies: be more explicit! (not sure about what?)}
+More generally, complex topologies, with possibly multi-level hierarchies, add a layer of complexity to modern manycore systems besides heterogeneity and concurrency.
+The techniques used for programming a system with two or four identical cores are mostly not suited at all to program these dauntingly complex topologies.
+We need to re-think our design process to accomodate for these changes in complexity.
+%\todo{JC: great segway to complexity of topologies: be more explicit! (not sure about what?)}
 
-As part of the shift towards memory-centered systems, emerging memory technologies play a significant role.
-In general, upcoming technologies like \acp{NVM} where data is not lost when power is turned off, have significant implications e.g. for energy efficient systems~\cite{meena2014nvm,mittal2014survey}\index{non-volatile memory}.
-Some concrete \acp{NVM}, however, have further unique implications that increase the complexity of the system.
-For example, in \acp{RTM} information is stored in a so-called racetrack that can store multiple data addresses~\cite{rtm}\index{racetrack memory}.
-An address can only be accessed for reading or writing by shifting the head of a reader to the correct location, which has costs in terms of energy and latency.
-Thus, considerations of memory layout change when targeting \acp{RTM}.
-In general, these emerging technologies increase the complexity of the system and with it, the difficulty of programming it.
-
+%As part of the shift towards memory-centered systems, emerging memory technologies play a significant role.
+%In general, upcoming technologies like \acp{NVM} where data is not lost when power is turned off, have significant implications e.g. for energy efficient systems~\cite{meena2014nvm,mittal2014survey}\index{non-volatile memory}.
+%Some concrete \acp{NVM}, however, have further unique implications that increase the complexity of the system.
+%For example, in \acp{RTM} information is stored in a so-called racetrack that can store multiple data addresses~\cite{rtm}\index{racetrack memory}.
+%An address can only be accessed for reading or writing by shifting the head of a reader to the correct location, which has costs in terms of energy and latency.
+%Thus, considerations of memory layout change when targeting \acp{RTM}.
+%In general, these emerging technologies increase the complexity of the system and with it, the difficulty of programming it.
 \section{Programming Multicores}
 
 As already mentioned, programming is notoriously difficult since it translates from the level of abstraction of human interactions to the instructions of a computing system.
 The multicore era greatly aggravates this already difficult problem.
 Reasoning about concurrency, parallelism and heterogeneity on top of the correct functionality of software is significantly more difficult for a programmer.
 In general, the productivity of developers cannot keep up with the pace of developments in hardware.
-We speak of a software productivity gap~\cite{castrillon2014thesis,ecker2009hardware}\index{software productivity gap}. 
+We speak of a ``software productivity gap''~\cite{ecker2009hardware,castrillon2014thesis}\index{software productivity gap}. 
 
 When programming multicore systems, abstractions that proved very useful for programming single-cores become inadequate.
+This is exacerbated by the problem that machines are designed for backwards-compatibility with machine models which are also sequential at the instruction level~\cite{cisnotll}.
 A universal concept in programming is that of repeating an action multiple times, or looping. 
 For example, consider the task of iterating through a bunch of pictures and determining which of them contain cats.
-For instructing a human, we can probably say something like ``look through those pictures and sort out the ones have cats''.
+For instructing a human, we can probably say something like ``look through those pictures and sort out the ones that have cats''.
 A modern x86 chip, on the other hand, would understand something closer to this:
 
 \begin{minted}{Nasm}
@@ -141,8 +144,8 @@ for(i = 0; i < N; i++){
 
 Notice how the register management and several other low-level details are abstracted away.
 The end of the loop is very clear to read, as we know when we have reached the final picture.
-We can certainly say this is at a level of abstraction between the human and machine instructions contrasted above.
-However, the very widespread \texttt{for} instruction we used here also has the inherently sequential semantics exhibited by the machine code above.
+We can certainly say this is at a level of abstraction between the human and machine instructions listed above.
+However, the very widespread \texttt{for} instruction we used here also has the inherently sequential semantics, as exhibited by the assembly code it translates to.
 The semantics of the for loop are that the loop body will execute completely.
 After each iteration of the body, the increment expression is executed (usually incrementing the iteration variable), and the condition is evaluated, deciding wether to continue iterating.
 Indeed, in the two (equivalent) snippets above, we don't know how the functions \texttt{read\_picture} and \texttt{contains\_cats} work.
@@ -160,10 +163,10 @@ result = map (contains_cats . read_picture) pictures
 While the language separates statefull and stateless computation, allowing a great analysis of concurrency, there are reasons why Haskell is not the most widespread language for embedded systems.
 For example, garbage collection makes execution times very unpredictable.
 Similarly, the lazyness of the language adds a performance penalty to large complex computations.
-Compiling Haskell code to an efficient single-core execution is significantly more challenging than with the C code.
+Compiling Haskell code to an efficient single-core execution is significantly more challenging than equivalent C code.
 The lazyness also makes it difficult to reason about time in the computation.
 This is crucial in application domains like \ac{CPS}, where the systems interact with their environment.
-The \texttt{map} abstraction as implemented in Haskell is thus not well-suited to the domain of \ac{CPS}.
+The \texttt{map} abstraction, as implemented in Haskell, is not well-suited for many tasks in the domain of \ac{CPS}.
 In general, we are faced with trade-offs between abstract expressivity and translatability to an efficient execution.
 At its core, the challenge is about choosing the right models and corresponding abstractions for a particular domain.
 
@@ -172,7 +175,7 @@ At its core, the challenge is about choosing the right models and corresponding 
 Models play different roles in science and engineering.
 E.A. Lee explains this well in~\cite{lee2017plato}.
 He argues that scientists adapt their models to fit experiments in the world, while engineers adapt designs in the world to fit their models.
-Indeed, for some fundamental principles of computation, like $\lambda$-calculus, are discovered instead of invented, as Wadler argues~\cite{wadler2015propositions}.
+Indeed, some fundamental principles of computation, like $\lambda$-calculus, are arguably discovered instead of invented, as Wadler contends~\cite{wadler2015propositions}.
 Those might fit in the first paradigm, giving computer science a justification for its name.
 In the case of programming multicore systems, however, the problem is clearly in the second realm: we need to engineer good models~\cite{lee2006problem}.
 No serious argument can be made for languages like C or Haskell, nor the x86 instruction-set; They were invented, not discovered.
@@ -208,15 +211,20 @@ Originally meant as denotational semantics for parallelism~\cite{kahn74}, the mo
 Kahn Process Networks are provably deterministic~\cite{kahn74}, which is not the case for other models, e.g. Petri Nets.
 In a canonical sense, \acp{KPN} are more general than most dataflow models, and represent the most general deterministic dataflow model of computation~\cite{lee_matsikoudis_semantics}.
 In this thesis we will focus on a software synthesis flow~\cite{maps,castrillon2014thesis} based on \ac{KPN}.
-Figure~\ref{fig:software_synthesis_flows}\todo{improve figure: add a flow} shows the general structure of the flow and the four main abstractions as we identify them for our analysis~\cite{goens_mcsoc16}.
-Chapter~\ref{chap} will review these abstractions, including the models of computation above, and their relationships.
 
 \begin{figure}[h]
 	\centering
    \resizebox{0.95\textwidth}{!}{\input{figures/software_synthesis_flow.tex}}
-   \caption{The four main abstractions in Software Synthesis in the Example of a \acs{KPN}-based flow.} 
+   \caption{A flow for \ac{MoC}-based Software Synthesis. The main abstractions colored in green are the ones we deal with in this thesis. } 
 	\label{fig:software_synthesis_flows}
 \end{figure}
+
+Figure~\ref{fig:software_synthesis_flows} shows the general structure of many such \ac{MoC}-based flows. 
+Application, architecture and execution models are used for performance estimation and \ac{DSE}, commonly intertwining these two processes, to produce performance metrics and a mapping (and schedule) for the application on the target architecture.
+A final, code generation step generates code for the target architecture. This code is usually software for an existing architecture, but can also be hardware (e.g. in~\cite{haubelt2008systemcodesigner}), in flows that are closer to \ac{HLS}, which is the inspiration for the name software synthesis in the first place.
+This thesis is limited in its scope, and it does not deal with the whole flow as depicted in Figure~ref{fig:software_synthesis_flow}.
+It deals mostly with the abstractions on the left side of the figure, colored in green.
+Chapter~\ref{chap} will review these abstractions, including some of the models of computation above, and their relationships. \acp{MoC} are reviewed more generally in Chapter~\ref{chap:mocs}.
 
 \subsection{Problems}
 
@@ -224,7 +232,8 @@ The methods of software synthesis are a promising avenue for programming multico
 
 
 %Mapping structure (Part I)
-The flow depicted in Figure~\ref{fig:software_synthesis_flows} is based on a well-defined model of computation (\ac{KPN}) for specifying and reasoning about applications.
+Consider a concrete \ac{KPN}-based instance of the flow depicted in Figure~\ref{fig:software_synthesis_flows}, like~\cite{maps,sesame,thiele2007DOL}.
+\ac{KPN} is a well-defined \ac{MoC}, used for specifying and reasoning about applications in the flow.
 However, the architecture or the execution, which are comparably important, are commonly modeled in an ad hoc fashion.
 With a specific architecture or topology in mind, the flows encode the architecture model with a series of performance metrics or similar numbers characterizing a specific hardware, while the structural properties are implicit in the problem formulations and algorithms.
 
@@ -240,13 +249,14 @@ With a specific architecture or topology in mind, the flows encode the architect
 \end{figure}
 
 
-Consider the very simple example of mapping two processes $t_1,t_2$ where $t_2$ depends on $t_1$ onto an off-the-shelf multicore like the Exynos~5 chip with an octacore (4+4) ARM big.LITTLE\texttrademark, as depicted in Figure~\ref{fig:mapping_space_motivation}.
+Consider the very simple example of mapping two processes $t_1,t_2$ where $t_2$ depends on $t_1$ onto an off-the-shelf multicore like Odroid XU4, which features a Samsung\texttrademark Exynos~5 chip with an octacore (4+4) ARM big.LITTLE\texttrademark, as depicted in Figure~\ref{fig:mapping_space_motivation}.
 The mappings are plotted by encoding the mapping of each of the two tasks as the $x$ and $y$ coordinates of the grid, and the color of the squares in the grid encodes the execution time of the application with that mapping.
-The example is very simple and has deliberately been chosen such that it can be easily visualized. In particular, The actual values of the execution time are irrelevant and have been omitted.
+The example is very simple and we deliberately chose it such that it can be easily visualized.
+In particular, the actual values of the execution time are irrelevant for this discussion and have been omitted.
 Still, many of the problems are clear with this simple example already.
 
 There are exactly $2^8 = 64$ mappings in the mapping space, yet only 6 distinct execution times (colors).
-This is because, at least a priori, mapping both tasks to $\PE_6$, as shown in the figure, or mapping them both to $\PE_7$, will obviously result in the same execution time since the two cores are identical (Cortex-A15\texttrademark).
+This is because, at least a priori, mapping both tasks to $\PE_6$, as shown in the figure, or mapping them both to $\PE_7$, will obviously result in the same execution time, since the two cores are identical (Cortex-A15\texttrademark).
 This can be generally understood as a property of the \emph{symmetries} of the architecture, and should be exploited when exploring this mapping space.
 
 Similarly, researchers often use heuristics based on geometric properties of the design space to explore it.
@@ -255,34 +265,35 @@ If we consider the point $(4,4)$ on Figure~\ref{fig:mapping_space_example}, ther
 We can compare the geometry of the space with the geometry of the architecture itself, and see why this is the case: the distances in this space do not reflect the architecture with its heterogeneity and its memory subsystem.
 In general, the geometry of this space does not reflect the geometry of the problem. 
 
-Execution traces reflect directly the structure of the application, as they are bound by the semantics of it.
-This is even more so the case for mappings, encode the resource allocation for the application to an architecture.
+%Execution traces directly reflect the structure of the application, as they are bound by the semantics of it.
+%This is even more so the case for 
+Mappings encode the resource allocation for the application to an architecture.
 As such, they inherit structural properties of both the application and its semantics, as well as of the underlying architecture.
 Yet mappings are commonly treated as simple lists of assignment, disregarding this structure, like which tasks depend on which, or if they are mapped to cores with a large communication latency between them.
 Mapping algorithms commonly encode a heterogeneous architecture as a list of numbers of cores of different types, or perhaps use a grid system to encode \acp{PE} as they assume a \ac{NoC} with a regular-mesh topology.
 These models break down as soon as the complexities of the architecture transcend the fixed model, for example by having multiple clusters or levels of hierarchy, or star-mesh topologies instead of regular meshes.
 
 %Memory
-The aspects mentioned permeate the design of the internal algorithms in software synthesis flows, which effectively constraints them to a small class of models or disregards opportunities for reasoning about the structure of the problem. 
+The problems mentioned here permeate the design of the internal algorithms in software synthesis flows, which effectively constraints them to a small class of models or disregards opportunities for reasoning about the structure of the problem. 
 While memory has been identified as a first-class citizen for achieving efficient implementations, many methods also consider it just as an afterthought.
 For example, when discussing heterogeneity in architectures, the heterogeneity implied by the memory subsystem is seldom considered, nor are emerging memory technologies like \acp{NVM}.
 
 %Limits of the model (KPN)
 The issues raised above are not inherent issues with the flow, but rather with the state of practice.
 However, the flow itself does has some inherent limitations as well.
-The model of computation, \ac{KPN}, for example, falls short on certain use-cases.
+The \ac{KPN} model of computation falls short on certain use-cases.
 For example, the blocking-read semantics common in \ac{KPN} implementations are ill-suited for certain cases of data-level parallelism.
 Also, perhaps more importantly, \acp{KPN} do not model time in the physical world, which plays a central role for the execution of \acp{CPS}.
-In general, a model-based design approach needs to evolve models according to the use-cases.
+In general, a model-based design approach needs to evolve its models according to the use-cases.
 
 %Linear flow (transformations)
 Another inherent problem with the flow as formulated is the structure of the flow itself.
-Concretely, an application is described using a concrete model of computation and then this is used to reason about an implementation.
+An application is described using a concrete \ac{MoC} and then this is used to reason about an implementation.
 However, the flow as depicted in Figure~\ref{fig:software_synthesis_flows} (and implemented in practice) disregards transformations at the level of the application.
 This could mean a feedback loop back to the application, or perhaps semantics-preserving code transformations at the model level, as part of the exploration.
 
 %Benchmarking
-If methods like software synthesis are to be used in practice, we should also make sure they work in practice. 
+If methods like software synthesis are to be used in practice, we should also make sure they also work in practice. 
 Strong results on a varied benchmark suite from real-world applications are usually a much better indicator for practical applications than, say, a good asymptotic worst-case behavior.
 In order to get such results, however, we need such a varied realistic, up-to-date benchmark suite.
 In reality, however, increasingly branching subdomains and concerns of intellectual property mostly yield a scarce landscape of outdated benchmarks instead.
@@ -292,7 +303,7 @@ Tool support and maturity, degree of adoption and knowledge of the models are al
 
 \section{Contribution}
 
-In this thesis we seek to improve the tools we use for understanding and tackling these problems with software synthesis. 
+In this thesis we seek to improve the tools we use for understanding and tackling the problems discussed with software synthesis. 
 We work in a model-based perspective and consider the trade-off we've introduced, between abstract expressivity and translatability to an efficient execution
 To consider this we tackle the problem from both sides: the models and the compilers, in a very general sense, that translate to an efficient execution.
 The main idea behind this thesis is that the underlying models endow the problem with structure.
@@ -302,59 +313,46 @@ Again there are two ways of doing this:
 \item by taking a concrete flow and improving it leveraging its own structure, or
 \item by changing the underlying models in a way that improves the balance in some way in the trade-off above.
 \end{enumerate}
-These make the two parts of this thesis.
+This thesis discusses on both.
+We first focus on software synthesis for (high-performance) embedded systems running on \acp{MPSoC}.
+In particular, we focus on a concrete software synthesis flow~\cite{maps,castrillon2014thesis} based on \acp{KPN}. 
+Chapter~\ref{chap:mapping} introduces this flow, as depicted in Figure~\ref{fig:software_synthesis_flows}, and the corresponding background on the mapping problem.
 
-The first part focuses on software synthesis in the domain of \acp{CPS} and generally high-performance embedded systems running on \acp{MPSoC}.
-In particular, we focus on a concrete software synthesis flow~\cite{maps,castrillon2014thesis} based on \acp{KPN} (cf. Fig.~\ref{fig:software_synthesis_flows}).
-Chapter~\ref{chap:background} introduces this flow and the corresponding background.
+To evaluate methods in software synthesis in particular and compilers in general, we need to test them on benchmarks. 
+Chapter~\ref{chap:benchmarking} discusses benchmarking in compilers, and introduces some benchmarks we use in the thesis.
+It also discusses benchmark generation, with its advantages and pitfalls, both using random processes and machine learning.
 
 % Exploiting Structure in Dataflow Software Synthesis: Part I
-As described in Figure~\ref{fig:software_synthesis_flows}, the software synthesis process is centered around multiple abstractions.
-These can be seen as formal constructs modeling the application and architectures, as well as decisions of the execution of the former on the latter, like mappings.
-They are all rich in (mathematical) structure.
-Architectures for example, even heterogeneous ones, exhibit a great deal of symmetry.\todo{make this perhaps more intuitive}
-Similarly, the space of mappings has locality properties, where some mappings are similar whereas others are to others . Chapter~\ref{chap:structures} describes these structures.
-In this thesis we aim to identify and exploit these structures in different ways.
+As motivated in Figure~\ref{fig:mapping_space_motivation}, the mapping problem in software synthesis has a rich structure, like its symmetries or geometry.
+We identify and describe this structure in Chapter~\ref{chap:mapping_structures}.
+Describing the structure is only as useful as the applications we find from it.
+In Chapter~\ref{chap:mapping_applications} we discuss multiple applications, e.g. at compile time in \ac{DSE} or at run-time in hybrid mappings.
+We also show how this structure can be used to formulate other properties of mappings, like robustness or compactness, which can be useful for resilient computation even in real-time scenarios in \ac{CPS}.
 
-Chapter~\ref{chap:compile-time} explores compile-time applications of the identified structures.
-For example, it shows how we can use symmetries in \ac{DSE} for pruning the design space and discusses the role of locality in mapping algorithms.
-Chapter~\ref{chap:mapping_other_applications}, on the other hand, explores other applications of the structures.
-It shows how symmetries can also be leveraged at runtime in so-called hybrid mapping strategies.
-It also discusses memory, which is traditionally neglected in mapping approaches.
-\todo{The structure of the applications feels weird: can I change it?}
-In Chapter~\ref{chap:mapping_conclusions} we discuss the conclusions we can make from exploring this mapping flow,
-and we also discuss related work to this part in Chapter~\ref{chap:related_mappings}.
+After exploring how to improve concrete flows with its structure, we turn our attention to the underlying models.
+Chapter~\ref{chap:mocs} reviews \acfp{MoC} in general, and shows how to improve the methods here.
+We first show how to improve existing methods, discussing what we call the MacQueen gap in the \ac{KPN} semantics.
+We discuss a novel model, Reactors, where time is a first-class citizen, and discuss applications in the telecommunications and automotive domains.
 
-The second part of this thesis goes beyond the discussed \ac{KPN}-based flow.
-Instead of the structure emerging from a concrete model, we consider the underlying models themselves.
-While Software Synthesis refers to a family of methods, each concrete method has a corresponding choice of abstractions it uses.
-This translates to the programming language abstractions and semantics striving for expressive idioms for programmers that permit the compiler to analyze them and execute them efficiently.
-Thus, instead of exploiting the structure of the given abstractions, in the second part of this thesis we explore ways in which we can improve upon software synthesis methods by changing the structure we use: be it the semantics of the model of computation, implicit language structures or even the benchmarks we evaluate to asses our methods.
+\ac{MoC} are abstract mathematical models, they need to be exposed to programmers using a language or an \acs{API}.
+In Chapter~\ref{chap:pl} we discuss the programming languages used to develop \ac{MoC}-based applications. 
+We review different existing languages, including the Ohua paradigm, which can be used for implicitly defining dataflow applications.
+We discuss language-level transformations and abstractions in the context of Ohua and how \ac{MoC}-based design can be used for optimizing \acs{I/O} in microservice-based architectures.
 
-In Chapter~\ref{chap:mocs} we start with a more systematic overview of \acfp{MoC}.
-We see how understanding the models and their relationships pays off by finding and exploiting a gap in the semantics between \ac{KPN} and languages that usually implement this model using blocking-reads semantics.
-Expanding on the overview of \acp{MoC}, we consider the requirements of the domain of \acp{CPS}.
-From these considerations we discuss a novel model, Reactors, and how it can be used in different domains like automotive and telecommunications.
-In Chapter~\ref{chap:language} we go beyond the realm of \acp{CPS} and discuss how the principles of dataflow and language-based transformations can be exploited in a different domain, namely that of microservice-oriented systems.
-We discuss two distinct ways to exploit language-level abstractions in this domain.
+The topic of this thesis is broad, and much related work exists for all aspects covered here. 
+While different chapters cover related work pertinent to the topic discussed, we review and discuss it concisely again in Chapter~\ref{chap:related}.
+Finally, some conclusions from this work are summarized in Chapter~\ref{chap:conclusions}.
 
-Finally, in Chapter~\ref{chap:benchmarknig} we turn our attention to a seemingly orthogonal aspect: Benchmarking.
-In order to assess the performance of any method or flow, we require benchmarks.
-However, benchmarks are scarce and of very diverse levels of quality.
-Nevertheless, we can exploit structure again to combat this problem: instead of the structure of the models and architectures, we consider the structure of the applications and their code.
-We show how we can achieve this both with hand-made models, and using machine learning to learn the structure of the applications.
-
-We discuss related work to the different aspects of this second part in Chapter~\ref{chap:related_semantics}.
-We then expand our conclusions from the \ac{KPN} flow to consider these additional aspects, concluding the thesis in Chapter~\ref{chap:conlusion.}
-\todo{Add a discussion of the motivation to constraint in the right way. Do I have a good example? (GOTO?), cite~\cite{tasharofi2013scala}} 
-
-TODO: Add a figure with the flow of the content and dependencies (ideally, by sections). Perhaps add another figure with the references to all coauthored papers? (it would be too much to add them here). Or: perhaps just discuss how we separate the bibliography (in the ``note on originality'').
+While all topics covered in this thesis are related by model-based design of software, not every chapter depends on everything previous.
+Figure~\ref{fig:chapter_dependencies} shows the logical dependencies of the chapters, and in some cases, the sections of the chapters in this thesis.
+Any path in this graph should yield a consistent exposition of the topics discussed. 
+A reader only interested in some topics can readily skip chapters and sections that are not in the path to the sections that interest them.
 
 \begin{figure}[h]
 	\centering
    \resizebox{0.95\textwidth}{!}{\input{figures/contents_dependency_graph.tex}}
    \caption{Dependencies of chapters and sections of this thesis.}
-	\label{fig:multicore_era}
+	\label{fig:chapter_dependencies}
 \end{figure}
 
 
