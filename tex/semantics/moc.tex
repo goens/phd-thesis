@@ -89,7 +89,7 @@ Common among most dataflow models is the concepts of actors, which encapsulate c
 Actors communicate exclusively via explicit input and output channels, which work as \acs{FIFO} buffers.
 An actor fires when certain conditions are met, consuming tokens in (some of) its input channels, and producing other tokens in its output channels.
 
-We will describe Dennis dataflow using a formalism similar to the one described in~\cite{Parks:M95/105,lee_matsikoudis_semantics}.
+We will describe Dennis dataflow using a formalism similar to the one described in~\cite{Parks:M95:105,lee_matsikoudis_semantics}.
 This formalism is very general and allows to describe many other dataflow paradigms as special cases.
 The basis of the formalism are the \emph{firirng rules}\index{firing rules}.
 An actor has a finite set $\mathcal{R}$ of firing rules, and each rule $R \in \mathcal{R}$ is a finite tuple of word over the alphabet of values $\bar \Sigma := \Sigma \cup {\bot}$.

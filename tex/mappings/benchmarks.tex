@@ -3,7 +3,7 @@ We will discuss the first two for benchmarking here, while the \texttt{sdf3} for
 
 \subsection{CPN Benchmarks}
 
-The first input format for \mocasin is the \texttt{MAPS} format, which uses benchmarks written in the \ac{CPN} language (cf. Section~\ref{kpn_basic}).
+The first input format for \mocasin is the \texttt{MAPS} format, which uses benchmarks written in the \ac{CPN} language (cf. Section~\ref{sec:kpn_basic}).
 A \ac{CPN} application is compiled using the \ac{MAPS} flow, which evolved into the commercial tool suite from SLX.
 SLX generously provided access to their tool suite for this benchmarking, as well as some \ac{CPN} benchmarks. 
 
@@ -11,24 +11,11 @@ The tool flow compiles an application using a \acp{pthread} back-end with instru
 Since this traces are deterministic and depend only on the inputs, not on the execution order, they can be used to replay and simulate the execution (cf. Section~\ref{sec:simulating_mappings}).
 In an instrumented run, the \ac{MAPS} flow also executes each process in isolation (with the stored tokens), gathering information about the precise instructions executed.
 This is used for performance estimation using an abstract processor model\cite{eusse2014pre}.
-The performance estimation for each process, together with the execution traces can then be used to simulate a mapping with \mocasin, as explain in Section~\ref{sec:simulating_mappings}.
-This is summarized in Figure~\ref{fig:maps_flow}.
-
-\begin{figure}[h]
-	\centering
-\resizebox{0.8\textwidth}{!}{
-   \begin{tikzpicture}
-     \input{figures/example_mapping}
-   \end{tikzpicture}
- }
-   \caption{Benchmarks in the \ac{MAPS} flow. TODO: fix figure}
-   \label{fig:maps_flow}
-\end{figure}
-
+The performance estimation for each process, together with the execution traces can then be used to simulate a mapping with \mocasin, as explained in Section~\ref{sec:simulating_mappings}.
 
 We use three \ac{CPN} benchmarks for evaluation.
-The first benchmark is the audio filter example as seen in Chapter~\ref{chap:mapping}, which takes a stereo file and implements a band-pass filter after transforming to the frequency, and transforming it back afterwards.
-This benchmark has $8$ processes and $15$ channels (some channels for parameters are not depicted in Figure~\ref{fig:audio_filter_graph}).
+The first benchmark is the audio filter example as seen in Chapter~\ref{chap:mapping}, which takes a stereo file and implements a low-pass filter after transforming to the frequency, and transforming it back afterwards.
+This benchmark has $8$ processes and $15$ channels (some channels, used to send parameters, are not depicted in Figure~\ref{fig:audio_filter_graph}).
 The second benchmark we consider is an embedded pedestrian-recognition application using an algorithm based on the \ac{HOG} technique\index{HOG}.
 This benchmark was kindly provided by SLX and consists of $10$ processes with $33$ channels.
 Finally, we use a speaker recognition application, as described in~\cite{bouraoui2019comparing}.

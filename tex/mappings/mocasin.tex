@@ -19,7 +19,7 @@ The \mocasin architecture is composed of multiple modules that can be combined t
 
 In general, simulating a KPN requires four inputs, as explained in Section~\ref{sec:simulating_mappings}: the \ac{KPN} graph, a platform description, execution traces and a mapping.
 The \mocasin tool has data internal structures for these four inputs that reflect the models as explained insection~\ref{sec:kpn_basic}-\ref{sec:mapping_problem}.
-The tool boasts multiple readers to generate the internal data structures from established formats like \texttt{tgff}, \texttt{sdf3} or the \texttt{MAPS} formats. \index{tgff}\index{\acs*{\SDFFF}}
+The tool boasts multiple readers to generate the internal data structures from established formats like \texttt{tgff}~\cite{tgff}, \texttt{sdf3}~\cite{sdf3} or the \texttt{MAPS} formats. \index{tgff}\index{\acs*{\SDFFF}}
 Instead of a concrete trace, \mocasin expects a trace generator, which can generate the trace on the fly: this is useful e.g. for non-deterministic models computation, but for KPNs the two are equivalent.
 The \ac{KPN} trace generator, for example, simply reads the trace from a file.
 A mapping, while required for simulation, does not need to be provided: it can be calculated in a \acl{DSE}.
@@ -87,7 +87,7 @@ We also have some meta-heuristics, which include a random walk, simulated anneal
 
 \mocasin is designed to be a tool for tool development.
 As such, one of its main goals is to enable building different scenarios for different contexts, like static mapping of \ac{KPN} applications or hybrid execution of dynamic \ac{LTE} loads~\cite{menard_rapido21}.
-We use the Hydra~\ref{yadan2019-hydra} framework to configure \mocasin and construct different scenarios as different tools.\index{Hydra}
+We use the Hydra~\cite{yadan2019hydra} framework to configure \mocasin and construct different scenarios as different tools.\index{Hydra}
 Figure~\ref{fig:mocasin_arch} depicts this to the right, for an example simulating \ac{TGFF} applications with random mappings and storing the execution history in a \texttt{JSON} file.
 This configuration philosophy allows us to work in a modular fashion, with the modules as depicted in the \mocasin toolbox in the figure.
 This allows us to implement different contributions of this thesis as \mocasin modules.
@@ -103,5 +103,5 @@ This allows us to implement different contributions of this thesis as \mocasin m
 
 Many concepts that are central contributions of this thesis are implemented in \mocasin. 
 This is done as modules, using the \mocasin toolbox infrastructure. 
-Figure~\ref{fig:mocasin_kpn_simulation} shows a family of \mocasin flows for mapping and simulating KPN or \ac{tgff} applications.
+Figure~\ref{fig:mocasin_kpn_simulation} shows a family of \mocasin flows for mapping and simulating \ac{KPN} or \ac{TGFF} applications.
 Different contributions of this thesis and the corresponding references are described in the figure and marked as such (with light-green coloring).
