@@ -6,7 +6,7 @@
 
 \begin{tikzpicture}[node distance = 4em]
     %nodes
-    \node [ours,align=center ] (moc) {application \\ (\ac{MoC}) e.g. \ac{KPN} };
+    \node [ours,align=center ] (moc) {application \\ (\acs*{MoC}) e.g. \acs*{KPN} };
     \node [ours, align=center, below= 0.5 cm of moc] (arch) {architecture \\ model};
     \node [ours,  align=center,below= 0.5 cm of arch] (exec) {execution \\ (e.g. traces)};
     \node (mapping) at (3.5,-0.6) [single arrow,
@@ -14,7 +14,7 @@
                                     align=center,
                                     shade,shading=axis,
                                     left color=white,right color=green!20,
-                                    minimum width=2.5cm,minimum height=1cm,] {\ac{DSE} \\ (mapping/scheduling)};
+                                    minimum width=2.5cm,minimum height=1cm,] {\acs*{DSE} (mapping/ \\ scheduling)};
     \node (estimation) at (3.5,-3.2) [single arrow,
                                     text width=3cm,
                                     align=center,
@@ -22,7 +22,7 @@
                                     left color=white,right color=blue!20,
                                     minimum width=2.5cm,minimum height=1cm,] {perf. estimation \\ (simulation)};
 
-    \node [ours, minimum height=6em, align=center] (mapping) at (7.8,-0.6) {mapping \\ (and schedule)};
+    \node [ours, minimum height=6em, align=center] (mapping) at (7.8,-0.6) {mapping \\ (\& schedule)};
     \node [other,minimum height=6em, align=center,below= 0.5cm of mapping] (simulation) {performance metrics};
     \node (generation) at (11,-1.8) [single arrow,
                                     text width=3cm,

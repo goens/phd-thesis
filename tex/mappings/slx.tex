@@ -30,8 +30,37 @@ The \acl{MAPS} is a software synthesis flow. It was developed at RWTH Aachen and
 It has analysis algorithms to suggest parallelization of sequential code, both as OpenMP annotations as well as \ac{CPN} annotations. We will not discuss these here.
 It also has detailed platform models which are used in simulation and performance estimation flows, we will very briefly outline these, only as they pertain the \ac{KPN}-based software synthesis flow. 
 
-Figure~\ref{fig:maps_flow} describes the \ac{MAPS} flow. 
-Applications are written in \ac{CPN}.
+\begin{figure}[h]
+	\centering
+   \resizebox{0.95\textwidth}{!}{\input{figures/maps_flow.tex}}
+   \caption{The Software Synthesis Flow from Figure~\ref{fig:software_synthesis_flows} in \ac{MAPS}. \ac{MAPS} implements all steps in the flow, which are therefore all depicted in green.} 
+	\label{fig:maps_flow}
+\end{figure}
 
-A performance estimation flow is used to 
-A Clang-based compiler 
+Figure~\ref{fig:maps_flow} describes the \ac{MAPS} flow, as an instance of the general software synthesis flow in Figure~\ref{fig:software_synthesis_flows} in the introduction.
+Applications are written as \ac{KPN} applications in the \ac{CPN} language.
+While \ac{CPN} supports \ac{SDF} annotations as well, these are embedded into the \ac{KPN} \ac{MoC} for analysis and code generation, there is no separate \ac{DSE} and code generation for purely-\ac{SDF} applications.
+The architecture model is an \acs{XML}-based description which has detailed models of the communication subsystem and its topology,
+including different possible communication \acsp{API}~\cite{odendahl2013split}, different frequency and voltage domains and even models of the \ac{ISA} for the processing elements.
+This model influenced the definition of the SHIM standard~\cite{mca_shim15} which then resulted in an IEEE standard~\cite{ieee-2804-2019}. 
+ 
+Performance estimation in \ac{MAPS} follows in multiple steps.
+In a first step, using a \acp{pthread} backend, the application is emulated on the host machine to gather functional \ac{KPN} traces.
+Since the \ac{KPN} model is deterministic, these traces are independent of the actual performance values of the application.
+Then, the processes are instrumented and executed in isolation, dividing them into what in \ac{MAPS} are called \emph{segments}\index{process segments}.
+These segments are defined as the execution between any two read or writes to or from channels\footnote{A special annotation can be used additionally to divide segments manually.}.
+Using the data from the functional \ac{KPN} trace to obtain a detailed trace of the instructions executed during each segment in the process.
+These detailed instruction traces are combined with an abstract processor model from the architecture description to estimate the performance on the target platform~\cite{eusse2014pre}.
+This yields traces with performance annotations for every process and every \ac{PE} type.
+Finally, these performance-annotated traces are used in conjuction with the mapping and communication model in a discrete-event simulator to estimate the overall performance of the mapping.
+If performance-annotated traces are available from a profile execution on the actual hardware, these can be used instead.
+
+The \ac{DSE} step in \ac{MAPS} is similar to that of all the flows described in before, as well as the flow of the \mocasin tool, which we will describe shortly. 
+In this \ac{DSE} step, \ac{MAPS} generates a mapping.
+On some platforms when processes share a \ac{PE}, \ac{MAPS} can also generate a schedule for the processes.
+These mappings are then used by the Clang-based \ac{CPN} compiler to generate target-specific C code, which can be further compiled by a C compiler for the target platform.
+This way, the flow generates target-specific code from an abstract \ac{KPN} description of the application (and the appropriate platform models).
+
+As explained in the introduction, this thesis does not focus on the performance estimation and code generation steps of this flow (cf. Figure~\ref{fig:software_synthesis_flows}.
+Thus, we use \ac{MAPS} for performance estimation and code generation.
+For evaluating our methods in \ac{DSE} and application, architecture and mapping models, we primarily use the \mocasin tool, which we describe in the next section.
