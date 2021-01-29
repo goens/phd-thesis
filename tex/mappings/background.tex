@@ -1,22 +1,13 @@
-Software synthesis can be seen as embedded in a spectrum of design approaches going from hardware design (and classical \ac{EDA}) through hardware-software co-design up to software synthesis on the other end. 
-In software synthesis we strive to derive an efficient execution from a computation expressed in an abstract model to a concrete architecture.
-In order to understand software synthesis, thus, we first need to understand the underlying models of computation.
-Closely related to these concurrent models of computation are execution traces, which capture a concrete execution for some input.
-However, going from such abstract models to a concrete execution also requires an understanding of the target hardware architecture.
-The relationship between the two can be captured in a mapping.
-This chapter considers all of these aspects with their corresponding models, and the relationship between them.
-It is the central piece of background theory required for the methods presented in this thesis.
-
 \section{Kahn Process Networks}
 \label{sec:kpn_basic}
 
-The flow we investigate in Part I is based on the \ac{MoC} of \acfp{KPN}.
+The main flow we investigate in this thesis is based on the \ac{MoC} of \acfp{KPN}.
 In this section we introduce this model, or rather, its most common implementation with blocking-read semantics~\cite{kahn_macqueen} .
-In Part II, specifically in Chapter~\ref{chap:mocs} we will discuss the original formal semantics~\cite{kahn74} and how they differ to those introduce here.
-We also discuss other models of computation and how they relate to each other.
+In Chapter~\ref{chap:mocs} we will discuss the original (denotational) semantics~\cite{kahn74} and how they differ to those introduce here.
+There, we also discuss other models of computation and how they relate to each other.
 
-We can think of a \ac{KPN} as a computation distributed among different \emph{processes}\index{KPN ! process} (originally derived from coroutines).
-Each of these processes executes sequentially and is Turing complete. However, the processes share no memory, they have memories local only to themselves.
+We can think of a \ac{KPN} as computation distributed among different \emph{processes}\index{KPN ! process} (originally derived from coroutines).
+Each of these processes executes sequentially and is Turing complete. However, the processes share no memory, they have local memories accessible only to themselves.
 They communicate between each other using \emph{channels}\index{KPN ! channel}, which work as unbounded \acs{FIFO} buffers. 
 Processes have sets of outgoing and incoming channels.
 As an instruction, any process can write to one of its outgoing channels or read from one of its incoming channels.
@@ -38,12 +29,12 @@ In an analogous fashion, the values written to the \texttt{freq} variable in the
 __PNkpn fft_process
     __PNin(int cnt, short src_data[N])
     __PNout(complex freq[N]){
-  int i, loop_cnt;
-  __PNin(cnt)
-     loop_cnt = cnt;
-  for(i = 0; i < cnt; ++i)
-    __PNin(src_data) __PNout(freq)
-      fft(src_data, freq);
+          int i, loop_cnt;
+          __PNin(cnt)
+             loop_cnt = cnt;
+          for(i = 0; i < cnt; ++i)
+            __PNin(src_data) __PNout(freq)
+              fft(src_data, freq);
 }
 \end{minted}
 \caption{An \ac{FFT} implemented as a \ac{KPN} process in \ac{CPN}, based on Appendix A.1.3 of \cite{castrillon2014thesis}}
@@ -52,18 +43,18 @@ __PNkpn fft_process
 
 
 In general, the communication in \acp{KPN} is asynchronous: 
-When a process writes to an outgoing channel, the data is buffered in the channel until it is read, and the process continuous to execute.
+When a process writes to an outgoing channel, the data is buffered in the channel until it is read, and the process continues to execute.
 If a process reads from a channel, it receives the oldest token buffered in the channel.
-If there are no tokens, execution blocks until such a token is written to a channel - hence the name, blocking-read semantics.
-A channels can be the outgoing channel of at most one process (it should also be so for at least one process, otherwise the channel is useless).
+If there are no tokens, execution blocks until such a token is written to a channel - hence the denomination of blocking-read semantics.
+A channel can be the outgoing channel of at most one process (this should also be so for at least one process, otherwise the channel is useless).
 On the other hand, if a channel is an incoming channel to multiple processes, all tokens are copied for each of those processes.
 Hence, all processes will see the exact same incoming stream of tokens from a shared channel, instead of splitting them up.
 
 Let us consider the \acs{FFT} process from Listing~\ref{listing:fft_cpn} and combine it with other processes into a full application.
-Listing~\ref{listing:audio_filter} describes a simplified algorithm for a low-pass filter on a stereo sound file, using this \acs{FFT} process.
+Listing~\ref{listing:audio_filter} describes a simplified algorithm for a low-pass filter on a stereo sound file, using this \acs{FFT} process.\index{audio filter}
 We also omit the templates and channel declarations in this simplified listing.
 The \texttt{src} process reads the stereo file, splits it into two channels and sends the sound in blocks of a determined length as tokens.
-These files are then transformed from the time domain to the frequency domain using a \acf{FFT}, filtered and transformed back to the time domain.
+These files are then transformed from the time domain to the frequency domain using an \ac{FFT}, filtered and transformed back to the time domain.
 A sink channel gathers the filtered blocks from both channels, left and right, and combines them again into a stereo sound file that it can store.
 
 \begin{listing}
@@ -89,7 +80,7 @@ __PNprocess sink = sink_process
 \label{listing:audio_filter}
 \end{listing}
 
-The data flow in the example of Listing~\ref{listing:audio_filter} is very structured: it goes from the source, split over both channels, through the filter, back to the sink.
+The data flow in the example of Listing~\ref{listing:audio_filter} is very structured: it goes from the source, splits into two channels, through the filter, back to the sink.
 This structure can easily be visualized in a graph, like in Figure~\ref{fig:audio_filter_graph}.
 More generally, we can think of any \ac{KPN} application as a directed graph $K = (V_K,E_K)$, where the nodes $V_K$ represent the processes, and the edges $E_K$, the channels.
 This works even when a channel is an incoming channel for multiple processes.
@@ -114,80 +105,89 @@ We call this graph the \emph{\ac{KPN} graph}\index{KPN ! graph}.
 Kahn Process Networks have a more abstract definition with mathematical semantics~\cite{kahn74}, in the sense of Scott~\cite{scott1970}.
 These abstract away the concrete implementation of individual steps in a computation.
 Even so, the execution of a computation can be thought of as a series of steps or partial computations that eventually yield the final result.
-These series, which is commonly referred to as execution trace, can be captured as a sequence of steps, e.g. as the element of a Scott Domain\footnote{this will all be discussed more in-depth in Chapter~\ref{chap:mocs}}. 
+These series, which is commonly referred to as execution trace, can be captured as a sequence of steps, e.g. as the element of a Scott Domain\footnote{This will be discussed more in-depth in Chapter~\ref{chap:mocs}}. 
 Abstract computations, modeled as Scott-continuous functions, can can make computations of arbitrary length.
-For an alphabet $D$, this is modeled by (countably) infinite sequences in $D^\omega \setminus D^* = \{ (a_n)_{n \in \mathbb{N}} \mid a_n \in D~\text{for all}~n \in \mathbb{N} \}$.
+For an alphabet $\Sigma$, this is modeled by (countably) infinite sequences in $\Sigma^\omega := \{ (a_n)_{n \in \mathbb{N}} \mid a_n \in \Sigma~\text{for all}~n \in \mathbb{N} \}$.
 A concrete execution, on the other hand, always has a finite length.
-It always resides in $D^*$, the Kleene colsure of $D$.
+It always resides in $\Sigma^*$, the Kleene closure of $\Sigma$.\index{Kleene closure}
 For a (Scott-continuous) function, this sequence can be modeled as a finite string in the computation domain.
 
 In a concurrent execution, multiple entities concurrently execute steps.
 As modeled by Kahn, these entities all implement individual (Scott-continuous) functions.
 As such, there is not a unique series of steps that can be said to be the execution trace of the computation.
-To see this, consider the example depicted in Figure~\ref{fig:audio_fiter_traces}:
-\todo{finish, discuss example. Is this trace the right way of doing it? (should be reads and writes to channels for the individual histories)}
+To see this, consider the example depicted in Figure~\ref{fig:audio_filter_traces}:
+It shows multiple execution orders for the audio filter \ac{KPN} application.
+If we were to consider the values in the channels, each of these orders would yield a different trace or history of values.
+In this case, the actions in the alphabet $\Sigma$ should also model the actual values of the arrays of floating-point values that can be stored in the channels, which is why we show the processes in the figure instead.
+The traces corresponding to the executions shown in Figure~\ref{fig:audio_filter_traces} are all equivalent.
 
 \begin{figure}[h]
 	\centering
    \resizebox{0.7\textwidth}{!}{\input{figures/audio_filter_traces}}
-   \caption{Different possible executions of the audio \ac{KPN}.}
+   \caption{Different possible sequential executions of the audio filter \ac{KPN}.}
 	\label{fig:audio_filter_traces}
 \end{figure}
 
 
-In the distributed case thus, the execution traces are in fact equivalence classes of strings.
+In the case of a concurrent execution thus, traces are in fact equivalence classes of strings.
 We define this more formally, following~\cite{mazurkiewicz1995introduction}, the first chapter of~\cite{diekert1995book}.
-Let $D$ be a finite set, like an alphabet $\Sigma$ or data type $D = \bigcup_{i \in \mathcal{I}} D_i$ be a data type for a \ac{KPN}.
-Let $\Delta$ be a symmetric, reflexive relation on $D$, which we call a dependency\index{dependency}.
-This means that if $(a,b) \in \Delta$, we have $(b,a) \in \Delta$ and also $(a,a) \in Delta$ for all $a \in D$. 
-With $\Delta$ we define an additional relation in $D$, namely $I := (D \times D) \setminus \Delta$.
+%Let $D$ be a finite set, like an alphabet $\Sigma$ or data type $D = \bigcup_{i \in \mathcal{I}} D_i$ be a data type for a \ac{KPN}.
+Let $\Delta$ be a symmetric, reflexive relation on $\Sigma$, which we call a dependency\index{dependency}.
+This means that if $(a,b) \in \Delta$, we have $(b,a) \in \Delta$ and also $(a,a) \in \Delta$ for all $a \in \Sigma$. 
+With $\Delta$ we define an additional relation over $\Sigma$, namely $I := (\Sigma \times \Sigma) \setminus \Delta$.
 We call $I$ the induced independency\index{independency}. 
-We define an equivalence relation $\sim_I$ on the monoid $D^*$ (with respect to concatenation) as follows:
-We require for $a,b \in I$ then $ab \sim_I ba$. The relation $\sim_I$ is defined as the least congruence that satisfies this requirement.
+We define an equivalence relation $\sim_I$ on the monoid $\Sigma^*$ (with respect to concatenation) as follows:
+We require that if $a,b \in I$, then $ab \sim_I ba$.
+The relation $\sim_I$ is defined as the least congruence that satisfies this requirement.
 Note that a congruence is an equivalence relation that respects the algebraic structure, in this case the monoid structure of the concatenation operation.
-We call the equivalence classes of $D^*/{\sim_I}$ traces. 
-By definition, the concatenation operation on $D^*$ factors over the equivalence relation $\sim_I$,
-and thus $D^*/{\sim_I}$ defines a monoid (with identity element $[\epsilon]_{\sim_i}$, where $\epsilon \in D^*$ is the empty string).
-We call this the Trace Monoid\index{trace monoid}, $T(D)$.
+We call the equivalence classes of $\Sigma^*/{\sim_I}$ traces. 
+By definition, the concatenation operation on $\Sigma^*$ factors over the equivalence relation $\sim_I$,
+and thus $\Sigma^*/{\sim_I}$ defines a monoid (with identity element $[\epsilon]_{\sim_i}$, where $\epsilon \in \Sigma^*$ is the empty string).
+We call this the Trace Monoid\index{trace monoid}, $T(\Sigma)$.
 We care about the algebraic structure of a monoid since it is central to the definition of Scott-continuity.
 
-\begin{ex}
-  Todo (based on example above)
-\end{ex}
+%\begin{ex}
+%  Todo (based on example above)
+%\end{ex}
 
 There are two additional equivalent definitions of this monoid as histories and dependence graphs.
-We present histories here, as they are easier for the intuition.
-Instead of a single alphabet (or set of types) $D$, we have a finite set of alphabets $D := (D_i), i \in \mathcal{I}$, where $\mathcal{I}$ is a finite index set.
-We can think of the indices as corresponding to the processes or actors in the system, and the alphabets $D_i$ to the alphabets of these individual entities.
-If we think of the individual entities as computing some (Scott-continuous) function, their execution trace will be a unique string $a_i \in D_i^*$ (recall that concrete executions are finite).
+We present histories here, as they are better for the intuition.
+Instead of a single alphabet $\Sigma$, we have a finite set of alphabets $\Sigma := (\Sigma_i), i \in \mathcal{I}$, where $\mathcal{I}$ is a finite index set.
+We can think of the indices as corresponding to the entities in the system (e.g. processes) and the alphabets $\Sigma_i$ to the alphabets of actions of these individual entities.
+If we think of the individual entities as computing some function, their execution trace will be a unique string $a_i \in \Sigma_i^*$ (recall that concrete executions are finite).
 Since, in general, these entities do not compute independently, they have common synchronization points.
-These synchronization points are abstractly modeled in the computation alphabet by mutual elements in $D_i \cap D_j$ for two entities $i,j \in \mathcal{I}$.
-We can define a monoid, the product monoid~\index{product monoid} $P(D)$, by component-wise concatenation of the strings: $(a_i)_i (b_i)_i = (a_ib_i)_i$ for all $i \in \mathcal{I}$.
+These synchronization points are abstractly modeled in the computation alphabet by mutual elements in $\Sigma_i \cap \Sigma_j$ for two entities $i,j \in \mathcal{I}$.
+In the case of synchronous dataflow application, for example, we could model the alphabet as being tuples of a channel and a value, and the common synchronization points would be reading to or writing from a value.
+In \ac{KPN}, since the communication is asynchronous, we would need to model both the channels and the processes as entities.
+
+We can define a monoid, the product monoid~\index{product monoid} $P(\Sigma)$, by component-wise concatenation of the strings: $(a_i)_i (b_i)_i = (a_ib_i)_i$ for all $i \in \mathcal{I}$.
 However, not every such a string product can be the history of a system.
-The synchronization points of different subsystems should be consistent with each other. Consider the following example:
-\begin{ex}
-  \label{ex:inconsistency_history}
-TODO: slight variation that shows an element of $P(D) \setminus H(D)$
-\end{ex}
+The synchronization points of different subsystems should be consistent with each other. 
+%Consider the following example:
+%\begin{ex}
+%  \label{ex:inconsistency_history}
+%TODO: slight variation that shows an element of $P(D) \setminus H(D)$
+%\end{ex}
 To avoid this, we want to ensure histories are consistent. For this, we define elementary histories~\index{elementary history} as follows:
-For any $a in \bigcup_{i \in \mathbb{I}} D_i$, the elementary history of $a$ is the tuple $(a_i)_{i \in \mathbb{I}}$, with $a_i = \left\{ \begin{array}{ll} a, & \text{ if } a \in D_i, \\ \epsilon, & \text{ otherwise. }\end{array}\right.$
+For any $a \in \bigcup_{i \in \mathcal{I}} \Sigma_i$, the elementary history of $a$ is the tuple $(a_i)_{i \in \mathcal{I}}$, with
+ \[a_i = \left\{ \begin{array}{ll} a, & \text{ if } a \in \Sigma_i, \\ \epsilon, & \text{ otherwise. }\end{array}\right.\]
 Again, $\epsilon$ represents the empty string.
-The monoid generated by all elementary histories for elements in $\bigcup_{i \in \mathbb{I}} D_i$ is called the history monoid $H(D)$, and is a submonoid of $P(D)$.
-If we examine the definition, it is not difficult to convince ourselves that these are precisely the histories which avoid inconsistencies like those of Example~\ref{ex:inconsistency_history}.
+The monoid generated by all elementary histories for elements in $\bigcup_{i \in \mathcal{I}} \Sigma_i$ is called the history monoid $H(\Sigma)$, and is a submonoid of $P(\Sigma)$.
+If we examine the definition, it is not difficult to convince ourselves that these are precisely the histories which avoid inconsistencies.% like those of Example~\ref{ex:inconsistency_history}.
 
-\begin{ex}
-  Todo (based on example above)
-\end{ex}
+%\begin{ex}
+%  Todo (based on example above)
+%\end{ex}
 
-We can go from a trace to a history by the morphism $\pi: T(\bigcup_{i \in \mathcal{I}}) \rightarrow H(D), a \mapsto (\pi_i(a))_i, i \in \mathcal{I}$, where $\pi_i$ is the projection $\bigcup_{i \in \mathcal{I}}D_i \rightarrow D_i$.
-Here, for the trace monoid $T(D)$ we define the dependencies to be $\bigcup_{i \in \mathcal{I}}D_i \times D_i$. 
+We can go from a trace to a history by the morphism $\pi: T(\bigcup_{i \in \mathcal{I}}) \rightarrow H(\Sigma), a \mapsto (\pi_i(a))_i, i \in \mathcal{I}$, where $\pi_i$ is the projection $\bigcup_{i \in \mathcal{I}}\Sigma_i \rightarrow \Sigma_i$.
+Here, for the trace monoid $T(\Sigma)$ we define the dependencies to be $\bigcup_{i \in \mathcal{I}}\Sigma_i \times \Sigma_i$. 
 This is not just a morphism, but in fact an isomorphism: See Theorem 1.5.4 of~\cite{mazurkiewicz1995introduction}.
 Thus, the two concepts are equivalent.
 For the rest of this thesis we will use the terms traces and histories interchangeably.
 
 
 Traces, and equivalently histories, can be used to describe the concrete computations in concurrent systems like those described by a \ac{KPN}.
-They are also well-suited (and well-suited) to model these systems in the context of process calculi, like \ac{CSP}.
+They are also well-suited to model these systems in the context of process calculi, like \ac{CSP}.
 However, an important observation is the converse: a concrete execution of a \ac{KPN} is determined uniquely by its history.
 Moreover, any concrete implementation of the \ac{KPN} realizing the same execution will have the same history: the history is an invariant of the abstract execution model.
 It captures the concurrent essence of the concrete computation.
@@ -195,10 +195,12 @@ It captures the concurrent essence of the concrete computation.
 \section{Architecture Models}
 
 \label{sec:arch_models}
-Hardware architectures are in significant contrast to applications from the point of view of modeling.
-Abstraction boundaries are more clearly defined in the hardware world: semiconductor components like transistors are organized into digital switches, which are used to form logic gates (like a NAND gate) in logic diagrams for components, like an \ac{ALU}.
+Hardware architectures are in contrast to applications from the point of view of modeling.
+Abstraction boundaries are arguably more clearly defined in the hardware world:
+semiconductor components like transistors implementing digital switches are used to form logic gates (like a NAND gate).
+Logic gates are used in increasingly complex logic diagrams for building components like an \ac{ALU}.
 These components are combined into digital machines in a microarchitecture to expose a well-defined \acf{ISA} in a \ac{PE}~\cite{lee2017plato}.
-\acp{PE} can then be connected via on-chip interconnects to on-chip memory and other controllers to make an \ac{MPSoC}.
+\acp{PE} can then be connected via on-chip interconnects to on-chip memory and other peripherials to make an \ac{MPSoC}.
 The boundaries between these levels of abstraction or \emph{platforms}, as A. Sangiovanni-Vincentelli calls them~\cite{sangiovanni2007quo}, are clear.
 Designers at each level expose a small amount of complexity through these established abstractions, in what is commonly referred to an hourglass design~\cite{10.1145/3274770}.
 
@@ -213,16 +215,17 @@ Designers at each level expose a small amount of complexity through these establ
    \label{fig:architecture_abstractions}
 \end{figure}
 
-Figure~\ref{fig:architecture_abstractions} summarizes different models used at different levels in achitecture.
+Figure~\ref{fig:architecture_abstractions} summarizes different models used at different levels in architectures.
+The ``bottleneck'' design shown on the left implies how there are well-defined abstraction layers at the different levels.
 The layer between hardware and software is, in a sense, also just such a layer of abstraction.
-Since these layers are very clear in the hardware world, so are the corresponding models at those levels of abstraction.
+Since these layers are clearer in the hardware world, so are the corresponding models at those levels of abstraction.
 If we want to reason about the execution of complex applications on \acp{MPSoC}, we certainly should not focus on modeling individual logic gates in the architecture.
 The challenge is to model architectures at the right level of abstraction.
 
 In the modeling of the computation in applications, we care about the semantics of the model.
 It should be expressive enough to capture the application while being rigid enough to allow a compiler and system to reason about its execution and optimize it as much as possible.
 Hardware, on the other hand, is fixed: in software synthesis (and in this thesis) we're not concerned with hardware design.
-As such, we take a more scientific role to modeling hardware, as opposed to the engineering role we take for applications: We fit the model to the hardware, not the hardware to the model (cf.~\cite{lee2017plato}).
+As such, we take a more scientific role\footnote{In the sense of Lee~\cite{lee2017plato}, as described in the introduction.} to modeling hardware, as opposed to the engineering role we take for applications: We fit the model to the hardware, not the hardware to the model. 
 
 Architectures models for software synthesis have two main requirements: specification and simulation.
 In order to derive an efficient implementation of an application to an architecture, the model of that architecture needs to at least include the possible decisions required for that software implementation.
@@ -234,11 +237,11 @@ whereas a higher-level, source-to-source compiler might do without them if it on
 Similarly, in many cases a simulation is part of the software synthesis flow.
 In this case, a model of the architecture needs to allow such a simulation.
 Obviously, a simple analytic model requires a different level of abstraction for the architecture model than a cycle-accurate simulator.
-A very concrete way of considering this is the Y-chart approach proposed in~\cite{kienhuis2001methodology}, as depicted in Figure~\ref{fig:y-charts}, which is based on Figure~6 from~\cite{kienhuis2001methodology}. 
+A very concrete way of considering this is the Y-chart approach proposed in~\cite{kienhuis2001methodology}, as depicted in Figure~\ref{fig:y_chart_abstractions}, which is based on Figure~6 from~\cite{kienhuis2001methodology}. 
 
 \begin{figure}[h]
 	\centering
-\resizebox{0.8\textwidth}{!}{
+\resizebox{0.95\textwidth}{!}{
    \begin{tikzpicture}
      \input{figures/y_chart}
    \end{tikzpicture}
@@ -255,21 +258,21 @@ We will thus focus only on models of architecture for the sake of \ac{DSE} and t
 
 The general situation described in the Y-charts approach is very common in practice: A parametrized family of hardware architectures is assumed as part of the flow, and architectures are described in terms of this family.
 With newer developments in hardware, like the proliferation of \ac{NoC}-based architectures, many modern approaches apply the same principle to these modern architectures.
-For example, the models used by~\cite{weichslgartner2014daarm,singh2010communication,richthammer2018search} all assume a regular mesh ($N \times M$)\ac{NoC}-based topology and parametrize the architecture by the size of the mesh, $N,M$ as well as the core types and communication and memory parameters like worst-case latency values.
-TODO: multi-level (pimentel)
-TODO: standards ~\cite{ieee-2804-2019,mca_shim15}
-
+For example, the models used by~\cite{weichslgartner2014daarm,singh2010communication,richthammer2018search} all assume a regular mesh ($N \times M$) \ac{NoC}-based topology and parametrize the architecture by the size of the mesh, $N,M$ as well as the core types and communication and memory parameters like worst-case latency values.
+In the Sesame framework~\cite{sesame}, an additional abstraction layer called the \emph{mapping layer} works as an intermediate virtual platform, in correspondence with the \ac{KPN}, application, which is then mapped to the target platform.\index{mapping layer}
 In the DOL approach~\cite{thiele2007DOL}, architectures are modeled in an XML specification that implicitly models the architectures as graphs with specific annotations e.g. for memory sizes or resource sharing methods like \ac{FIFO}. 
 While this is an ad-hoc model, its graph-based nature is general enough to describe arbitrary architectures.
 This is common of the most general models at this level of abstraction: they are graph-based models.
-In Sesame, architectures are modeled with bi-partite graphs~\cite{erbas2006multiobjective} with cores and memories.
+In~\cite{erbas2006multiobjective}, architectures are modeled as bi-partite graphs with cores and memories.
 This is bi-partite structure is actually similar to the constraint graphs defined in~\cite{weichslgartner2014daarm,richthammer2018search}, which basically describe the subset of the architecture used by a mapping. 
 In \ac{MAPS}~\cite{maps}, on the other hand, for the purposes of mapping, architectures are described by labeled graphs where only the cores are nodes and the edges represent communication.
+This is similar to the model described in~\cite{sesame}.
+Some of these models~\footnote{Specifically, iterations on the \ac{MAPS} model by Silexica} have been an influence in the SHIM standard~\cite{mca_shim15} and the IEEE 2804-2019 Standard~\cite{ieee-2804-2019}.
 There are subtle differences between all these models, which makes comparing approaches difficult~\cite{goens_mcsoc16}.
 
 In practice, however, the different graph-based architecture models are mostly equivalent.
 For this thesis we use a model based on the \ac{MAPS} model for defining \emph{architecture graphs}\index{architecture graph}.
-An architecture graph $A = (V_A,E_A,l_A)$ is a labeled directed multigraph where the nodes $V_A$ represent \acp{PE} in the architecture. These \acp{PE} are labeled with core types $l_A(V_A) \subset \{\text{core types}\}$. 
+An architecture graph $A = (V_A,E_A,l_A)$ is a labeled directed multigraph where the nodes $V_A$ represent \acp{PE} in the architecture. These \acp{PE} are labeled with core types. % $l_A(V_A) \subset \{\text{core types}\}$. 
 Communication in the achitecture graph is represented by the edges $E_A$. Since $A$ is a multigraph, $E_A$ is a multiset: there can be multiple edges $e_1,\ldots,e_n \in E_A$ between two cores $\text{PE},\text{PE}' \in V_A$.
 These edges are different by their label $l_A(e_i), i = 1,\ldots,n$. The labels of edges identify them as \emph{communication primitives}\index{communication primitive}.
 Communication primitives are an abstraction that encompasses communication via multiple methods: shared memories, \ac{DMA} or even specialized hardware like hardware \ac{FIFO} buffers.
@@ -290,7 +293,7 @@ Consider the architecture depicted in Figure~\ref{fig:odroid},the Exynos Odroid-
 This architecture has two types of cores, the ARM Cortex A7/A15 , little and  big, respectively. Similarly, there are three types of communication primitives in the architecture:
 communication via the L1 and L2 caches, or over the shared DRAM memory.
 This architecture can be modeled in an architecture graph by having $8$ nodes, one for each core ($4$ of each of the two core types), and connecting the nodes by with all the primitives that can be used to communicate between them.
-Figure~\ref{fig:architecture_graph_odroid} the architecture graph for this example.
+Figure~\ref{fig:architecture_graph_odroid} shows the architecture graph for this example.
 
 \begin{figure}[h]
 	\centering
@@ -308,7 +311,7 @@ In particular, the communication latency changes depending on the number of hops
 Our model of architecture graphs (among others, like the DOL architecture model) has the advantage of having a different communication primitive for each of these connections with different numbers of hops, thus being able to model \ac{NoC}-topologies as well as others (e.g. BUS-based).
 However, for simplicity of reasoning, we can sometimes benefit of a related graph, which we call the \emph{topology graph}\index{topology graph}\cite{goens_mcsoc18}.
 A topology graph $T = (V_T,E_T,l_T)$ is also a directed multigraph with the same vertex set $V_T = V_A$ as that of the architecture graph $A$, namely the set of cores.
-Thus, the labels are also identical $l_{A}\restriction{V_A} = l_T\restriction{V_T}$.
+Thus, the labels are also identical $l_{A~ \big| V_A} = l_{T~ \big| V_T}$.
 The edges are different: we only add an edge for a communication primitive $e \in E_A$ if it allows \textbf{direct} communication between two cores. Thus, $E_T \subseteq E_A$.
 For a BUS-based architecture like the ODROID-XU4, this topology graph corresponds to the architecture graph. However, for a \ac{NoC}-based architecture, the topology graph captures the network topology.
 Figure~\ref{fig:arch_graph_vs_topology} shows the difference of the architecture graph $A$ and the topology graph $T$ for a $2 \times 2$ regular mesh NoC topology.
@@ -327,7 +330,7 @@ As such, the topology graph reflects the topology of the on-chip network better,
 \end{figure}
 
 As mentioned above, the subtle differences in different models make comparison between them difficult~\cite{goens_mcsoc16}.
-The main reason for this is the two distinct roles that architecture models play in software synthesis as we have discussed in this section.
+The main reason for this are the two distinct roles that architecture models play in software synthesis, as we have discussed in this section.
 Having a common model for specification is beneficial for defining software synthesis approaches, and thus, desirable.
 Having common models of architecture, while beneficial for comparison, is not necessarily desirable: there are good reasons for having simulations at different levels of accuracy.
 Nevertheless, Pelcat and others have \cite{pelcat2015models} make an attempt to define such common models of architecture.
@@ -344,10 +347,10 @@ As such, we will focus only on the graphs defined in this section for mapping sp
 
 The main problem we address in the first part of this thesis is the \emph{mapping problem}\cite{marwedel2011mapping}.
 The mapping problem is the decision problem of assigning physical resources (hardware) to the logical tasks and data (software) of an application.
-As can be seen from Figure~\ref{fig:sofware_synthesis_flow}, this is a central problem in software synthesis.
+As can be seen from Figure~\ref{fig:software_synthesis_flow} in the introduction, this is a central problem in software synthesis.
 
-Intuitively, we commonly think of assigning the tasks and communication channels (or data) to the physical resources, and not the other way around. 
-The reason we choose to do so has a again a mathematical background, as we will explain here.
+We commonly think of assigning the tasks and communication channels (or data) to the physical resources, and not the other way around. 
+The reason we do not choose to do so again has a mathematical background, as we will explain here.
 Such an assignment is a correspondence and can be interpreted as a relation $\mathcal{R} \subseteq A \times K$ that relates the architecture $A$ and the application $K$.
 By abuse of notation we refer to the graphs $A,K$ here to mean both one relation on their nodes $V_A,V_K$ and one on their edges $E_A,E_K$.
 
@@ -361,8 +364,9 @@ For this, we describe the final mapping as decided by the scheduler at run-time,
 
 We define a mapping to have exactly one physical resource for each logical one (i.e. for each task or data/communication channel).
 This kind of mathematical relation is precisely the definition of a function, which is why we model mappings as functions $m : K \rightarrow A$, i.e. assigning physical resources to the logical ones.
-A mapping also needs to be consistent. If it assigns two tasks $t_1,t_2 \in V_K$ to different \acp{PE}, when these tasks exchange data ($(t_1,t_2) \in E_K$), the data communication channel needs to be mapped to a physical channel that respects the task assignment: we require that $m((t_1,t_2)) = (m(t_1),m(t_2)) \in E_A$.
-This condition, mathematically, means precisely that a mapping respects the graph structure of $K,E$. In other words, a mapping is a \emph{morphism of graphs} $m : K \rightarrow A$\index{mapping ! definition}.
+A mapping also needs to be consistent. If it assigns two tasks $t_1,t_2 \in V_K$ to different \acp{PE}, when these tasks exchange data (i.e., $(t_1,t_2) \in E_K$), the data communication channel needs to be mapped to a physical channel that respects the task assignment: we require that $m((t_1,t_2)) = (m(t_1),m(t_2)) \in E_A$.
+This condition, mathematically, means precisely that a mapping respects the graph structure of $K$ and $A$.
+In other words, a mapping is a \emph{morphism of graphs} $m : K \rightarrow A$\index{mapping ! definition}.
 
 \begin{figure}[h]
 	\centering
@@ -381,7 +385,7 @@ This mapping can be considered as the morphism of graphs depicted on the right, 
 We could not map the communication edge $(t_1,t_2)$ to, say, the L1 cache of PE$_3$, $\operatorname{L1\$}$, since this cannot be used to communicate between PE$_1$ and PE$_2$.
 This is equivalent to saying that $\operatorname{L1\$}$ is not an edge of $m(t_1),m(t_2)$, or any L1 cache for that matter, since (more precisely) there is no edge $(m(t_1),m(t_2)) \in V_A$ with the label $l_A((m(t_1),m(t_2))) = \operatorname{L1\$}$.
 
-We call the a set $M \subseteq \{m : K \rightarrow A, m \text{ is a morphism} \}$ the set of (valid) mappings. A morphism of graphs $m : K \rightarrow A$ that is not in the set $M$ is an invalid mapping.
+We define a set $M \subseteq \{m : K \rightarrow A, m \text{ is a morphism} \}$ as the set of (valid) mappings. A morphism of graphs $m : K \rightarrow A$ that is not in the set $M$ is an invalid mapping.
 This might be because different reasons, e.g. if a \ac{PE} $p \in V_A$ is not general purpose and cannot execute some tasks, or when modeling the sizes of data (channels), if a communication channel does not fit a physical resource.
 We model this by letting $M$ be a proper subset of $\operatorname{Mor}(K,A)$, the set of morphisms $K \rightarrow A$.
 
@@ -404,7 +408,7 @@ This element-wise comparison of vectors gives us a partial order on $\mathbb{R}_
 Equation~\ref{eqn:mapping_min_problem} can be then understood as finding Pareto-minimal points, i.e. points that are not dominated by any other point in the set.
 Concretely, we say that $\hat m$ is not dominated by any point (is Pareto minimal), if $m \nless \hat m$ for all $m \in M$. 
 A variant of this same problem can be encoded as an integer optimization problem, e.g. as is done in~\cite{erbas2006multiobjective}.
-However as a problem formulation, we believe the treatment given here defining the conditions as a morphism of graphs is much simpler to read and understand and just as expressive.
+As a problem formulation, however, we believe the treatment given here defining the conditions as a morphism of graphs is much simpler to read and understand and just as expressive.
 
 \begin{figure}[h]
 	\centering
@@ -420,12 +424,12 @@ However as a problem formulation, we believe the treatment given here defining t
 Figure~\ref{fig:mapping_space_example} is a reproduction of Figure~\ref{fig:mapping_space_motivation}. It depicts the optimization problem of Equation~\ref{eqn:mapping_min_problem} on a very simple example.
 The example is based on a telecom application of the E3S benchmark suite, chosen specifically because it consists of exactly two tasks, which allows the mapping space to be visualized in a two-dimensional plot.
 The mappings are plotted by encoding the mapping of each of the two tasks as the $x$ and $y$ coordinates of the grid, and the color of the squares in the grid encodes the (simulated) execution time on the Odroid-XU4 architecture.
-The actual values of the execution time are irrelevant here and have been deliberately omitted. In the figure it is clear that the minimal execution time is obtained by mapping the two tasks two distinct $Cortex-A15$ (big) cores,
+The actual values of the execution time are irrelevant here and have been deliberately omitted. In the figure it is clear that the minimal execution time is obtained by mapping the two tasks two distinct Cortex-A15 (big) cores,
 i.e. the set of $m$ with $t_1 \mapsto p_1, t_2 \mapsto p_2$ where $p_1,p_2 \in \{\PE_5,\PE_6,\PE_7,\PE_8\}$ and $p_1 \neq p_2$ are precisely the minimizers of Equation~\ref{eqn:mapping_min_problem}.
 
 The example in Figure~\ref{fig:mapping_space_example} is chosen deliberately to be so simple that it can be depicted in a figure.
 There are exactly $2^8 = 64$ mappings in the mapping space.
-For the audio filter application from Section~\ref{sec:kpn_basic} (cf. Figure~\ref{fig:audio_filter_graph}), this space has already $8^8 = 16777216$ mappings and finding the minimal execution time is much more intractable.
+For the audio filter application from Section~\ref{sec:kpn_basic} (cf. Figure~\ref{fig:audio_filter_graph}), this space has already $8^8 = 16777216$ mappings and finding the minimal execution time is much less tractable.
 In general, the mapping space has cardinality $|V_A|^{|V_K|}$, and thus grows exponentially with the number of tasks $|V_K|$.
 For the $1024$-core Epiphany-V-based Parallella architecture~\cite{parallella}, the mapping space of a moderately-large application with $28$ tasks has more than $10^{84}$ possible mappings, considerably more than there are atoms in the observable universe.
 
@@ -435,7 +439,7 @@ The focus of this thesis are not mapping heuristics, but rather the mapping prob
 As such, we will not dive deeply into the literature of heuristics. At this point, we will only distinguish between general classes of mappings: static, dynamic and hybrid, as well as between heuristics and meta-heuristics. 
 
 Static mappings are mappings defined prior to run-time (commonly, at design-time or at compile-time).
-Traditionally mapping decisions made at design-time are part of a co-design approach and are hard-coded into the application itself.
+Traditionally, mapping decisions made at design-time are part of a co-design approach and are hard-coded into the application itself.
 By abstracting over the target architecture and the mapping problem, software synthesis methods allow to defer these static decisions to compile-time, and make this kind of mappings more portable.
 
 Dynamic mappings, on the other hand, are chosen at run-time.

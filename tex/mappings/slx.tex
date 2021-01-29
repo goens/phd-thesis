@@ -1,35 +1,35 @@
 Many flows exist that enable model-based design in a software synthesis flow.
-In the introduction we discussed many of the original software synthesis methods.
-The approach of~\cite{lin1998softwaresynthesis} uses Petri Nets, or~\cite{ritz1992softwaresynthesis} which uses \acp{SDF}.
-Other flows use multiple models~\cite{bhartacharyya2000softwaresynthesis,pino1995softwaresynthesis,bhattacharyya2012softwaresynthesis}, generally dataflow.
+In the introduction we discussed some of the original software synthesis methods,
+the approach of~\cite{lin1998softwaresynthesis} uses Petri Nets, or~\cite{ritz1992softwaresynthesis} which uses \acp{SDF}
+and other flows which use multiple models~\cite{bhartacharyya2000softwaresynthesis,pino1995softwaresynthesis,bhattacharyya2012softwaresynthesis}, generally dataflow.
 
 SystemCoDesigner~\cite{haubelt2008systemcodesigner} is based on SystemC and aimed at \acsp{FPGA}, as is the case with CAPH~\cite{serot2013caph}, which is based on dataflow and the actor model.
 Although the flows are based on \acp{MoC}, their goal is not software but rather an \acsp{FPGA} implementation, and as such these flows are closer to \ac{HLS} than the rest. 
-Coincidentally, the term software synthesis is inspired on the much better-known \ac{HLS}.
+Coincidentally, the term software synthesis is an allusion to the much better-known \ac{HLS}.
 
 Also based on a more general dataflow model is the Turnus~\cite{casale2013turnus} flow.
-It builds on top of RVC-CAL, which is in turn based on the CAL actor language~\cite{cal}.
+It builds on top of RVC-CAL, which is in turn based on the CAL actor language~\cite{eker2003cal}.
 
 More specific is the \ac{\SDFFF}\cite{sdf3} framework, which does much more than generating random \ac{SDF} graphs.
 As a software synthesis tool~\cite{stuijk2010predictable}, it focuses on the more restricted \ac{SDF} \ac{MoC}, allowing much more sophisticated analysis of the applications.
 Similarly, PREESM~\cite{pelcat2014preesm} works with parametrized extensions of \ac{SDF}~\cite{desnos2013pimm} that provide a greater trade-off between expressiveness and analyzability.
 
 On the other side of the \ac{MoC} spectrum, many related flows use \ac{KPN}.
-The static-mapping-based flows of \ac{DOL}\cite{thiele2007dol}, Sesame~\cite{pimentel2006systematic} or \ac{MAPS}~\cite{maps} use different levels of abstraction to derive an efficient execution form a \ac{KPN}-based application description.
+The static-mapping-based flows of \ac{DOL}\cite{thiele2007DOL}, Sesame~\cite{pimentel2006systematic} or \ac{MAPS}~\cite{maps} use different levels of abstraction to derive an efficient execution form a \ac{KPN}-based application description.
 
 Going beyond static mapping, the DAARM~\cite{weichslgartner2014daarm} flow maps dataflow applications using a hybrid approach.
 Similarly, the work of~\cite{quan2015hybrid} extends the Sesame approach to hybrid mappings, and Spider~\cite{heulot2014spider} extends the work of PREESM to hybrid mappings.
 
 This thesis and the contributions included in it are \textbf{not} aimed at proposing (yet another) software synthesis design flow.
 Instead, we propose methods to improve existing flows, with the ambitious goal of being general enough that the improvements would benefit most of the flows discussed. 
-Perhaps a good way to think of this is that just as these flows help users write more efficient applications, we aim to help the flow designers improve their flows.
-For chapters~\ref{chap:mapping_structures} and \ref{chap:mapping_applications}, we focus on one flow to do this.
-We choose the \ac{MAPS} flow~\cite{maps}, which resulted in the commercial spinoff Silexica, who kindly allowed us to use their tools for our research.
+Perhaps a good way to think of this is: Just as these flows help users write more efficient applications, we aim to help the flow designers improve their flows.
+For chapters~\ref{chap:mapping_structures} and \ref{chap:mapping_applications}, and partially Chapter~\ref{chap:benchmarking}, we focus on one flow to do this.
+We choose the \ac{MAPS} flow~\cite{maps}, which we describe next.
 Some contributions, on the other hand, go beyond these flows. This is particularly the case in chapters~\ref{chap:mocs} and~\ref{chap:pl}, and in part Chapter~\ref{chap:benchmarking} 
 
 \subsection{The MAPS flow}
 
-The \acl{MAPS} is a software synthesis flow. It was developed at RWTH Aachen and spun-off into a company, Silexica\footnote{\url{https://www.silexica.com/}}, which kindly allowed us to use the \ac{KPN} mapping flow of \ac{MAPS}.
+The \acf{MAPS} is a software synthesis flow developed at RWTH Aachen University and spun-off into a company, Silexica\footnote{\url{https://www.silexica.com/}}, which kindly allowed us to use the \ac{KPN} mapping flow of \ac{MAPS} for our research.
 \ac{MAPS} is very comprehensive, it does much more than \ac{KPN}-based software synthesis.
 It has analysis algorithms to suggest parallelization of sequential code, both as OpenMP annotations as well as \ac{CPN} annotations. We will not discuss these here.
 It also has detailed platform models which are used in simulation and performance estimation flows, we will very briefly outline these, only as they pertain the \ac{KPN}-based software synthesis flow. 
@@ -37,11 +37,11 @@ It also has detailed platform models which are used in simulation and performanc
 \begin{figure}[h]
 	\centering
    \resizebox{0.95\textwidth}{!}{\input{figures/maps_flow.tex}}
-   \caption{The Software Synthesis Flow from Figure~\ref{fig:software_synthesis_flows} in \ac{MAPS}. \ac{MAPS} implements all steps in the flow, which are therefore all depicted in green.} 
+   \caption{The Software Synthesis Flow from Figure~\ref{fig:software_synthesis_flows}. \ac{MAPS} implements all steps in the flow, which are therefore all depicted in green.} 
 	\label{fig:maps_flow}
 \end{figure}
 
-Figure~\ref{fig:maps_flow} describes the \ac{MAPS} flow, as an instance of the general software synthesis flow in Figure~\ref{fig:software_synthesis_flows} in the introduction.
+Figure~\ref{fig:maps_flow} describes the \ac{MAPS} flow, as an instance of the general software synthesis flow in Figure~\ref{fig:software_synthesis_flows} from the introduction.
 Applications are written as \ac{KPN} applications in the \ac{CPN} language.
 While \ac{CPN} supports \ac{SDF} annotations as well, these are embedded into the \ac{KPN} \ac{MoC} for analysis and code generation, there is no separate \ac{DSE} and code generation for purely-\ac{SDF} applications.
 The architecture model is an \acs{XML}-based description which has detailed models of the communication subsystem and its topology,
@@ -52,19 +52,19 @@ Performance estimation in \ac{MAPS} follows in multiple steps.
 In a first step, using a \acp{pthread} backend, the application is emulated on the host machine to gather functional \ac{KPN} traces.
 Since the \ac{KPN} model is deterministic, these traces are independent of the actual performance values of the application.
 Then, the processes are instrumented and executed in isolation, dividing them into what in \ac{MAPS} are called \emph{segments}\index{process segments}.
-These segments are defined as the execution between any two read or writes to or from channels\footnote{A special annotation can be used additionally to divide segments manually.}.
-Using the data from the functional \ac{KPN} trace to obtain a detailed trace of the instructions executed during each segment in the process.
+These segments are defined as the execution between any two reads or writes to or from channels\footnote{A special annotation can be used additionally to divide segments manually.}.
+Using the data from the functional \ac{KPN} trace, \ac{MAPS} obtains a detailed trace of the instructions executed during each segment in the process.
 These detailed instruction traces are combined with an abstract processor model from the architecture description to estimate the performance on the target platform~\cite{eusse2014pre}.
 This yields traces with performance annotations for every process and every \ac{PE} type.
 Finally, these performance-annotated traces are used in conjuction with the mapping and communication model in a discrete-event simulator to estimate the overall performance of the mapping.
-If performance-annotated traces are available from a profile execution on the actual hardware, these can be used instead.
+If performance-annotated traces are available from a profiling execution on the actual hardware, these can be used instead.
 
 The \ac{DSE} step in \ac{MAPS} is similar to that of all the flows described in before, as well as the flow of the \mocasin tool, which we will describe shortly. 
 In this \ac{DSE} step, \ac{MAPS} generates a mapping.
-On some platforms when processes share a \ac{PE}, \ac{MAPS} can also generate a schedule for the processes.
+On some platforms, when processes share a \ac{PE}, \ac{MAPS} can also generate a schedule for the processes.
 These mappings are then used by the Clang-based \ac{CPN} compiler to generate target-specific C code, which can be further compiled by a C compiler for the target platform.
 This way, the flow generates target-specific code from an abstract \ac{KPN} description of the application (and the appropriate platform models).
 
-As explained in the introduction, this thesis does not focus on the performance estimation and code generation steps of this flow (cf. Figure~\ref{fig:software_synthesis_flows}.
-Thus, we use \ac{MAPS} for performance estimation and code generation.
+As explained in the introduction, this thesis does not focus on the performance estimation and code generation steps of this flow (cf. Figure~\ref{fig:software_synthesis_flows}).
+We use \ac{MAPS} for performance estimation and code generation.
 For evaluating our methods in \ac{DSE} and application, architecture and mapping models, we primarily use the \mocasin tool, which we describe in the next section.

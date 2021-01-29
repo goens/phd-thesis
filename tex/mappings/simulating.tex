@@ -4,7 +4,8 @@ For investigating the mapping problem in software synthesis, higher-level simula
 First and foremost, higher-level simulations are faster.
 If a meta-heuristic iteratively evaluates dozens, hundreds or even thousands of mappings to find a near-optimal one, it greatly benefits from the fast evaluation time associated with a higher-level simulation.
 
-Higher levels of abstraction come with a trade-off, accuracy of the simulation suffers in exchange for the simpler models and faster simulation times.
+Higher levels of abstraction come with a trade-off.
+The accuracy of the simulation suffers in exchange for the simpler models and faster simulation times.
 Let $\tilde \Theta$ be the approximation of $\Theta$ from the simulation. A loss in accuracy means that $| \Theta(m) - \tilde \Theta(m)|$ becomes larger.
 However, depending on the use-case and mapping objective $\Theta$, this loss in simulation accuracy might not necessarily affect the quality software synthesis results.
 Suppose that the objective $\Theta$ represents execution time or energy consumption, and the goal of the software synthesis is just a best-effort minimization of $\Theta$ (with no additional constraints, i.e. $C \equiv \operatorname{True}$).
@@ -24,7 +25,7 @@ The behavior of a system plays a central role in simulation. A deterministic mod
 Non-determinism, when present, should also be captured by the models and reflected by the simulations.
 
 The behavior of systems is commonly captured in execution traces, which simply record the behavior of different entities (e.g. processes or actors) at different timepoints.
-This can be formally captured in a monoid structure of (Mazurkiewicz) traces or, equivalently, histories~\cite{diekert1995book}.
+This can be formally captured in a monoid structure of (Mazurkiewicz) traces or, equivalently, histories~\cite{diekert1995book}, as described in Section~\ref{sec:traces}.
 Traces are useful to understand the behavior of systems~\cite{vampir} and are common in many domains.
 However, for systems that are non-deterministic, (by definition) the behavior of the system does not only depend on the input.
 This can make designing~\cite{lee2006problem} and debugging~\cite{murillo_debugging} particularly difficult.
@@ -35,15 +36,15 @@ Kahn Process Networks are deterministic, as are all the dataflow models that can
 This means that the behavior of a KPN application depends only on the input to the network.
 In particular, it does not on the mapping and scheduling or related execution details.
 Thus, their behavior can be captured by a (Mazurkiewicz) trace.
-This permits to re-create their behavior in a fashion that is independent of the mapping~\cite{find_proper_references}.
+This permits to re-create their behavior in a fashion that is independent of the mapping.
 By ``replaying'' the trace, i.e. simulating the execution of a process for every input in the trace, a discrete-event simulator can successfully simulate the execution of a KPN, since the token sequence is guaranteed to be identical given identical inputs.
-In particular, this allows us to do design-space exploration.
+In particular, this allows us to do \acf{DSE}.
 
 A discrete-event simulation of a KPN application thus requires behavior traces. It also needs to model the execution and communication times.
 Modeling execution times from a trace is simple, with a crucial assumption: if the execution times for a trace event only depend on the PE type.
 This assumption won't hold always hold, e.g. when the instruction cache is flushed due to scheduling decisions, or due to unpredictability from the \ac{OS}.
 Note that data caches are modeled as part of the communication between processes.
-However, in most cases this assumption is a good approximation, it is normal to expect that the same code executing on the same data and the same \ac{ISA} will usually require the same amount of time.
+In most cases this assumption is a good approximation, as it is normal to expect that the same code executing on the same data and the same \ac{ISA} will usually require the same amount of time.
 
 Modeling communication is more complicated, as it depends on the memory subsystem. In general, the communication costs of sending a KPN token depend on multiple factors, like the size of the token, contention in the memory subsystem (and correspondingly methods of arbitration, routing in the case of a \ac{NoC}, etc), or the API and protocol being used.
 For the simulations in this thesis, we use a model based on annotations of the architecture graph $A$. These annotations are functions that calculate the time cost of communicating data, as a function of its size.
@@ -57,6 +58,7 @@ We extended the split-cost communication model to account for these issues in~\c
 The idea is to add a third term to account for the network, in addition to the consumer and producer costs. 
 This third term can account for the routing and the topology of the network while maintaining an analytic model which is cheap to evaluate in a high-level simulation.
 
-Simulation is essential for software synthesis, yet it is not the focus of this thesis. As such, we will only discuss the main idea behind the analytic models and their relationship to a fast simulation of \ac{NoC}-based architectures.
+Simulation is essential for software synthesis, yet it is not the focus of this thesis. 
+%As such, we will only discuss the main idea behind the analytic models and their relationship to a fast simulation of \ac{NoC}-based architectures.
 The main contribution of~\cite{menard_norcas16}, with a concrete model for the Tomahawk~2 architecture~\cite{tomahawk2} and the corresponding evaluation comparing to the SystemC-based simulator Noxim~\cite{noxim} are due to my coauthors and beyond the scope of this thesis.
 
