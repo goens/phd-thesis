@@ -1,20 +1,37 @@
 % Define block styles
-\tikzstyle{flow} = [rectangle, rounded corners, draw, fill=green!20, %legend: possible "IP leak"
+\tikzstyle{ours} = [rectangle, rounded corners, draw, fill=green!20, %legend: possible "IP leak"
     text width=7em, text centered, minimum height=4em]
-\tikzstyle{abstract} = [rectangle, draw, fill=blue!20, 
+\tikzstyle{other} = [rectangle, draw, fill=blue!20, 
     text width=7em, text centered, rounded corners, minimum height=4em]
 
 \begin{tikzpicture}[node distance = 4em]
     %nodes
-    \node [abstract ] (moc) {Application (Model of Computation)};
-    \node [abstract, below=of moc] (exec) {Execution};
-    \node [flow, right=of moc ] (kpn) {Kahn Process Networks (KPN)};
-    \node [flow, right=of exec] (traces) {KPN Traces (Histories)};
-    \node [abstract, right=of kpn ] (arch) {Architecture};
-    \node [abstract, right=of traces] (decisions) {Decisions};
-    \node [flow, right=of arch] (archgraph) {Architecture graphs, ad-hoc models};
-    \node [flow, right=of decisions] (mappings) {Mappings};
-    \node [below=of traces] (todo) {TODO: improve this figure! (based on MCSOC'16)};
+    \node [ours,align=center ] (moc) {application \\ (\ac{MoC}) e.g. \ac{KPN} };
+    \node [ours, align=center, below= 0.5 cm of moc] (arch) {architecture \\ model};
+    \node [ours,  align=center,below= 0.5 cm of arch] (exec) {execution \\ (e.g. traces)};
+    \node (mapping) at (3.5,-0.6) [single arrow,
+                                    text width=3cm,
+                                    align=center,
+                                    shade,shading=axis,
+                                    left color=white,right color=green!20,
+                                    minimum width=2.5cm,minimum height=1cm,] {\ac{DSE} \\ (mapping/scheduling)};
+    \node (estimation) at (3.5,-3.2) [single arrow,
+                                    text width=3cm,
+                                    align=center,
+                                    shade,shading=axis,
+                                    left color=white,right color=blue!20,
+                                    minimum width=2.5cm,minimum height=1cm,] {perf. estimation \\ (simulation)};
+
+    \node [ours, minimum height=6em, align=center] (mapping) at (7.8,-0.6) {mapping \\ (and schedule)};
+    \node [other,minimum height=6em, align=center,below= 0.5cm of mapping] (simulation) {performance metrics};
+    \node (generation) at (11,-1.8) [single arrow,
+                                    text width=3cm,
+                                    align=center,
+                                    shade,shading=axis,
+                                    left color=white,right color=blue!20,
+                                    minimum width=2.5cm,minimum height=1cm,] {code \\ generation};
+
+    \node [other, minimum height=6em, align=center, right = 0.5 cm of generation] (mapping)  {target \\ code};
 
 
 \end{tikzpicture}
