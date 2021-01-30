@@ -1,16 +1,16 @@
 When working with mappings, particularly for \ac{DSE}, we normally want to represent these mappings in different ways for the algorithms~\cite{goens_mcsoc18}.
 In particular, we usually work with mappings using vectors to represent them.
 In most cases and flows, this is done implicitly, usually with the simple vectors we have been describing in many places so far.
-A mapping $m : K \rightarrow A$ is described as a mapping $\left( m(v_1), \ldots, m(v_k) \right) \in V_A^k$, where $V_A$ is interpreted to be a subset of $\mathbb{Z}$, assigning integer values for the different \acp{PE} in $\PE \in V_A$.
-Sometimes this representation is extended to consider channels, $\left( m(v_1), \ldots, m(v_k),m(e_1,\ldots,e_l) \right) \in V_A \cup E_A$, adding more integers to represent the communication primitives.
+A mapping $m : K \rightarrow A$ is described as a vector $\left( m(v_1), \ldots, m(v_k) \right) \in V_A^k$, where $V_A$ is interpreted to be a subset of $\mathbb{Z}$, assigning integer values for the different \acp{PE} in $V_A$.
+Sometimes this representation is extended to consider channels, $\left( m(v_1), \ldots, m(v_k),m(e_1),\ldots,m(e_l) \right) \in (V_A \cup E_A)^{k_1 + k_2}$, adding more integers to represent the communication primitives.
 In Section~\ref{sec:metric} we saw how we can interpret this as a metric space by using the Euclidean distance.
 This metric space structure is also commonly assumed when adapting meta-heuristics from other domains for mapping, often without giving the metric space structure any second thought.
 
-In this section we want to generalize this representation and use the concepts introduced in this Chapter to define three additional such representations.
+In this section we want to generalize this representation and use the concepts introduced in this chapter to define three additional such representations.
 Here we define a \emph{representation} to be specifically an embedding of the mapping space to a (real) vector space, for manipulating mappings e.g. in meta-heuristics for \ac{DSE}. 
 We refer to the simple vector representation we just discussed as the \texttt{SimpleVector} representation.
 In \mocasin we implement representations as a type of ``lens'' to see mappings in different ways.
-We used this representation implicitly for example in Figure~\ref{fig:mapping_space_example}, where we described the mapping space of a two-task application to the Odroid XU4, which as a two-dimensional space in the \texttt{SimpleVector} we could visualize on a plot.
+We used this representation implicitly for example in Figure~\ref{fig:mapping_space_motivation}, where we described the mapping space of a two-task application to the Odroid XU4, which as a two-dimensional space in the \texttt{SimpleVector} representation so that we could visualize the mapping space on a plot.
 
 In Section~\ref{sec:symmetries} we introduced symmetries of the mapping space, and explained how equivalent mappings in an orbit have the same objective values $\Theta$, like run-time, at least in simulations.
 We can define a (vector) representation to factor out the symmetries, as described when discussing Problem~\ref{prob:equiv} in Section~\ref{sec:symmetries}.
@@ -33,11 +33,11 @@ Figure~\ref{fig:example_space_symmetries} shows the same two-task application fr
 Only the lex-minimal elements remain, which for this simple example are exactly $6$ mappings, namely $(1,1), (5,1), (1,2), (1,5), (5,5)$ and $(5,6)$. 
 From this figure it is intuitively clear why this representation prunes the mapping space, as well as why this might be useful for \ac{DSE}.
 
-We also implemented the low-distortion embeddings discussed in Section~\ref{sec:embeddings} in \mocasin as the \texttt{MetricSpaceEmbedding} representation.
+We also implemented the low-distortion embeddings discussed in Section~\ref{sec:metric} in \mocasin as the \texttt{MetricSpaceEmbedding} representation.
 We implemented both additional distance metrics described in Section~\ref{sec:metric} and enable the one with extra dimensions by default.
 By default, we set a target distortion of $1.001$, which effectively disables the Johnson-Lindenstrauss reduction. 
 We do this because it is yet unclear how to best manage the trade-off enabled by this transform, to define a sensible default, and we want to keep the distortion of the metrics as close to the defined metric as possible.
-Combaning both representations, with the embeddings and the symmetries, we obtain the \texttt{SymmetryEmbedding} representation.
+Combining both representations, with the embeddings and the symmetries, we obtain the \texttt{SymmetryEmbedding} representation.
 A mapping inspected through this representation is first normalized to the lex-minimal element using symmetries and then embedded into a real space using the low-distortion embedding.
 
 \begin{figure}[h]
@@ -53,13 +53,13 @@ A mapping inspected through this representation is first normalized to the lex-m
     \end{tikzpicture}
   }
 
-	\caption{A visualization of the mapping space of Figure~\ref{fig:mapping_space_motivation} in the \texttt{MetricSpaceEmbedding} and \texttt{SymmetryEmbedding} representations.}
+	\caption{A visualization of the mapping space of Figure~\ref{fig:mapping_space_motivation} in the \texttt{MetricSpaceEmbedding} (left) and \texttt{SymmetryEmbedding} (right) representations.}
 	\label{fig:example_space_embedding}
 \end{figure}
 
-Figure~\ref{fig:example_space_embedding} shows an intuitive visalization of both representations based on low-distortion embeddings, \texttt{MetricSpaceEmbedding} and \texttt{SymmetryEmbedding} on the same two-task application example on the Odroid XU4.
+Figure~\ref{fig:example_space_embedding} shows an intuitive visualization of both representations based on low-distortion embeddings, \texttt{MetricSpaceEmbedding} and \texttt{SymmetryEmbedding} on the same two-task application example on the Odroid XU4.
 The real vector spaces to which we embed these spaces are in this case $30$-dimensional, not $2$-dimensional.
-To visualize them we use the t-SNE method, which is not a good representation of the actual distances but provides a good overview of the structure of the whole space.
+To visualize them we use the t-SNE\cite{tsne} method, which is not a good representation of the actual distances but provides a good overview of the structure of the whole space.
 We see how in these metrics the structure of times is intuitively better organized than in the \texttt{SimpleVector} representation with the Euclidean norm. 
 
 \begin{figure}[h]

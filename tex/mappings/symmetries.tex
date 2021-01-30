@@ -491,53 +491,72 @@ If $f$ is not defined on some of the cores of $m$, i.e., $\im(m) \not \subseteq 
 Consider for example the mapping of an application with three tasks to the $4 \times 4$-mesh defined by $m_1(t_1) = m_1(t_3) = \PE_1$ and $m_1(t_2) = \PE_5$, which we can also write as the vector $m_1 = (1,5,1)$.
 Then the partial permutation $(1,2,6,5)$ from Figure~\ref{fig:example_partial_permutation} above defines the mapping $(1,2,6,5)m_1 = (2,1,2)$.
 Similarly, the action of the partial permutation $(2,5)(1)(6)$ yields a new mapping, $(2,5)(1)(6)m_1 = (1,2,1)$.
-However, since the translation $[1,5][2,6][3,7][4,8]$ is not defined on $5 = m_1(t_2)$, we cannot define $[1,5][2,6][3,7][4,8]$ as a mapping.
+However, since the translation $\tau = [1,5][2,6][3,7][4,8]$ is not defined on $\PE_5 = m_1(t_2)$, we cannot define $[1,5][2,6][3,7][4,8]$ as a mapping.
 Formally we can say that the partial permutations $\widehat{(1,2,6,5)}$ and $\widehat{(2,5)(1)(6)}$ are defined on $m_1$, but $\widehat{[1,5][2,6][3,7][4,8]}$ is not defined on $m_1$.
 
-%What happens with application symmetries? Consider ...
+What happens with application symmetries? As defined here, the edges of the application $K$ are the (data) dependencies of a computation process (or task).
+All dependencies have to be respected, which means that considering partial symmetries of the application can lead to non-determinstic or faulty behavior. 
 
-Define orbits for inverse semigroups and s.c.c.
+We are now ready to formally define the set of partial symmetries of architectures and mappings, as in the case of groups.
+Recall that a mapping $m: K \rightarrow A$ can be seen as a morphism of graphs from $M$ to $A$.
+In particular, every mapping $m$ defines a subgraph $m(K) \leq A$.
+This subgraph has a node $m(t) \in V_A$ for every \ac{PE} in the architecture $A$ that is used in a mapping, and similarly an edge $(m(t_1),m(t_2)) \in E_A$ for every communication primitive where a channel is mapped to.
+Precisely the isomorphism of these subgraphs is what defines the partial symmetries of the architecture. 
 
-We are now ready to formally define the set of partial symmetries of architectures, applications in mappings as in the case of groups.
-\begin{defn}
-$\AutSemi$
+\begin{defn}[$\AutSemi$]
+   Let $A$ be an architecture graph.
+   The set of partial symmetries of the architecture graph $\AutSemi(A)$ is the set of partial labed-graph isomorphisms of $A$, i.e. the partial permutations $\varphi$ of $V_A$ which induce an isomorphism of labeled graphs between $\dom(\varphi)$ and $\cod(\varphi)$.
+\index{$\AutSemi$}
 \end{defn}
 
-There is a different way of intperpreting these notions of symmetry, using graph isomorphisms.
-Recall that a mapping $m: T \rightarrow A$ can be seen as a morphism of graphs from $T$ to $A$.
-In particular, every mapping $m$ defines a subgraph $m(T) \leq A$.
-This subraph has a node $m(t) \in V_A$ for every $PE$ in the architecture $A$ that is used in a mapping, and similarly an endge $(m(t_1),m(t_2)) \in E_A$ for every communication primitive where a channel is mapped to.
-Figure~\ref{fig:example_graph_isomorphism} shows this graph for two of the mappings discussed above, $m_0 = (0,1,0)$ and $m_1 := (0,4,5,1)m_0 = (4,0,4)$. 
-You can see that the architecture subgraphs of the mappings are identical. In fact, if there is a partial symmetry, these two graphs will always be identical:
+As motivated above, $\AutSemi(A)$ acts on the set of mappings $M$, just as $\operatorname{Aut}(A)$ the group of (total) symmetries does.
+This action induces (and the action of the group $\operatorname{Aut}(K)$) define together an embedding on $\AutSemi(M) \leq \mathcal{I}(M)$, the inverse semigroup of partial permutations on $M$, which is how we define $\AutSemi(M)$.
 
-\begin{figure}[h]
-	\centering
-   \resizebox{0.55\textwidth}{!}{\input{figures/placeholder.tex}}
-	\caption{Some partial symmetries of a 4x4 mesh.}
-	\label{fig:partial_symmetries_4x4}
-\end{figure}
-It is a sort of trace of the mapping. This mapping does not describe 
-\todo{check that notation is consistent}
+In inverse semigroups, not every element has an inverse, only a pseudo-inverse. 
+Consider the identity partial permutation on the lower-left $2\times 2$-\ac{NoC} in the $4 \times 4$ mesh, $i = (1)(2)(5)(6)$.
+This identity partial permutation is an \emph{idempotent}\index{idempotent}, which means that $i^2 = i$, which implies that $i^{-1} = i$.
+Groups, in contrast, have precisely one idempotent, the identity element.
+The set of idempotents of a semigroup plays an important role in describing the structure of the semigroup~\cite{lawson_inverse_semigroups}.
+If we then consider the translation $\tau$ from above, we can multiply $\tau i = [1,5][2,6]$, which is defined only on two cores.
+If we muliply it with the pseudoinverse of $i$, $i^{-1} = i$, we get $\tau i i^{-1} = \tau i i = \tau i \neq \tau$.
+There is no way we can get $\tau$ back from $\tau i$, since $\tau$ is defined on $4$ cores.
 
+Just as with groups, we can define orbits for inverse semigroups.
+However, due to the one-way nature of some multiplication operation, the orbit of a semigroup is more complicated.
+Let $X$ be a set and let $S$ be a semigroup acting on $X$.
+Then, for an element $x \in X$, we can think of the \emph{orbit graph} of $x$ as a directed graph $\mathbb{O} = (V,E)$ where $V = \{ s x \mid s \in S \}$.
+The edges $E$ are defined by the action, namely an edge $e = (v,w)$ is added for every $v,w$ for which there exists an $s \in S$ such that $v = s w$.
+This directed graph is clearly connected, but not strongly connected.
+The \acp{s.c.c.} of this orbit graph\index{\ac{s.c.c.}} define equivalence classes and play the role that orbits played in group actions for our application to software synthesis.
+
+By definition of $\AutSemi(A)$, for a partial symmetry $f \in \AutSemi(A)$ and a mapping $m$ we know that if the mapping $fm$ is defined, then the two subgraphs $fm(K) \cong m(K) \leq A$ are isomorphic.
+We also get an isomorphism between the two subgraphs by Lemma~\ref{lem:symmetry_to_iso}
 \begin{lem}
 \label{lem:symmetry_to_iso}
-Let $m : T \rightarrow A$ be a mapping and let $f \in \AutSemi(A)$ be a partial automorphism of the archtitecture such that $\im(m) \subseteq \dom(f)$. Then, the two graphs $m(T)$ and $(fm)(T)$ are isomoprhic and the function $\varphi: m(T) \rightarrow (fm)(T), m(t) \mapsto f \cdot m(t)$ for all $t \in T$ is an isomorphism of labeled graphs.
+Let $m : T \rightarrow A$ be a mapping and let $f \in \AutSemi(A)$ be a partial automorphism of the architecture such that $\im(m) \subseteq \dom(f)$.
+Then, the two graphs $m(K)$ and $(fm)(K)$ are isomorphic and the function $\varphi: m(K) \rightarrow (fm)(K), m(t) \mapsto f \cdot m(t)$ for all $t \in K$ is an isomorphism of labeled graphs.
 \begin{proof}
-First note that $\varphi$ is well-defined. Indeed, since $\im(m) \subseteq \dom(f)$ it means that $f \cdot m(t)$ is defined for all $t \in T$. Since $f \in \AutSemi(A)$, we know that the type of $m(t)$ and $f \cdot m(t)$ is equal for all $t \in T$, as well as the type of all edges $(m(t_0),m(t_1))$ and  $(f \cdot m(t_0), f \cdot m(t_1))$ is equal. Thus, $\varphi$ is a morphism of labeled graphs. Finally, since $f \in \AutSemi(A)$, we know that $f$ is a partial permutation, and in particular, a bijection between $\dom(f)$ and $\cod(f)$. In particular, $\varphi$ is bijective, and as a bijective morphism of labeled graphs, an isomorphism. 
+First note that $\varphi$ is well-defined.
+Indeed, since $\im(m) \subseteq \dom(f)$ it means that $f \cdot m(t)$ is defined for all $t \in V_K$.
+Since $f \in \AutSemi(A)$, we know that the type of $m(t)$ and $f \cdot m(t)$ is equal for all $t \in V_K$, as well as the type of all edges $(m(t_1),m(t_2))$ and $(f \cdot m(t_1), f \cdot m(t_2))$ is equal.
+Thus, $\varphi$ is a morphism of labeled graphs.
+Finally, since $f \in \AutSemi(A)$, we know that $f$ is a partial permutation, and in particular, a bijection between $\dom(f)$ and $\cod(f)$.
+In particular, $\varphi$ is bijective, and as a bijective morphism of labeled graphs, an isomorphism. 
 \end{proof}
 \end{lem}
 
-What about the converse, if the subgraphs generated by the mappings are isomorphic, does this mean that there is a (partial) isomorphism of the mappings too? Can we use this to characterize equivalent mappings? 
-In general, no.
-Consider the subgraph of the mappings $m_2 := (4,4,0)$ and $m_3 := (4,0,0)$. Both these mappings project into isomorphic subgraphs $m_2(T) \cong m_3(T) \cong m_0(T)$, but obviously the mappings are not equivalent.
+What about the converse, if the subgraphs generated by the mappings are isomorphic, does this mean that there is a (partial) isomorphism of the mappings too?
+Can we use this to characterize equivalent mappings? In general, no.
+Consider the subgraph of the mappings $m_2 := (5,5,1)$ and $m_3 := (5,1,1)$.
+Both these mappings project into isomorphic subgraphs $m_2(K) \cong m_3(K) \cong m_1(K)$, but obviously the mappings are not equivalent.
 Even if the subgraphs are isomorphic, the crucial difference is, however, that the mapping $\varphi$ as defined in Lemma~\ref{lem:symmetry_to_iso} is \textbf{not} an isomorphism of (labeled) graphs. 
 What if tasks $t_1$ and $t_2$ are equivalent?
-In other words,  what if $g = (0)(1,2)$ is a (full) automorphism of the application graph?
-Then the mappings $m_0$ and $m_2$ are equivalent (via $g$), but the function $\varphi$ of Lemma~\ref{lem:symmetry_to_iso} is still not an isomoprhism of the subgraphs.
+In other words,  what if $g = (1,2)(3)$ is a (full) automorphism of the application graph?
+Then, the mappings $m_1$ and $m_3$ are equivalent (via $g$), but the function $\varphi$ of Lemma~\ref{lem:symmetry_to_iso} is still not an isomoprhism of the subgraphs.
 However, we can generalize the function by applying $g$ first, as $\varphi \circ g : m(T) \rightarrow fm(T), m(t) \mapsto (fm \circ g)(t) = (fm)(g(t))$.
 This generalization, in fact, yields a full characterization of equvialent mappings through isomorphy of subgraphs.
 \begin{theorem}
-Let $A$ be an architecture with inverse semigroup of automorphisms $S = \AutSemi(A)$ and let $T$ be an application graph with group of automorphsims $G = \Aut(T)$.
+Let $A$ be an architecture with inverse semigroup of automorphisms $S = \AutSemi(A)$ and let $K$ be an application graph with group of automorphsims $G = \Aut(K)$.
 For mappings $m,m' : T \rightarrow A$, the following statements are equvialent:
 \begin{enumerate}
 \item There exists a partial permutation $f \in S$ and a perumtation $g \in G$, such that $\varphi \circ g$ is an isomorphism of labeled graphs.
@@ -545,7 +564,7 @@ For mappings $m,m' : T \rightarrow A$, the following statements are equvialent:
 \end{enumerate}
 \begin{proof}
 The implication $(1) \Rightarrow (2)$ follows directly from the definition of $\varphi$ and the action of $S \times G$.
-For the implication $(2) \Rightarrow (1)$, since $m$ and $m'$ are in the same s.c.c. of the orbit of $S \times G$, there exists an $x \in S \times G$ such that $m = x \cdot m'$.
+For the implication $(2) \Rightarrow (1)$, since $m$ and $m'$ are in the same \ac{s.c.c.} of the orbit of $S \times G$, there exists an $x \in S \times G$ such that $m = x \cdot m'$.
 We can use the direct product structure of $S \times G$ to decompose $ x = fg$ for $f \in S, g \in G$.
 This means that $m = fg \cdot m' = f \cdot (g \cdot m')$.
 Applying Lemma~\ref{lem:symmetry_to_iso} on $m$ and $g \cdot m'$ shows that $\varphi \circ g$ is an isomorphism.
@@ -554,17 +573,18 @@ Applying Lemma~\ref{lem:symmetry_to_iso} on $m$ and $g \cdot m'$ shows that $\va
 
 How do partial symmetries with inverse semigroups compare to (global) symmetries, in the sense of group theory?
 We can start with a simple example, of a $2\times 2$ mesh, which we will call $M_2$. The group of symmetries of this architecture, as we have seen, is $D_4$ with $|D_4| = 8$ symmetries.
-What about the partial symmetries? It is easy to check that $|\AutSemi(M_2)| = 45$, which is a lot more partial symmetries than global ones! But in fact, comparing the size of the group and the semigroup is misleading.
-We can't compare them, as they deal with different objects, functions vs partial functions. For this case of $M_2$, in a sense, we do not get any more symmetries by going to the partial symmetry world.
+What about the partial symmetries? It is easy to check that $|\AutSemi(M_2)| = 45$, which are many more partial symmetries than global ones! But in fact, comparing the size of the group and the semigroup is misleading.
+We can't compare them, as they deal with different objects, functions and partial functions.
+For this case of $M_2$ there is a sense in which we do not get any more symmetries by going to the partial symmetry world.
 We can see it through the following argument: the group $\Aut(M_2) \cong D_4$ acts canonically on the power set of $M_2$, $\operatorname{Pow}(M_2)$, simply by acting element-wise:
 For $M \subseteq M_2$ and $g \in \Aut(M_2)$, the (canonical) action is defined as follows: $g \cdot M := \{ g \cdot m \mid m \in M \}$.
-In this action, the orbits $G \\ \operatorname{Pow}(M_2)$ are in obvious bijection to the s.c.c. of the orbit of $\AutSemi(M_2) \\ \operatorname{M_2}$.
+In this action, the orbits $operatorname{Pow}(M_2) / G$ are in obvious bijection to the \acp{s.c.c.} of the orbit of $M_2 / \AutSemi(M_2) $.
 
-We have seen how to describe partial symmetries, a natural question is how how to calculate them?
-This can be accomplished with the methods of~\cite{east2019semigroups}, and our applications of it in joint work with S. Siccha and J. Castrillon~\cite{goens_taco17}.
+We have seen how to describe partial symmetries, a natural question is how to calculate them?
+This can be accomplished with the methods of~\cite{east2019semigroups}, and our applications of it in joint work with Sergio Siccha and Jeronimo Castrillon~\cite{goens_taco17}.
 In fact, \mpsym implements Algorithm~2 from~\cite{goens_taco17}.
 We worked with Sebastian Krammer in his bachelor thesis~\cite{krammer_bachelor} on finding more efficient algorithms. 
-Unfortunately, the algorithms as implemented so far are not efficient enough to be useful in the context of mappings and \ac{dse}.
+Unfortunately, the algorithms as implemented so far are not efficient enough to be useful in the context of mappings and \ac{DSE}.
 
 In future work, we believe we should be able to find explicit generating systems for an $n \times n$ mesh for an arbitrary $n$, which would significantly improve the performance of the algorithms, which is limited by finding a good generating set.
 Using inverse semigroups also opens up an additional avenue for future work, where \emph{similarities} can be described instead of precise symmetries. \index{mapping similarities}
