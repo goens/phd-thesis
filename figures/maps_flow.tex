@@ -1,0 +1,36 @@
+% Define block styles
+\tikzstyle{ours} = [rectangle, rounded corners, draw, fill=green!20, %legend: possible "IP leak"
+    text width=7em, text centered, minimum height=4em]
+\tikzstyle{other} = [rectangle, draw, fill=green!20, 
+    text width=7em, text centered, rounded corners, minimum height=4em]
+
+\begin{tikzpicture}[node distance = 4em]
+    %nodes
+    \node [ours,align=center ] (moc) {application \\ \acs*{KPN} };
+    \node [ours, align=center, below= 0.5 cm of moc] (arch) {architecture \\ model};
+    \node [ours,  align=center,below= 0.5 cm of arch] (exec) {execution \\ traces};
+    \node (mapping) at (3.5,-0.6) [single arrow,
+                                    text width=3cm,
+                                    align=center,
+                                    shade,shading=axis,
+                                    left color=white,right color=green!20,
+                                    minimum width=2.5cm,minimum height=1cm,] {\acs*{DSE} (mapping/ \\ scheduling)};
+    \node (estimation) at (3.5,-3.2) [single arrow,
+                                    text width=3cm,
+                                    align=center,
+                                    shade,shading=axis,
+                                    left color=white,right color=green!20,
+                                    minimum width=2.5cm,minimum height=1cm,] {perf. estimation \\ (simulation)};
+
+    \node [ours, minimum height=6em, align=center] (mapping) at (7.8,-0.6) {mapping \\ (\& schedule)};
+    \node [other,minimum height=6em, align=center,below= 0.5cm of mapping] (simulation) {performance metrics};
+    \node (generation) at (11,-1.8) [single arrow,
+                                    text width=3cm,
+                                    align=center,
+                                    shade,shading=axis,
+                                    left color=white,right color=green!20,
+                                    minimum width=2.5cm,minimum height=1cm,] {code \\ generation};
+
+    \node [other, minimum height=6em, align=center, right = 0.5 cm of generation] (mapping)  {target \\ code};
+
+\end{tikzpicture}
