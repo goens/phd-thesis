@@ -1,0 +1,35 @@
+\begin{scope}[name prefix=orig-]
+\input{figures/audio_filter_graph}
+
+\node (label) [align=center] at (12,0) { \large original};
+\end{scope}
+
+\begin{scope}[name prefix=transformed-,xshift=140,yshift=-140]
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm] (src) {\texttt{src}};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, below right = 1cm of src] (fft_r) {\texttt{fft\_r}};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, above right = 1cm of src] (fft_l) {\texttt{fft\_l}};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, right = 1 cm of fft_r] (filter_r) {\texttt{filter\_r}};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, right = 1 cm of fft_l] (filter_l) {\texttt{filter\_l}};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, right = 1 cm of filter_r] (ifft_r) {\texttt{ifft\_r}};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, right = 1 cm of filter_l] (ifft_l) {\texttt{ifft\_l}};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, below right = 1cm of ifft_l] (sink) {\texttt{sink}};
+
+\draw[-latex] (src) -- (fft_l);
+\draw[-latex] (src) -- (fft_r);
+\draw[-latex] (fft_l) -- (filter_l);
+\draw[-latex] (fft_r) -- (filter_r);
+\draw[-latex] (filter_l) -- (ifft_l);
+\draw[-latex] (filter_r) -- (ifft_r);
+\draw[-latex] (ifft_l) -- (sink);
+\draw[-latex] (ifft_r) -- (sink);
+
+\node (label) [align=center] at (-3.5,0) {\large transformed};
+\end{scope}
+
+
+\draw (orig-fft_l) edge[-{latex},line width=1.2mm, color=red!60,in=140,out=310,looseness=1]  (transformed-fft_l);
+\draw (orig-ifft_l) edge[-{latex},line width=1.2mm, color=red!60,in=140,out=310,looseness=1]  (transformed-ifft_l);
+\draw (orig-filter_l) edge[-{latex},line width=1.2mm, color=red!60,in=140,out=310,looseness=1]  (transformed-filter_l);
+\draw (orig-fft_r) edge[-{latex},line width=1.2mm, color=red!60,in=120,out=290,looseness=1]  (transformed-fft_r);
+\draw (orig-ifft_r) edge[-{latex},line width=1.2mm, color=red!60,in=120,out=290,looseness=1]  (transformed-ifft_r);
+\draw (orig-filter_r) edge[-{latex},line width=1.2mm, color=red!60,in=120,out=290,looseness=1]  (transformed-filter_r);
