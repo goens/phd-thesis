@@ -11,25 +11,25 @@ A natural idea that arises from this is to search for \emph{compact} mappings\in
 	\label{fig:compact_intro}
 \end{figure*}
 
-Figure~\ref{fig:compact_intro} illustrates well the idea of compact mappings.
+Figure~\ref{fig:compact_intro} illustrates the idea of compact mappings.
 It depicts two variants for mapping the two application graphs depicted in the figure.
 The particular property of these two variants is that they are equivalent from the point of view of the distances:
-For any two connected nodes in one of the application graphs, the node distance in terms of number of hops between both nodes is identical in both mapping variants.
+For any two connected nodes in any of the application graphs, the node distance in terms of number of hops between both nodes is identical in both mapping variants.
 Intuitively, however, the mappings on the right are preferable to those on the left. 
 Does this intuition translate to actual benefits in mappings?
 
 To test this idea we used a SystemC-based \ac{NoC} simulator, Noxim~\cite{noxim}, which we modified to obtain more detailed statistics about the simulations~\cite{goens_samos19}.
 In particular, we extracted the variance of the package delays in the simulation. 
-We then configured Noxim to simulate a $10 \times 10$ mesh topology with xy routing and worm-hole switching. 
+We configured Noxim to simulate a $10 \times 10$ mesh topology with xy routing and worm-hole switching. 
 This choice was made to mimic the routing of commercial platforms like the Tile-Gx series from Mellanox Technologies~\cite{technologies2015-tile-gx36-processor,technologies2015-tile-gx72-processor}, or Intel's Xeon Phi~\cite{tam2018-skylake-sp} or Scalable Platform~\cite{sodani2016-knights-landing}, or academic ones like OpenPiton~\cite{balkind2016-openpiton}.
 
-If we execute the example from Figure~\ref{fig:compact_intro} example, the non-compact example on the left actually outperforms the compact one on the right.
+If we execute the example from Figure~\ref{fig:compact_intro}, the non-compact example on the left actually outperforms the compact one on the right.
 By closer inspection of the figure, this is because the distances within the application are very high.
 In other words, the mappings depicted are simply bad mappings.
 A lot of contention within the application offsets any gains from avoiding contention against other mappings.
 
 However, while the motivational example is not very informative in terms of finding good mappings to combine, it does motivate the idea of compact mappings.
-We used a greedy heuristic to find such compact mappings in a regular mesh \ac{NoC}, while also ensuring they are not as bad as those in the example.
+We used a heuristic to find such compact mappings in a regular mesh \ac{NoC}, while also ensuring they are not as bad as those in the example.
 We do this by ensuring the communication costs are low within the application as well, using a greedy heuristic.
 
 \begin{algorithm}
@@ -59,10 +59,10 @@ The heuristic is described in Algorithm~\ref{algo:greedy_mapping}.
 We assume the application graph is (weakly) connected.
 The heuristic then starts with any node in the application such that there is a path from it to every node in the application (\texttt{Root}).
 It then randomly assigns an unused core to this node, subsequently iterating through the application graph in a breadth first fashion.
-In this iteration it assigns cores such that the distance from a node to its predecessor is minimized in the mapping.
+In this breadth-first search, it assigns cores such that the distance from a node to its predecessor is minimized in the mapping.
 This greedy algorithm thus minimizes local communication, but it does not ensure that the communication is minimized globally for the whole application.
 
-A central concept behind this algorithm is the set of cores marked as occupied, which can be initialized in particular fashion to enforce the geometry of the mapping.
+A central concept behind this algorithm is the set of cores marked as occupied, which can be initialized in a particular fashion to enforce the geometry of the mapping.
 To produce compact mappings we mark every core as occupied, except for an $m \times m'$ rectangle such that $m,m' > |V|$, and we choose $\{m,m'\} \subseteq \{ \sqrt{|V|}, \sqrt{|V|}+1\}$ minimal with this property.
 We compare these mappings to those produced without the additional rectangle constraint, which are low-communication mappings that are not necessarily compact.
 
@@ -81,7 +81,7 @@ Packages in Noxim were injected with a fixed injection rate (of packages per cyc
 \end{figure}
 
 Figure~\ref{fig:compact_latency} shows the results of a comparison between compact, non-compact and random mappings. 
-Each point reports the \emph{average network delays} over the course of the whole simulation for each of application and each mappings. 
+Each point reports the \emph{average network delays} over the course of the whole simulation for each of application and each mappings.\index{average network delay} 
 We can see that for injection rates above $10^{-3}$ there is basically no difference between compact and non-compact mappings, and for the very high injection rate of $10^{-3}$ the difference is still negligible.
 
 To make a better comparison, we designed an additional experiment that compared between two distinct scenarios.
@@ -109,7 +109,7 @@ Note that an injection rate of $10^{-2}$ every task is sending a package in aver
 	\label{fig:topology_vs_geometry}
 \end{figure*}
 
-A conclusion we can make from these experiments is that compact mappings are not particularly useful. 
+From these experiments we can conclude that compact mappings are not particularly useful. 
 The improvements they bring in reducing contention are not relevant in practice, since the amount of contention required for the compactness to make a difference is unrealistically high.
 Figure~\ref{fig:topology_vs_geometry} shows a comparison between a typical example of two low-communication mappings, a compact one and a non-compact one. 
 These are the kinds of mappings that result from Algorithm~\ref{algo:greedy_mapping} (with and without the additional compactness constraint).
