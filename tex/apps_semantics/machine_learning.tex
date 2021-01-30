@@ -1,25 +1,18 @@
 In the previous two sections we have discussed multiple benchmarks in two different classes: hand-written benchmarks and randomly generated benchmarks.
 We have discussed the advantages and disadvantages of both.
 Hand-written benchmarks cost many person-hours to write and maintain, and are usually very limited due to \ac{IP}.
-Random benchmarks can overcome the scarcity of hand written ones at the cost of accuracy, they are less realistic and not as useful for assessing how well a method will perform on real use-cases.
-There is a third approach that sits in-between the two above, to use machine learning to generate benchmarks with realistic properties.
+Random benchmarks can overcome the scarcity of hand-written ones at the cost of accuracy, since they are less realistic and, accordingly, not as useful for assessing how well a method will perform on real use-cases.
+There is a third approach that sits in-between the two above, which is to use machine learning to generate benchmarks with realistic properties.
 This section discusses this approach and its limitations.
 
 \subsection{Generative models}
 \label{sec:generative}
 
-\begin{figure*}[th]
-	\centering
-	\includegraphics[width=\textwidth]{figures/illustration_histograms_ideal.pdf}
-	\caption{An illustration of generative models in the Fischer-Wald setting.}
-	\label{fig:histograms}
-\end{figure*}
-
 Machine learning models that could generate benchmarks fall under the general term ``generative models''.
 There are different classes of generative models, however:
 %Let again $p$ be the probability density function describing the probability of a programmer writing a piece of code $\omega \in \Omega$.
 \begin{enumerate}
-\item \label{fischer-wald} A model in the \textbf{Fischer-Wald setting} is a machine learning model solving the problem of density estimation~\cite{vapnik}. This means finding a probability $p'(t,\alpha_0)$ in a set of probabilities $\{ p'(t,\alpha) \mid \alpha \in \Lambda \}$ parametrized by elements of the parameter set $\Lambda$,
+\item \label{fischer-wald} A model in the \textbf{Fischer-Wald setting} is a machine learning model solving the problem of density estimation~\cite{vapnik}. This means finding a \ac{pdf} $p'(t,\alpha_0)$ in a set of \acp{pdf} $\{ p'(t,\alpha) \mid \alpha \in \Lambda \}$ parametrized by elements of the parameter set $\Lambda$,
   such that for the risk functional $R(\alpha) = \int -\log(p'(t,\alpha)) dp(t)$, the value of $R(\alpha_0)$ is minimal over all $\alpha \in \Lambda$.
 \item \label{conditional-estimation} A \textbf{conditional estimation} model can again mean a solution to a few different problems in different settings. For a random variable $Y$ over code, it estimates either the joint distribution $X \times Y$ or one of the conditional probabilities $p(y \mid X = x)$ or $p(x \mid Y = y)$, where $X$ is the random variable representing a piece of code (i.e. $X(\omega) = \omega$, the identity on $\Omega$)~\cite{vapnik}.
 
@@ -32,6 +25,14 @@ Even more so, this could be used to create domain-specific benchmarks with more 
 Tuning heuristics and even auto-completion tasks could all be based on conditional estimation models.
 The focus of this section is the discussion of using solutions to (\ref{fischer-wald}) for benchmark generation.
 This problem is the basis for generative models of code, and solutions to (\ref{conditional-estimation}) are based on or related to it as well.
+
+\begin{figure*}[h]
+	\centering
+	\includegraphics[width=\textwidth]{figures/illustration_histograms_ideal.pdf}
+	\caption{An illustration of generative models in the Fischer-Wald setting.}
+	\label{fig:histograms}
+\end{figure*}
+
 
 \subsection{Potential Problems}
 \label{sec:potential_problems}

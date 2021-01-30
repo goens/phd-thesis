@@ -34,10 +34,11 @@ The speaker recognition application has $12$ processes and $33$ channels.
 \subsection{The E3S Benchmarks}
 
 The second input of \mocasin we use for benchmarking is \texttt{tgff}.
-The \texttt{tgff} format comes from \acf{tgff}, a random task graph generator~\cite{dick1998tgff}. 
+The \texttt{tgff} format comes from \acf{TGFF}, a random task graph generator~\cite{dick1998tgff}. 
 However, the same author also published a benchmark suite, the \ac{E3S}~\cite{e3s}.
 Based on data from the Embedded Microprocessor Benchmark Consortium, the suite provides task graphs and processor execution times for applications from multiple embedded domains.
-In total, the \ac{E3S} boasts Table~\ref{tab:e3s} summarizes the applications.
+In total, the \ac{E3S} boasts $20$ benchmarks from $5$ different domains, with up to $9$ tasks per benchmark.
+Table~\ref{tab:e3s} summarizes the applications.
 
 \begin{table*}[t]
   %\footnotesize
@@ -47,7 +48,7 @@ In total, the \ac{E3S} boasts Table~\ref{tab:e3s} summarizes the applications.
       %\hline
       Domain & No. of task graphs & tasks per graph\\
       \hline
-      auto-indust & 4 & 4-9\\
+      auto-indust. & 4 & 4-9\\
       networking & 4 & 1-4\\
       telecom & 9 & 2-6\\
       consumer & 2 & 5-7\\
@@ -58,14 +59,13 @@ In total, the \ac{E3S} boasts Table~\ref{tab:e3s} summarizes the applications.
   \vspace{-0.5cm}
 \end{table*}
 
-The processors and architectures in the \ac{E3S} are generally not \acp{MPSoC}, most of them are single-core systems.
-This comes mostly because the benchmark suite is pretty dated, being over $20$ years old at the time of this writing.
+The benchmark suite is pretty dated, being over $20$ years old at the time of this writing.
 Unfortunately, benchmarks are generally scarce.
-The methods investigated in this thesis here have more to do with the trends than the actual numbers, which is why using such a dated benchmark is still adequate.
+The methods investigated in this thesis here have more to do with the trends than the actual numbers, which is why using such a dated benchmark suite is still adequate.
 We expect the relative performance of mapping algorithms on the \ac{E3S} benchmarks to be similar to that on present and future applications.
 
 A significant focus of the methods we will evaluate with these benchmarks is on the multicore architectures.
-To overcome the limitation of the single-core nature of the \ac{E3S}, we use the same method as in~\cite{schwarzer2017symmetry}.
+For this, we use the same method as in~\cite{weichslgartner2014daarm,schwarzer2017symmetry}.
 We use the architecture topology of a modern multicore, including the frequencies, as well as the memory subsystem with its latency and bandwidth, and scale the numbers from the \ac{E3S} for each of the cores of the modern multicore.
 This gives a realistic scenario, albeit not simulating a concrete instance of the architecture.
 In~\cite{schwarzer2017symmetry} the authors do this to create architectures with a regular mesh structure, with less realistic topologies like heterogeneous meshes with randomly placed cores.
