@@ -1,0 +1,21 @@
+\tikzstyle{core} = [draw, text width=10em, minimum height=4em,
+minimum width=4em, rounded corners, fill=gray!40, text centered]
+
+%https://texample.net/tikz/examples/double-arrows/
+
+\begin{scope}
+\foreach \x in {15,14,...,1}{
+  \node[core] (core_\x) at (\x,\x) {};
+};
+\node (core_0) [core] (0,0) {\Huge PE$_0$};
+\end{scope}
+
+\begin{scope}[xshift=800,yshift=80,scale=0.5]
+\node (core_8) [core, fill=gray!60] (0,0) {\Huge Secure \& \\ Mngt. C.};
+\end{scope}
+
+\begin{scope}[xshift=400,yshift=-300]
+  \draw[{Triangle[length=2mm,width=4.5mm]}-{Triangle[length=2mm,width=4.5mm]},line width=2.2mm ] (-15,2.5) -- (-15,7);
+  \draw[{Triangle[length=2mm,width=4.5mm]}-{Triangle[length=2mm,width=4.5mm]},line width=2.2mm ] (15,2.5) -- (15,7);
+  \node[draw,thick,text centered,minimum width=10cm,minimum height=10mm] (0,0) {\Huge SECURE BUS};
+\end{scope}

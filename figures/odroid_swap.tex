@@ -1,0 +1,67 @@
+\begin{scope}[name prefix=orig-]
+\input{figures/odroid.tex}
+\end{scope}
+
+\begin{scope}[xshift=500, yshift=-230, name prefix=changed-]
+%little cores
+\node (pe2) at ({-1.5},{4}) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!30] {\huge \textbf{ PE$_2$}};
+\node (L1-pe2) at (-1.5,2.5) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+\node (pe1) at (-1.5+3,4) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!30] {\huge \textbf{ PE$_1$}};
+\node (L1-pe1) at (-1.5+3,2.5) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+\node (pe3) at (-1.5,4+4) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!30] {\huge \textbf{ PE$_3$}};
+\node (L1-pe3) at (-1.5,2.5+4) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+\node (pe4) at (-1.5+3,4+4) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!30] {\huge \textbf{ PE$_4$}};
+\node (L1-pe4) at (-1.5+3,2.5+4) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+
+%big cores
+\node (pe5) at ({6.5-1.5},{4}) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!60] {\huge \textbf{ PE$_5$}};
+\node (L1-pe5) at (6.5-1.5,2.5) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+\node (pe6) at (6.5-1.5+3,4) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!60] {\huge \textbf{ PE$_6$}};
+\node (L1-pe6) at (6.5-1.5+3,2.5) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+\node (pe7) at (6.5-1.5,4+4) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!60] {\huge \textbf{ PE$_7$}};
+\node (L1-pe7) at (6.5-1.5,2.5+4) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+\node (pe8) at (6.5-1.5+3,4+4) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!60] {\huge \textbf{ PE$_8$}};
+\node (L1-pe8) at (6.5-1.5+3,2.5+4) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+
+
+\node (L2-little) at (0,0) [draw,minimum width=6cm,align=center,minimum height=1.5cm, fill=blue!55] {\huge \textbf{ L2\$}};
+\node (L2-big) at (6.5,0) [draw,minimum width=6cm,align=center,minimum height=1.5cm, fill=blue!55] {\huge \textbf{ L2\$}};
+\node (DRAM) at (3.25,-2.5) [minimum width=12.5cm,align=center,minimum height=2cm, fill=blue!85,text=black!30] {\huge \textbf{DRAM}};
+
+\node (label) [align=center] at (-6.5,2.5) {\Huge symmetry \\ \Huge transformation};
+\end{scope}
+
+\draw (orig-pe1) edge[-{latex},line width=2.2mm, color=red!60,in=120,out=290,looseness=1]  (changed-pe1);
+\draw (orig-pe2) edge[-{latex},line width=2.2mm, color=red!60,in=120,out=290,looseness=1]  (changed-pe2);
+
+
+\begin{scope}[yshift=230, xshift=500,name prefix=non-]
+%little cores
+\node (pe5) at ({-1.5},{4}) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!60] {\huge \textbf{ PE$_5$}};
+\node (L1-pe5) at (-1.5,2.5) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+\node (pe2) at (-1.5+3,4) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!30] {\huge \textbf{ PE$_2$}};
+\node (L1-pe2) at (-1.5+3,2.5) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+\node (pe3) at (-1.5,4+4) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!30] {\huge \textbf{ PE$_3$}};
+\node (L1-pe3) at (-1.5,2.5+4) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+\node (pe4) at (-1.5+3,4+4) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!30] {\huge \textbf{ PE$_4$}};
+\node (L1-pe4) at (-1.5+3,2.5+4) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+
+%big cores
+\node (pe1) at ({6.5-1.5},{4}) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!30] {\huge \textbf{ PE$_1$}};
+\node (L1-pe5) at (6.5-1.5,2.5) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+\node (pe6) at (6.5-1.5+3,4) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!60] {\huge \textbf{ PE$_6$}};
+\node (L1-pe6) at (6.5-1.5+3,2.5) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+\node (pe7) at (6.5-1.5,4+4) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!60] {\huge \textbf{ PE$_7$}};
+\node (L1-pe7) at (6.5-1.5,2.5+4) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+\node (pe8) at (6.5-1.5+3,4+4) [draw,minimum width=2.5cm,align=center,minimum height=2cm, fill=green!60] {\huge \textbf{ PE$_8$}};
+\node (L1-pe8) at (6.5-1.5+3,2.5+4) [draw,minimum width=2.5cm,align=center,minimum height=1.5cm, fill=blue!30] {\huge \textbf{ L1\$}};
+
+
+\node (L2-little) at (0,0) [draw,minimum width=6cm,align=center,minimum height=1.5cm, fill=blue!55] {\huge \textbf{ L2\$}};
+\node (L2-big) at (6.5,0) [draw,minimum width=6cm,align=center,minimum height=1.5cm, fill=blue!55] {\huge \textbf{ L2\$}};
+\node (DRAM) at (3.25,-2.5) [minimum width=12.5cm,align=center,minimum height=2cm, fill=blue!85,text=black!30] {\huge \textbf{DRAM}};
+\node (label) [align=center] at (-10,6) {\Huge \textbf{not} a symmetry \\ \Huge transformation};
+\end{scope}
+
+\draw (orig-pe1) edge[-{latex},line width=2.2mm, color=red!60,in=180,out=90,looseness=1]  (non-pe1);
+\draw (orig-pe5) edge[-{latex},line width=2.2mm, color=red!60,in=120,out=60,looseness=1]  (non-pe5);

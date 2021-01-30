@@ -1,0 +1,79 @@
+
+\begin{scope}[name prefix=orig-,xshift=-170]
+  \node[rectangle,thick,minimum width = 2cm, minimum height=2cm,fill=green!30] (pe1) at (1,1) {\Huge PE$_1$};
+  \node[rectangle,thick,minimum width = 2cm, minimum height=2cm,fill=green!30] (pe2) at (5,1) {\Huge PE$_2$};
+  \node[rectangle,thick,minimum width = 2cm, minimum height=2cm,fill=green!30] (pe3) at (1,5) {\Huge PE$_3$};
+  \node[rectangle,thick,minimum width = 2cm, minimum height=2cm,fill=green!30] (pe4) at (5,5) {\Huge PE$_4$};
+  \foreach \x in {0,...,1}{
+    \foreach \y in {0,...,1}{
+       \pgfmathsetmacro{\xn}{\x*4}
+       \pgfmathsetmacro{\yn}{\y*4} 
+       \draw ({\xn + 2}, {\yn + 2}) -- ++(0.5,0.5);
+       \draw ({\xn + 2.5},{\yn + 2.5}) rectangle ++(1,1) ++(-0.5,-0.5) node[font=\Large] {R};
+      }
+    }
+
+  \foreach \x in {0,...,1}{
+    \foreach \y in {0,...,1}{
+      \pgfmathsetmacro{\xs}{\x*4+3}
+      \pgfmathsetmacro{\ys}{\y*4+3}
+      \pgfmathsetmacro{\xn}{\xs+3}
+      \pgfmathsetmacro{\yn}{\ys+3}
+      \pgfmathsetmacro{\xsm}{\x*4+3.5}
+      \pgfmathsetmacro{\ysm}{\y*4+3.5}
+      \pgfmathsetmacro{\xnm}{\xsm+3}
+      \pgfmathsetmacro{\ynm}{\ysm+3}
+      \ifnum\x<1
+      \path[<->,very thick,blue!55] (\xsm,\ys) edge (\xnm,\ys);
+      \fi
+      \ifnum\y<1
+      \path[<->,very thick,blue!55] (\xs,\ysm) edge (\xs,\ynm);
+      \fi
+      }
+    }
+      \path[<->,line width=1mm,red!60] (3,3.5) edge (3,6.5);
+
+\end{scope}
+
+
+
+\begin{scope}[name prefix=transformed-,xshift=170]
+  \node[rectangle,thick,minimum width = 2cm, minimum height=2cm,fill=green!30] (pe2) at (1,1) {\Huge PE$_2$};
+  \node[rectangle,thick,minimum width = 2cm, minimum height=2cm,fill=green!30] (pe1) at (5,1) {\Huge PE$_1$};
+  \node[rectangle,thick,minimum width = 2cm, minimum height=2cm,fill=green!30] (pe3) at (1,5) {\Huge PE$_3$};
+  \node[rectangle,thick,minimum width = 2cm, minimum height=2cm,fill=green!30] (pe4) at (5,5) {\Huge PE$_4$};
+  \foreach \x in {0,...,1}{
+    \foreach \y in {0,...,1}{
+       \pgfmathsetmacro{\xn}{\x*4}
+       \pgfmathsetmacro{\yn}{\y*4} 
+       \draw ({\xn + 2}, {\yn + 2}) -- ++(0.5,0.5);
+       \draw ({\xn + 2.5},{\yn + 2.5}) rectangle ++(1,1) ++(-0.5,-0.5) node[font=\Large] {R};
+      }
+    }
+
+  \foreach \x in {0,...,1}{
+    \foreach \y in {0,...,1}{
+      \pgfmathsetmacro{\xs}{\x*4+3}
+      \pgfmathsetmacro{\ys}{\y*4+3}
+      \pgfmathsetmacro{\xn}{\xs+3}
+      \pgfmathsetmacro{\yn}{\ys+3}
+      \pgfmathsetmacro{\xsm}{\x*4+3.5}
+      \pgfmathsetmacro{\ysm}{\y*4+3.5}
+      \pgfmathsetmacro{\xnm}{\xsm+3}
+      \pgfmathsetmacro{\ynm}{\ysm+3}
+      \ifnum\x<1
+      \path[<->,very thick,blue!55] (\xsm,\ys) edge (\xnm,\ys);
+      \fi
+      \ifnum\y<1
+      \path[<->,very thick,blue!55] (\xs,\ysm) edge (\xs,\ynm);
+      \fi
+      }
+    }
+
+      \path[<->,line width=1mm,red!60] (3,3.5) edge (3,6.5);
+      \path[<->,line width=1mm,red!60] (3.5,3) edge (6.5,3);
+
+\end{scope}
+
+\draw (orig-pe1) edge[-{latex},line width=2.2mm, color=red!60,in=240,out=300,looseness=1]  (transformed-pe1);
+\draw (orig-pe2) edge[-{latex},line width=2.2mm, color=red!60,in=240,out=300,looseness=1]  (transformed-pe2);

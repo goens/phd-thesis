@@ -17,25 +17,25 @@ A transformation that swaps the cores $\PE_1$ and $\PE_2$ leaves the archtiectur
 On the other hand, a transformation that swaps $\PE_1$ and $\PE_5$ does change the topology, since the cores are of different types. As can also be seen in Figure~\ref{fig:exynos_symmetries}.
 \begin{figure}[h]
 	\centering
-\resizebox{0.3\textwidth}{!}{
+\resizebox{0.8\textwidth}{!}{
    \begin{tikzpicture}
-     \input{figures/odroid}
+     \input{figures/odroid_swap}
    \end{tikzpicture}
  }
-   \caption{Symmetries in the Odroid-XU4 architecture. TODO: fix figure.}
+   \caption{Examples of transformations in the Odroid-XU4 architecture.}
    \label{fig:exynos_symmetries}
 \end{figure}
 
 When the memory subsystem is more complex, this is also reflected in the topology. Consider the \ac{NoC}-based architecture depicted in the example, with four identical cores $\PE_1\ldots,\PE_4$.
 An analogous transformation to the one described before, which swaps the cores $\PE_1$ and $\PE_2$, is not a symmetry of this topology, as depicted in Figure~\ref{fig:non_equivalent}.
 The change in the cores changes the communication patterns.
-Before the transformation, sending data from $\PE_1$ to $\PE_3$ needs two hops over the \ac{NoC}, whereas after the transformation it can be sent within a single hop.
+Before the transformation, sending data from $\PE_1$ to $\PE_3$ needs two hops, whereas after the transformation it can be sent within a single hop, as shown by the red paths in the \ac{NoC}.
 
 \begin{figure}[h]
 	\centering
-\resizebox{0.3\textwidth}{!}{
+\resizebox{0.7\textwidth}{!}{
    \begin{tikzpicture}
-     \input{figures/odroid}
+     \input{figures/noc_nonsym}
    \end{tikzpicture}
  }
    \caption{The communication topology affects symmetries in architectures.}
@@ -48,17 +48,29 @@ Similarly, it is clear that reversing a transformation $t_1^{-1}$ also preserves
 Finally, the identity transformation on the architecture $\operatorname{id}_A$ (which does not change anything) clearly preserves the structure.
 These observations together mean that these transformations have the structure of a group with the function composition $(\circ)$ as its operation.
 
-More precisely, the group of symmetries of the achitecture is precisely the group of graph isomorphisms from the architecture graph $A$ to itself.
+More precisely, the group of symmetries of the architecture is precisely the group of graph isomorphisms from the architecture graph $A$ to itself.
 An isomorphism from an object to itself is called an automorphism\index{automorphism}.
 We denote the group of automorphisms of the architecture $A$ as $\Aut(A)$
 
-For the case of the \ac{NoC}-based architecture, the authomorphism group $\Aut(A\text{NoC}) \cong D_4$ is a dihederal group on $4$ points.
+For the case of the \ac{NoC}-based architecture, the authomorphism group $\Aut(A_\text{NoC}) \cong D_4$ is a dihederal group on $4$ points.
 It conists of $3$ rotations, $4$ reflections and the identity transformation.
 The Odroid architecture, on the other hand, has $\Aut(A_\text{Odroid}) \cong S_4 \times S_4$ as symmetry group.
-This group with $48$ transformations is comprised of (independent) arbitrary permutations of the A15 and A7 cores.
+This group with $48$ transformations consists of (independent) arbitrary permutations of the A15 and A7 cores.
+
+\begin{figure}[h]
+	\centering
+\resizebox{0.9\textwidth}{!}{
+   \begin{tikzpicture}
+     \input{figures/coolidge}
+   \end{tikzpicture}
+ }
+   \caption{The topology of the Kalray MPPA3 Coolidge.}
+   \label{fig:coolidge}
+\end{figure}
 
 Since the Odroid architecture is heterogeneous, both clusters are distinct and there is no symmetry between them.
-Many complex architectures, however, do consist of multiple identical culsters. Consider the architecture depicted in Figure~\ref{fig:coolidge}.
+Many complex architectures, however, do consist of multiple identical clusters.
+Consider the architecture depicted in Figure~\ref{fig:coolidge}.
 It is the MPPA3 Coolidge from Kalray~\cite{coolidge} and consists of $5$ identical clusters.
 Each cluster has $17$ cores, $16$ of which are identical general-purpose cores, and the last one is a special-purpose secure and management core.
 
@@ -79,10 +91,10 @@ This is depicted on Figure~\ref{fig:audio_filter_symmetries}.
 	\centering
 \resizebox{0.9\textwidth}{!}{
 \begin{tikzpicture}
-   \input{figures/audio_filter_graph}
+   \input{figures/audio_filter_symmetries}
  \end{tikzpicture}
 }
-   \caption{A symmetry of the audio filter application. TODO: adapt figure}
+   \caption{A symmetry transformation of the audio filter application.}
 	\label{fig:audio_filter_symmetries}
 \end{figure}
 
@@ -91,18 +103,18 @@ For an application $K = (V_K,E_K)$ we can label the nodes $V_K$ with unique iden
 Formally, thus, the automorphism group $\Aut(E)$ of the labeled graph $K$ is trivial, i.e. $\Aut(E) = \{ \id \}$. 
 We could label $K$ differently to capture the symmetry from Figure~\ref{fig:audio_filter_symmetries}.
 For example, if use the source code of the process as label, we would capture this symmetry.
-We have to be more careful, however, as this can lead to a problematic definition of symmetries.
+We have to be careful, however, as this can lead to a problematic definition of symmetries.
 
 An application might use the same code at different points, resulting in very different behavior.
 For example, consider an application that receives a list of points, which it sorts before operating on it.
 Before returning the list, it sorts them again to ensure they are sorted.
 Both times it sorts the list using the quicksort algorithm, yet the second time the list is almost always sorted or close to being sorted.
-Then the execution of the same quicksort code in the second instance behaves very differently from the first time.
+Then, the execution of the same quicksort code in the second instance behaves very differently from the first time.
 
 A difference like the one outlined above is very difficult to capture automatically, as it requires understanding of the application to a very high level of abstraction.
-We thus consider application symmerties as manually-defined anotations.
-There are some conceivable ways to automatically capture and annotate such application symmetries, for example when dealing with known data-level parallelism.
-In future work, a framework as we discuss in Chapter~\ref{chap:mocs}, Section~\ref{sec:macqueen} could be extended to extract symmetries.
+We thus consider application symmetries as manually-defined annotations.
+There are some conceivable ways to automatically capture and annotate such application symmetries, for example when dealing with known \ac{DLP}.
+In future work, a framework as we discuss in Chapter~\ref{chap:mocs}, Section~\ref{sec:macqueen} could be extended to extract application symmetries from \ac{DLP}.
 For the rest of this thesis, however, we focus on symmetries induced from the architecture.
 
 \subsection{Mappings}
@@ -114,11 +126,9 @@ Let $m : K \rightarrow A$ be a mapping.
 Recall that a symmetry $\sigma \in \Aut(A)$ of the architecture is a transformation that leaves the structure of the architecture unchanged.
 Conisder then the mapping $\sigma m := k \mapsto \sigma(m(k))$.
 Since the structure of $A$ is unchanged, then the structure of $m$ and $\sigma m$ is also identical.
-All observable properties of $m$ and $\sigma m$, like the execution time or energy consumption, are the same.
+All observable properties $\Theta$ of $m$ and $\sigma m$, like the execution time or energy consumption, are the same.
 If they were not, it would have to be due to a structural difference in the (sub)architectures $m(K),(\sigma m)(k) = \sigma(m(K)) \leq A$, which are isomorphic by assumption on $\sigma$.
 We say that these properties like the execution time and energy consumption are \emph{invariants}\index{invariants} of the group action.
-
-Figure~\ref{fig:mapping_action_example} shows an example of the action on mappings. \todo{add and describe figure.}
 
 The case for $K$ is analogous.
 Let $\pi \in \Aut(K)$ be a symmetry of the application.
@@ -129,7 +139,27 @@ Indeed, for $\pi, \tau \in \Aut(K)$, we have
   (\pi (\tau m))(k) = \pi m(\tau^{-1}k) = m(\pi^{-1}\tau^{-1}k) = m((\tau \pi)^{-1}k) = ((\tau \pi) m))(k) 
 \end{align*}
 
-From the models of the problem, as defined in Chapter~\ref{chap:mapping}, mappings under these symmetries are necessarily indistinguishable from each other, since they rely on inherent symmetries of the models.
+\begin{figure}[h]
+	\centering
+\resizebox{1.0\textwidth}{!}{
+\begin{tikzpicture}
+   \input{figures/odroid_af_symmetries}
+ \end{tikzpicture}
+}
+   \caption{Group actions on mappings.}
+	\label{fig:mapping_action_example}
+\end{figure}
+
+Figure~\ref{fig:mapping_action_example} shows an example of the action on mappings. 
+It depicts a mapping $m = [\PE_2,\PE_1,\PE_1,\PE_5,\PE_1,\PE_5,\PE_3,\PE_7]$ of the audio filter application on the Odroid XU4.
+On the bottom right, we depict the action of $\sigma$ on $m$ for the architecture symmetry $\sigma = (\PE_1,\PE_2)$, in cycle notation\footnote{See Appendix~\ref{appendix:groups} for an explanation}, which is the same symmetry transformation depicted in Figure~\ref{fig:exynos_symmetries}.
+This results in the mapping $\sigma m = [\PE_1,\PE_2,\PE_2,\PE_5,\PE_2,\PE_5,\PE_3,\PE_7]$.
+On the top right, we show the action of $\pi$ on $m$ for the application symmetry
+ \begin{align*} \pi =  (\texttt{fft\_l},\texttt{fft\_r})(\texttt{filter\_l},\texttt{filter\_r})(\texttt{ifft\_l},\texttt{ifft\_r}), \end{align*}
+which is the application symmetry depicted in Figure~\ref{fig:audio_filter_symmetries}.
+This results in the mapping $\pi m = [\PE_2,\PE_1,\PE_1,\PE_1,\PE_5,\PE_3,\PE_5,\PE_7]$.
+
+From the underlying problem formulation, as defined in Chapter~\ref{chap:mapping}, mappings under these symmetries are necessarily indistinguishable from each other, since they rely on inherent symmetries of the models.
 On the other hand, these are just models, they need not reflect reality.
 It still leaves the question open, how does this hold up in pracitice?
 Are equivalent mappings actually equivalent?
@@ -162,7 +192,7 @@ It is worth noting here that these measurements are just a first estimation.
 The accuracy of the energy data depends on a multitude of factors like the sampling rate or the measurement accuracy of the INA-231 sensors.
 We have not made a proper assesment of measurement errors and error propagation, which is especially large in the energy measurements that span measurements from four different components.
 Precise energy measurments, however, are beyond the scope of this thesis.
-We this experiment we cannot really conclude nor discard the hypothesis that energy consumption is an invariant of the mapping symmetries.
+With this experiment we cannot really accept nor discard the hypothesis that energy consumption is an invariant of the mapping symmetries.
 
 \subsection{Calculating Symmetries}
 
@@ -170,24 +200,24 @@ The branch of mathematics known as computational group theory deals with computa
 An overview of the methods of computational group theory can be found in~\cite{holt,seress2003permutation}, which both cover far beyond the basics presented in this subsection.
 Here we will present only the methods necessary for the calculations required of applications to software synthesis.
 
-To leverage the symmetries explained in this theses for software synthesis, we need to methods to calculate the following:
+To leverage the symmetries explained in this thesis, we need methods to calculate the following:
 \begin{enumerate}
-\item\label{prob:autgrp} Given an architecture graph $A$, the group of symmetries $\Aut(A)$.
+\item\label{prob:autgrp} Given an architecture graph $A$, calculate (generators for) the group of symmetries $\Aut(A)$.
 \item\label{prob:orbit} Given a mapping $m : T \rightarrow A$ and the symmetry group $G := \Aut(T \rightarrow A)$, enumerate the orbit $Gm$.
 \item\label{prob:equiv} Given two mappings $m,m' : T \rightarrow A$ and the symmetry group $G := \Aut(T \rightarrow A)$, determine whether $m = gm'$ for a $g \in G$, i.e. if the two mappings are in the same orbit.
 \end{enumerate}
 
 Mature software exists for computational group theory that can, in principle, solve these problems. 
-The \acs{GAP} system is a \ac{DSL} for computational discrete algebra with a focus on (computational) group theory~\cite{gap}.
+The \acsu{GAP} system is a \ac{DSL} for computational discrete algebra with a focus on (computational) group theory~\cite{gap}.
 We developed algorithms for dealing with problems \ref{prob:autgrp}-\ref{prob:equiv} in \ac{GAP}~\cite{goens_taco17}.
 We also included naive versions of most algorithms implemented directly in Python in \mocasin.
 
 Using \ac{GAP}-based algorithms in software synthesis tools like \ac{MAPS} in practice, however, comes with a series of complications.
 The largest problem is that it adds a dependency on a whole ecosystem.
 A complete distribution of \ac{GAP} is over $200$ MiB of size and takes around a second to start up in standard commodity hardware of today.
-Additionally, to communicate with a running \ac{GAP} instance we need to use \ac{POSIX} pipes, which is cumbersome and not portable.
+Additionally, to communicate with a running \ac{GAP} instance we need to use \ac{OS} pipes, which is cumbersome and not portable.
 A project existed to use \ac{GAP} as a library, but seems to be unmaintained, and we could not get it to function.
-We thus developed a standalone library~\cite{nicolai_studienarbeit}, \mpsym , which implements the required algorithms to solve problems ~\ref{prob:autgrp}-\ref{prob:equiv} and includes a domain-specific extension for efficiently dealing with hierarchical (e.g. clustered) archictures~\cite{goens_tcad21}.
+We thus developed a standalone library~\cite{goens_tcad21,nicolai_studienarbeit}, \mpsym , which implements the required algorithms to solve problems ~\ref{prob:autgrp}-\ref{prob:equiv} and includes a domain-specific extension for efficiently dealing with hierarchical (e.g. clustered) archictures~\cite{goens_tcad21}.
 
 Calculating the group of symmetries from an architecture graph (Problem~\ref{prob:autgrp}) is very related to the graph isomorphism problem. 
 This is a problem in NP, and it is not known, neither believed to be in P nor NP-complete. 
@@ -196,16 +226,43 @@ yet at the time of this writing (January 2021) the peer-review is still not comp
 Regardless of the worst-case complexity, graph isomorphism can be solved efficiently in practice for most instances~\cite{McKay201493}.
 Algorithms for doing so are implemented in nauty/Traces, which \mocasin and \mpsym use to solve Problem~\ref{prob:autgrp}.
 
+Virtually all \acp{MPSoC} have topologies that follow a well-defined set of design principles, like using \acp{NoC}, hierarchical clusters or groups of identical \acp{PE}.
+This is also the idea behind the \texttt{platform designer} module in \mocasin.
+In~\cite{goens_tcad21} we showed that we can leverage this to construct the automorphism group of the architecture.
+In particular, the automorphism groups of hierarchical architectures are the wreath product of symmetries of the clusters.
+We used a specialized algorithm that leverages a wreath-product decomposition, originally designed for applications in model checking~\cite{donaldson2009constructive}.
+Table~\ref{tab:correspondence} shows the domain-specific approach to finding architecture symmetries in hierarchical designs, as described in~\cite{goens_tcad21}.
+
+\begin{table*}[t]
+   %\footnotesize
+   \caption{Correspondence of architecture and group-theoretic constructions. Adapted from Table~1 in~\cite{goens_tcad21}.}
+     \label{tab:correspondence}
+   \begin{center}
+     \begin{tabularx}{\textwidth}{XX}
+       %\hline
+       Hardware Architecture & Group Theory \\
+       \hline
+       \rowcolor{gray!15}
+       Bus-based connection ($n$ identical elements/clusters) & Symmetric Group $S_n$ \\
+       Distinct elements/clusters & Direct product $G_1 \times \ldots \times G_n$ \\
+       \rowcolor{gray!15}
+       \ac{NoC} Connection with topology graph $\Gamma$ (identical elements) & Automorphism group of $\Gamma$  $\operatorname{Aut}(\Gamma)$  \\
+       Hierarchical composition & Wreath product $G \wr H$ \\
+     \end{tabularx}
+   \end{center}
+   \vspace{-0.5cm}
+ \end{table*}
+ 
 Most algorithms in computational group theory use a special data structure describing the group.
 This data structure is called a \emph{\ac{BSGS}}, see~\cite{holt,seress2003permutation} for more details.\index{base and strong generating set}
 The standard algorithm for calculating the \ac{BSGS} for a group is the Schreier-Sims Algorithm\index{Schreier-Sims Algorithm}.
 Multiple variants of this algorithm exist, which are more efficient under different circumstances.
-\acp{CAS} like \ac{GAP} use different variants with sophisticated heuristics for selecting which variant to use.
-In \mpsym we implement some variants of the Schreier-Sims with less sophisticated selection, which do not surpass \ac{GAP}'s performance.
+Computer algebra systems (\acsu{CAS}) like \ac{GAP} use different variants with sophisticated heuristics for selecting which variant to use.
+In \mpsym we implement some variants of the Schreier-Sims algorithm with a less sophisticated selection heuristic, which do not surpass \ac{GAP}'s performance.
 For all groups investigated in this thesis, however, \mpsym was comparable to \ac{GAP}, without the large ecosystem dependency~\cite{nicolai_studienarbeit,goens_tcad21}.
 
 Problem~\ref{prob:orbit} is a standard problem in computational group theory.
-We solve it using the Orbit algorithm, which can easily be adapted to a lazy variant, described in Algorithm~\ref{label:algo:lazy_orbit}.
+We solve it using the Orbit algorithm, which can easily be adapted to a lazy variant, described in Algorithm~\ref{algo:lazy_orbit}.
 If we use a perfect hash, the algorithm returns exactly the orbit of the mapping.
 If the hash can have duplicates, a smaller orbit might be returned, but the algorithm will clearly never yield elements from outside the orbit.
 This lazy variant is especially useful when looking for any mapping in the orbit which fullfils some properties, instead of being interested in the full orbit.
@@ -215,8 +272,8 @@ This is especially useful in the \acs*{TETRiS} system, which we will describe in
 	\caption{A lazy variant of the standard orbit algorithm}
 	\label{algo:lazy_orbit}
 	\begin{algorithmic}[1]
-	  \Input{A generating set $X = (g_1, \ldots, g_n), \langle g_1, \ldots, g_n \rangle = \operatorname{AutGrp}(M)$ for the mapping space, a mapping $m_0$. }
-	  \Output{The orbit of $m_0$: $\operatorname{AutGrp}(M)m = \{ g m_0 \mid g \in \operatorname{AutGrp}(M) \}$ }
+	  \Input{A generating set $X = (g_1, \ldots, g_n), \langle g_1, \ldots, g_n \rangle = \operatorname{Aut}(M)$ for the mapping space, a mapping $m_0$. }
+	  \Output{The orbit of $m_0$: $\operatorname{Aut}(M)m = \{ g m_0 \mid g \in \operatorname{Aut}(M) \}$ }
      \State H $\leftarrow$ $\{ \operatorname{Hash}(m_0) \}$
      \State CurElems $\leftarrow$ $\{ g_i m_0,~\operatorname{Hash}(g_i m_0) \notin H \mid i = 1,\ldots,n \}$
      \State H $\leftarrow$ $H \cup \{ \operatorname{Hash}(m) \mid m \in \text{CurElems} \}$
@@ -237,23 +294,23 @@ Using the same principle of the Orbit's partition, we can also just enumerate th
 While this is also an improvement, it is still very inefficient. Orbits can be very large when the problem has much symmetry.
 By default, \mpsym uses this variant as a fall-back method to solve Problem~\ref{prob:equiv} when correctness needs to be guaranteed.
 
-Another alternative for this which works without enumerating any orbits is based on the fact that the symmetries of the mapping $\operatorname{AutGrp}(M) \leq \operatorname{Sym}(M)$, the symmetric group on $M$ (i.e. the group of all permutations on $M$).
-Thus, if two mappings $m, m'$ are in the same orbit under $\operatorname{AutGrp}(M)$, then they are also in the same orbit under $\operatorname{Sym}(M)$: there exists a permutation $\sigma \in S_{|M|}$ which takes $m$ to $m'$.
-However, $|M|$ as we have seen can be very large, as it grows (at least) as $|V_A|^|V_K|$ and $\operatorname{Sym}(M) \cong S_{|M|}$ is thus unimaginably large, namely $|\operatorname{Sym}(M)| = |M|! \geq (|V_A|^|V_K|)!$.
-If we consider only architecture symmetries, this all works over the much smaller $\operatorname{AutGrp}(A)$.  We obviously do not have to iterate over the group to construct $\sigma$, since we know both $m,m'$ we can construct it directly.
-Knowing $\sigma$, we can efficiently solve the \emph{group membership problem}~\cite{seress2003permutation} for these permutation groups, using the \ac{BSGS}. \index{group membership problem}
-We know, namely, that $\sigma$ is in $\operatorname{AutGrp}(M)$ if and only if $\operatorname{AutGrp}(M)m = \operatorname{AutGrp}(M)m'$, by the definitions of the orbit and $\sigma$.
+Another alternative for this which works without enumerating any orbits is based on the fact that the symmetries of the mapping $\operatorname{Aut}(M) \leq \operatorname{Sym}(M)$, the symmetric group on $M$ (i.e. the group of all permutations on $M$).
+Thus, if two mappings $m, m'$ are in the same orbit under $\operatorname{Aut}(M)$, then they are also in the same orbit under $\operatorname{Sym}(M)$: there exists a permutation $\sigma \in S_{|M|}$ which takes $m$ to $m'$.
+However, $|M|$ as we have seen can be very large, as it grows (at least) as $|V_A|^{|V_K|}$ and $\operatorname{Sym}(M) \cong S_{|M|}$ is thus unimaginably large, namely $|\operatorname{Sym}(M)| = |M|! \geq (|V_A|^{|V_K|})!$.
+If we consider only architecture symmetries, this all works over the much smaller $\operatorname{Aut}(A)$.  We obviously do not have to iterate over the group to construct $\sigma$, since we know both $m,m'$ we can construct it directly.
+Knowing $\sigma$, we can efficiently solve the \emph{group membership problem}~\cite{seress2003permutation} for these permutation groups, using the \ac{BSGS} data structure.\index{group membership problem}
+We know, namely, that $\sigma$ is in $\operatorname{Aut}(M)$ if and only if $\operatorname{Aut}(M)m = \operatorname{Aut}(M)m'$, by the definitions of the orbit and $\sigma$.
 On the other hand, if we cannot construct $\sigma$ from $m,m'$, because it leads to contradictions, then, obviously, the orbits are different.
 
 We did not implement this variant based on the group membership problem.
 The reason for this is that we implemented an alternative which also allows us to select a mapping to work with, e.g. for \ac{DSE}.
 It is based on canonical representatives~\cite{goens_taco17,goens_mcsoc18}.
 A canonical representative of an orbit $Gm$ is an element $m_0 \in Gm$ such that there is a function
-$f : G \setminus \setminus M \rightarrow M$ which maps $Gm$ to $m_0$.
+$f : M / G \rightarrow M$ which maps $Gm$ to $m_0$.
 In other words, the function $f$ selects a unique element of every orbit, this element is the canonical representative.
 
-For constructing our canonical representatives, we order mappings using the \emph{lexicographical ordering}.
-For two mappings $m = (m_1,m_2,\ldots,m_k), m' = (m'_1,\ldots,m'_k)$ we say that $m \leq m'$ if and only if there exists a $j \leq k$ such that $m_i = m'_i$ for all $i < j$ and $m_j \leq m'_j$.\index{lexicographical ordering}
+For constructing our canonical representatives, we order mappings using the lexicographical ordering.\index{lexicographical ordering}
+For two mappings $m = (m_1,m_2,\ldots,m_k)$ and $m' = (m'_1,\ldots,m'_k)$ we say that $m \leq m'$ if and only if there exists a $j \leq k$ such that $m_i = m'_i$ for all $i < j$ and $m_j \leq m'_j$.\index{lexicographical ordering}
 The function $f$ for the canonical element of the orbit thus maps $Gm$ to $\min Gm$.
 In other words, we choose canonical elements to be the lexicographical-minimal elements of the orbits.
 
@@ -261,8 +318,8 @@ In other words, we choose canonical elements to be the lexicographical-minimal e
    \caption{Local search for finding canonical representatives. Adapted from Algorithm~1 of~\cite{goens_mcsoc18}.}
    \label{algo:canonical_representatives}
    \begin{algorithmic}[1]
-     \Input{A mapping $m$, a generating set $S$, with $\langle S \rangle = \operatorname{AutGrp}(M)$.}
-     \Output{A mapping $m_\text{canonical} = gm$ with $m_\text{canonical} < m'$ for all $m' \in Gm$}
+     \Input{A mapping $m$, a generating set $S$, with $\langle S \rangle = \operatorname{Aut}(M)$.}
+     \Output{A mapping $m_\text{canonical} = gm$ with $m_\text{canonical} \leq m'$ for all $m' \in Gm$}
      \State $F \gets \{m\}$
      \State $F_\text{old} \gets \emptyset$
      \While {$F \neq F_\text{old}$}
@@ -270,11 +327,11 @@ In other words, we choose canonical elements to be the lexicographical-minimal e
      \ForAll{ $s \in S$ }
      \ForAll{ $m' \in F$ }
      \If {$sm < m$}
-     \State $F \gets sm$
+     \State $F \gets F \cup \{sm\}$
      \EndIf
      \EndFor
      \EndFor
-     \State \label{line:optional} \textbf{(optional)} $F \gets \{ \operatorname{min}_{ m' \in F} m' \}$
+     \State \label{line:optional} $F \gets \{ \operatorname{min}_{ m' \in F} m' \}$ \textbf{(optional)}
      \EndWhile
      \Return $\operatorname{min}_{ m' \in F} m'$
    \end{algorithmic}
@@ -283,7 +340,7 @@ In other words, we choose canonical elements to be the lexicographical-minimal e
 To find the lex-minimal canonical representatives we use a local-search algorithm based on an iteration similar to the Orbit Algorithm. 
 Algorithm~\ref{algo:canonical_representatives} shows this local-search heuristic. 
 This algorithm to returns the lex-minimal element of the orbit if the generating set has a particular property, which we called being a \emph{strictly order-preserving generating set}~\cite{goens_mcsoc18}.
-We say $S$ is a strictly order-preserving generating set if for two mappings $m' < m$ in the same orbit, i.e. $m \in \langle S \rangle m'$, there exists a word $s_1,\ldots,s_n$ in the generators $s_i \in S$, such that $m' = s_1 \ldots s_n m$ with $s_i (s_{i+1}\ldots s_n)m < (s_{i+1} \ldots s_n)m$ for all $i = 1,ldots,n-1$.\index{stricly order-preserving generating set}
+We say $S$ is a strictly order-preserving generating set if for two mappings $m' < m$ in the same orbit, i.e. $m \in \langle S \rangle m'$, there exists a word $s_1,\ldots,s_n$ in the generators $s_i \in S$, such that $m' = s_1 \ldots s_n m$ with $s_i (s_{i+1}\ldots s_n)m < (s_{i+1} \ldots s_n)m$ for all $i = 1,\ldots,n-1$.\index{stricly order-preserving generating set}
 For example, for the symmetric group $S_n$, the set of all transpositions $S = \{ (i,j) \mid i \neq j \in \{1,\ldots,n\} \}$ is such a strictly order-preserving generating set.
 Without this property, the local search could yield an element which is not the lex-minimal element.
 If we remove the optional reduction in Line~\ref{line:optional}, we significantly speed up this search and make the probability of finding only a local minimum instead of the global one higher.
@@ -292,7 +349,6 @@ Thus, finding a local minimum instead of the canonical representative is tantamo
 Both \mpsym and \mocasin implement this heuristic and use it by default for design-space exploration, as we will see in Section~\ref{sec:dse}. 
 We also integrated \mpsym into \mocasin , using the simple Python versions of the algorithms in \mocasin only as fall-back. 
 
-TODO: add table from~\cite{goens_tcad21}.
 \subsection{Partial Symmetries}
 \label{sec:partial_symmetries}
 
@@ -310,33 +366,46 @@ Intuitively, thus, this four-by-four mesh has more symmetry.
 
 \begin{figure}[h]
 	\centering
-   \resizebox{0.55\textwidth}{!}{\input{figures/placeholder.tex}}
-	\caption{A comparison of the symmetries of two meshes.}
+   \resizebox{0.85\textwidth}{!}{
+      \begin{tikzpicture}
+      \input{figures/two_nocs.tex}
+      \end{tikzpicture}
+      }
+	\caption{A comparison of the two different-sized meshes and the intuitive notion of their symmetries.}
 	\label{fig:motivation_partial_symmetries}
 \end{figure}
 
 However, if we look at the group of automorphisms of the corresponding architecture graphs, we get a result that defies this intuition:
-both archtiectures have the same groups of symmetries!
-More precisely, their groups of automorphisms are isomorphic, they are dihederal groups on 4 points, $D_4$.
-More concretely, there are only 8  possible structure-preserving transformations acting on these two topologies, which are the rotations of $90^\circ,180^\circ,270^\circ,360^\circ = 0^\circ$ and the reflections among each of the axes (horizontal, vertical and both diagonals). We cannot, for example, divide the four-by-four mesh into a two-by-two mesh of two-by-two meshes, and rotate that larger two-by-two mesh by $90^\circ$ or one of the smaller ones by $90^\circ$. These two operations both work locally, if we ignore the rest of the structure, but do not preserve the whole structure of the mesh, as illustrated by Figure~\ref{fig:partial_symmetries_4x4}.
+both architectures have the same groups of symmetries!
+More precisely, their groups of automorphisms are isomorphic, they are dihedral groups on 4 points, $D_4$.
+More concretely, there are only 8  possible structure-preserving transformations acting on these two topologies, which are the rotations of $90^\circ,180^\circ,270^\circ,360^\circ = 0^\circ$ and the reflections among each of the axes (horizontal, vertical and both diagonals).
+We cannot, for example, divide the four-by-four mesh into a two-by-two mesh of two-by-two meshes, and rotate that larger two-by-two mesh by $90^\circ$ or one of the smaller ones by $90^\circ$.
+These two operations both work locally, if we ignore the rest of the structure, but do not preserve the whole structure of the mesh, as illustrated by Figure~\ref{fig:partial_symmetries_4x4}.
+The figure shows how a rotation on the bottom left $2 \times 2$ mesh breaks the communication structure.
+Highlighted is the communication between $\PE_1$ and $\PE_3$, which changes from $2$ hops to $1$ hop in the transformation.
 
 \begin{figure}[h]
 	\centering
-   \resizebox{0.55\textwidth}{!}{\input{figures/placeholder.tex}}
-	\caption{Some partial symmetries of a 4x4 mesh.}
+   \resizebox{0.95\textwidth}{!}{
+      \begin{tikzpicture}
+      \input{figures/fourbyfour_partial_motivation.tex}
+      \end{tikzpicture}
+      }
+	\caption{An example of a local symmetry that is not a global symmetry of a $4 \times 4$ mesh.}
 	\label{fig:partial_symmetries_4x4}
 \end{figure}
 
 For the mathematical formalization of this intuitive notion of local symmetries, in this section, we follow~\cite{lawson_inverse_semigroups}.
-There are essentially two ways equvialent ways of formalizing this intuitive notion of local symmetries, inverse semigroups and ordered groupoids.
+There are essentially two equivalent ways of formalizing this intuitive notion of local symmetries, inverse semigroups and ordered groupoids.
 We will consider the formalization using inverse semigroups, as it is conceptually simpler for computations, and mathematically equally as powerful.
-In the case of global symmetries there are concrete trasformations of architectures and mappings and corrpesponding abstract groups. For partial symmetries we will consider partial trasformations of mappings which we will model as partial permutations, and these partial permutations (transformations) have a corresponding abstract inverse semigroup.
+In the case of global symmetries, there are concrete transformations of architectures and mappings, which correspond to abstract groups.
+For partial symmetries, we will consider partial transformations of mappings, which we will model as partial permutations, and these partial permutations (transformations) have a corresponding abstract inverse semigroup.
 
 We start by defining partial functions and partial permutations.
 \begin{defn}
 Let X,Y be sets.
 A \emph{partial function} $f: X \rightarrow Y$ is a function from a subset of $X$ to a subset of $Y$.
-We denote the domain of by $\dom(f)$ the codomain of $f$ by $\cod(f)$.
+We denote the domain of $f$ by $\dom(f)$ the codomain of $f$ by $\cod(f)$.
 Thus, the partial function $f: X \rightarrow Y$ is a (total) function $f: \dom(f) \rightarrow \cod(f)$
 \end{defn}
 
@@ -347,27 +416,34 @@ A partial function $f: X \rightarrow X$ from $X$ to itself is called a \emph{par
 
 \begin{figure}[h]
 	\centering
-   \resizebox{0.55\textwidth}{!}{\input{figures/placeholder.tex}}
-	\caption{An example of a partial permutation in a $4 \times 4$ mesh.}
+   \resizebox{0.95\textwidth}{!}{
+      \begin{tikzpicture}
+      \input{figures/fourbyfour_partial_example.tex}
+      \end{tikzpicture}
+      }
+	\caption{The transformation of Figure~\ref{fig:partial_symmetries_4x4} as a partial permutation.}
 	\label{fig:example_partial_permutation}
 \end{figure}
 
 We can think of partial functions thus as functions that are not defined everywhere, and partial permutations, accordingly, are not defined everywhere.
-For example, the partial permutation $f : \{0,\ldots,15\} \rightarrow \{0,\ldots,15\}$ defined as $f(0) = 4, f(1) = 0, f(4) = 5, f(5) = 1$ is a rotation of the upper-left $2 \times 2$-mesh in the $4\times 4$-mesh, but is not defined on the rest of the architecure. This is a partial symmetry of the $4\times 4$-mesh. This partial permutation is dpeicted in Figure~\ref{fig:example_partial_permutation}. We can write it also as:
+For example, the partial permutation $f : \{1,\ldots,16\} \rightarrow \{1,\ldots,16\}$ defined as $f(1) = 2, f(2) = 6, f(5) = 1, f(6) = 5$ is a rotation of the bottom-left $2 \times 2$-mesh in the $4\times 4$-mesh depicted in Figure~\ref{fig:partial_symmetries_4x4}, but is not defined on the rest of the architcture.
+This is a partial symmetry of the $4\times 4$-mesh.
+This partial permutation is depicted in Figure~\ref{fig:example_partial_permutation}.
+We can write it also as:
 \begin{equation*}
 \left(
 \begin{array}{llllllllllllllll}
-0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15\\
-4 & 0 & - & - & 5 & 1 & - & - & - & - &  - &  - &  - &  - &  - &  -
+ 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 \\
+ 2 & 6 & - & - & 1 & 5 & - & - & - &  - &  - &  - &  - &  - &  - & -
 \end{array}
 \right)
 \end{equation*}
-Because the set $\{0,\ldots,15\}$ is understood from context, we can also write it, shorter, as:
+Because the set $\{1,\ldots,16\}$ is understood from context, we can also write it, shorter, as:
 \begin{equation*}
 \left(
 \begin{array}{llll}
-0 & 1 & 4 & 5 \\
-4 & 0 &  5 & 1
+1 & 2 & 5 & 6 \\
+2 & 6 &  1 & 5
 \end{array}
 \right)
 \end{equation*}
@@ -375,26 +451,27 @@ Because the set $\{0,\ldots,15\}$ is understood from context, we can also write 
 We also use a notation similar to the cycle notation of group theory, where we use a cicle with round brackets to denote a full cycle, where the last element maps to the first.
 Square brackets to denote when this is not the case, i.e. the function is not defined on the last element of that cycle. In this notation, singleton cycles cannot be omitted as in the case of groups.
 In other words, fixed points have to be represented as one-element cycles.
-The partial permutation from Figure~\ref{fig:example_partial_permutation} can thus be written much more compactly as: $(0,4,5,1)$.
-This is a full cycle, but it is only defined on the subset $\{0,1,4,5\}$.
-In the group context, the cycle $(0,4,5,1)$ as an element of the symmetric group on 15 points, would instead mean the (complete) permutation that fixes $\{2,3,6,7,8,9,10,11,12,13,14,15\}$.
-As a partial permutation in cycle notation we would write this as: \[(0,4,5,1)(2)(3)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15) \]
-A different example of a partial permutation is the partial permutation that moves the first row to the right (and is not defined on the rest), as a cycle: $[0,1][4,5][8,9][12,13]$.
-On the other hand, the partial permutation that is a diagonal reflection on the upper-left $2 \times 2$ (sub)mesh is, in cycle notation, $(1,4)(0)(5)$.
+The partial permutation from Figure~\ref{fig:example_partial_permutation} can thus be written much more compactly as: $(1,2,6,5)$.
+This is a full cycle, but it is only defined on the subset $\{1,2,5,6\}$.
+In the group context, the cycle $(1,2,6,5)$ as an element of the symmetric group on 16 points, would instead mean the (complete) permutation that fixes $\{3,4,7,8,9,10,11,12,13,14,15,16\}$.
+As a partial permutation in cycle notation we would write this as:
+ \[(1,2,6,5)(3)(4)(7)(8)(9)(10)(11)(12)(13)(14)(15)(16) \]
+A different example of a partial permutation is the partial permutation that moves the first column to the right (and is not defined on the rest), as a cycle: $[1,5][2,6][3,7][4,8]$.
+On the other hand, the partial permutation that is a diagonal reflection on the bottom-left $2 \times 2$ (sub)mesh is, in cycle notation, $(2,5)(1)(6)$.
 These two partial permutations can also be written in the matrix notation from above as:
 
 \begin{equation*}
 \left(
 \begin{array}{llll}
-0 & 4 & 8 & 12 \\
-1 & 5 & 9 & 13 
+1 & 2 & 3 & 4 \\
+5 & 6 & 7 & 8 
 \end{array}
 \right)
 \quad
 \left(
 \begin{array}{llll}
-0 & 1 & 4 & 5 \\
-0 & 4 & 1 & 5
+1 & 2 & 5 & 6 \\
+1 & 5 & 2 & 6
 \end{array}
 \right)
 \end{equation*}
@@ -406,19 +483,18 @@ Just as for groups, we can define the (left) action of a semigroup:
 Let $S$ be a semigroup and $X$ be a set. We say that $S$ \emph{acts} on $X$ (on the left) if there is a function $\cdot : S \times X \rightarrow X$ such that $(ab) \cdot x = a \cdot (b \cdot x)$. If $S$ is a monoid with identity $1$ and the function $\cdot$ satisfies the condition $1 \cdot x = x$ for all $x \in X$, we say that the action is a monoid action.
 \end{defn}
 
-The action of a semigroup of partial permutations to an architecture works the same as with groups, except it does not work on the whole architecture.
-Let $f$ be a partial permutation on an architecture $A$, and $m : T \rightarrow A$ be a mapping on that arcticeture.
-If the partial permutation is defined on all cores mappend on by $m$, i.e., $im(m) \subseteq \dom(f)$, then we can use the action of the semigroup of partial permutations of $A$ to define another mapping $fm$ by $fm(t) = f \cdot m(t)$
-for all $t$ in $T$. If $f$ is not defined on some of the cores of $m$, i.e., $im(m) \not \subseteq \dom(f)$, then we cannot define $fm$. In this way, $f$ also defines a partial permutation $\hat f$ on the set of mappings $\{ m : T \rightarrow A \}$.
-\todo{check that notation is consistent}
+The action of a semigroup of partial permutations on an architecture works the same as with groups, except it does not work on the whole architecture.
+Let $f$ be a partial permutation on an architecture $A$, and $m : K \rightarrow A$ be a mapping on that architecture.
+If the partial permutation is defined on all cores that $m$ maps to, i.e., $\im(m) \subseteq \dom(f)$, then we can use the action of the semigroup of partial permutations of $A$ to define another mapping $fm$ by $fm(t) = f \cdot m(t)$ for all $t$ in $K$.
+If $f$ is not defined on some of the cores of $m$, i.e., $\im(m) \not \subseteq \dom(f)$, then we cannot define $fm$. In this way, $f$ also defines a partial permutation $\hat f$ on the set of mappings $M \subseteq \{ m : K \rightarrow A \} =: A^K$.
 
-Consider for example the mapping of an application with three tasks to the $4 \times 4$-mesh defined by $m_0(t_0) = m_0(t_2) = \PE_0$ and $m_0(t_1) = \PE_1$, which we can also write as the vector $m_0 = (0,1,0)$.
-Then the partial permutation $(0,4,5,1)$ from Figure~\ref{fig:exapmle_partial_permutation} above defines the mapping $(0,4,5,1)m = (4,0,4)$.
-Similarly, the action of the partial permutation $(1,4)(0)(5)$ yields a new mapping, $(1,4)(0)(5)m_0 = (0,4,0)$.
-However, since the translation $[0,1][4,5][8,9][12,13]$ is not defined on $1 = m_0(t_1)$, we cannot define $[0,1][4,5][8,9][12,13]$ as a mapping.
-Formally we can say that the partial permutations $\widehat{(0,4,5,1)}$ and $\widehat{(1,4)(0)(5)}$ are defined on $m_0$, but $\widehat{[0,1][4,5][8,9][12,13]}$ is not defined on $m_0$.
+Consider for example the mapping of an application with three tasks to the $4 \times 4$-mesh defined by $m_1(t_1) = m_1(t_3) = \PE_1$ and $m_1(t_2) = \PE_5$, which we can also write as the vector $m_1 = (1,5,1)$.
+Then the partial permutation $(1,2,6,5)$ from Figure~\ref{fig:example_partial_permutation} above defines the mapping $(1,2,6,5)m_1 = (2,1,2)$.
+Similarly, the action of the partial permutation $(2,5)(1)(6)$ yields a new mapping, $(2,5)(1)(6)m_1 = (1,2,1)$.
+However, since the translation $[1,5][2,6][3,7][4,8]$ is not defined on $5 = m_1(t_2)$, we cannot define $[1,5][2,6][3,7][4,8]$ as a mapping.
+Formally we can say that the partial permutations $\widehat{(1,2,6,5)}$ and $\widehat{(2,5)(1)(6)}$ are defined on $m_1$, but $\widehat{[1,5][2,6][3,7][4,8]}$ is not defined on $m_1$.
 
-What happens with application symmetries? Consider ...
+%What happens with application symmetries? Consider ...
 
 Define orbits for inverse semigroups and s.c.c.
 

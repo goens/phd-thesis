@@ -1,0 +1,77 @@
+\begin{scope}[xshift=-500,yshift=113,scale=2,every node/.style={scale=2}]
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm] (src) {t$_1$};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, below right = 1cm of src] (fft_l) {t$_2$};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, above right = 1cm of src] (fft_r) {t$_3$};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, right = 1 cm of fft_l] (filter_l) {t$_4$};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, right = 1 cm of fft_r] (filter_r) {t$_5$};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, right = 1 cm of filter_l] (ifft_l) {t$_6$};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, right = 1 cm of filter_r] (ifft_r) {t$_7$};
+\node[draw, ellipse,minimum width = 1.1cm, minimum height=0.9cm, below right = 1cm of ifft_r] (sink) {t$_8$};
+\draw[-latex] (src) -- (fft_l);
+\draw[-latex] (src) -- (fft_r);
+\draw[-latex] (fft_l) -- (filter_l);
+\draw[-latex] (fft_r) -- (filter_r);
+\draw[-latex] (filter_l) -- (ifft_l);
+\draw[-latex] (filter_r) -- (ifft_r);
+\draw[-latex] (ifft_l) -- (sink);
+\draw[-latex] (ifft_r) -- (sink);
+\end{scope}
+
+
+\begin{scope}[name prefix=orig-]
+\input{figures/odroid.tex}
+\node[ellipse,fill=red!60] (t1) at (pe2) {\Huge t$_1$};
+\node[ellipse,fill=red!60,anchor=north west] (t2) at (pe1.north west) {\Huge t$_2$};
+\node[ellipse,fill=red!60] (t3) at (pe1) {\Huge t$_3$};
+\node[ellipse,fill=red!60,anchor=north west] (t4) at (pe5.north west) {\Huge t$_4$};
+\node[ellipse,fill=red!60,anchor=south east] (t5) at (pe1.south east) {\Huge t$_5$};
+\node[ellipse,fill=red!60,anchor=south east] (t6) at (pe5.south east) {\Huge t$_6$};
+\node[ellipse,fill=red!60] (t7) at (pe3) {\Huge t$_7$};
+\node[ellipse,fill=red!60] (t8) at (pe7) {\Huge t$_8$};
+\end{scope}
+
+
+\draw[-{Triangle[length=4mm,width=9.5mm]},line width=6.2mm,color=black!20,shorten >= 3mm, shorten <=3mm] (sink) -- (orig-pe1);
+
+\begin{scope}[xshift=500, yshift=-230, name prefix=arch-]
+\input{figures/odroid.tex}
+
+\node (label) [align=center] at (-8.5,2.5) {\Huge architecture symmetry: \\ \Huge (PE$_1$,PE$_2$)};
+\node[ellipse,fill=red!60] (t1) at (pe1) {\Huge t$_1$};
+\node[ellipse,fill=red!60,anchor=north west] (t2) at (pe2.north west) {\Huge t$_2$};
+\node[ellipse,fill=red!60] (t3) at (pe2) {\Huge t$_3$};
+\node[ellipse,fill=red!60,anchor=north west] (t4) at (pe5.north west) {\Huge t$_4$};
+\node[ellipse,fill=red!60,anchor=south east] (t5) at (pe2.south east) {\Huge t$_5$};
+\node[ellipse,fill=red!60,anchor=south east] (t6) at (pe5.south east) {\Huge t$_6$};
+\node[ellipse,fill=red!60] (t7) at (pe3) {\Huge t$_7$};
+\node[ellipse,fill=red!60] (t8) at (pe7) {\Huge t$_8$};
+
+\end{scope}
+
+
+\begin{scope}[yshift=230, xshift=500,name prefix=app-]
+\input{figures/odroid.tex}
+\node (label) [align=center] at (-11,6) {\Huge  application symmetry: \\ \Huge (t$_2$,t$_3$)(t$_4$,t$_5$)(t$_6$,t$_7$)};
+\node[ellipse,fill=red!60] (t1) at (pe2) {\Huge t$_1$};
+\node[ellipse,fill=red!60] (t2) at (pe1) {\Huge t$_2$};
+\node[ellipse,fill=red!60,anchor=north west] (t3) at (pe1.north west) {\Huge t$_3$};
+\node[ellipse,fill=red!60,anchor=south east] (t4) at (pe1.south east) {\Huge t$_4$};
+\node[ellipse,fill=red!60,anchor=north west] (t5) at (pe5.north west) {\Huge t$_5$};
+\node[ellipse,fill=red!60] (t6) at (pe3) {\Huge t$_6$};
+\node[ellipse,fill=red!60,anchor=south east] (t7) at (pe5.south east) {\Huge t$_7$};
+\node[ellipse,fill=red!60] (t8) at (pe7) {\Huge t$_8$};
+\end{scope}
+
+%action on arch
+\draw (orig-t5) edge[-{latex},line width=1.2mm, color=red!40,in=120,out=290,looseness=1]  (arch-t5);
+\draw (orig-t3) edge[-{latex},line width=1.2mm, color=red!40,in=120,out=290,looseness=1]  (arch-t3);
+\draw (orig-t2) edge[-{latex},line width=1.2mm, color=red!40,in=120,out=290,looseness=1]  (arch-t2);
+\draw (orig-t1) edge[-{latex},line width=1.2mm, color=red!40,in=120,out=290,looseness=1]  (arch-t1);
+
+%action on app
+\draw (orig-t7) edge[-{latex},line width=1.2mm, color=red!40,in=210,out=50,looseness=1]  (app-t7);
+\draw (orig-t6) edge[-{latex},line width=1.2mm, color=red!40,in=210,out=50,looseness=1]  (app-t6);
+\draw (orig-t5) edge[-{latex},line width=1.2mm, color=red!40,in=210,out=50,looseness=1]  (app-t5);
+\draw (orig-t4) edge[-{latex},line width=1.2mm, color=red!40,in=210,out=50,looseness=1]  (app-t4);
+\draw (orig-t3) edge[-{latex},line width=1.2mm, color=red!40,in=210,out=50,looseness=1]  (app-t3);
+\draw (orig-t2) edge[-{latex},line width=1.2mm, color=red!40,in=210,out=50,looseness=1]  (app-t2);
