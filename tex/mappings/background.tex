@@ -259,14 +259,14 @@ We will thus focus only on models of architecture for the sake of \ac{DSE} and t
 The general situation described in the Y-charts approach is very common in practice: A parametrized family of hardware architectures is assumed as part of the flow, and architectures are described in terms of this family.
 With newer developments in hardware, like the proliferation of \ac{NoC}-based architectures, many modern approaches apply the same principle to these modern architectures.
 For example, the models used by~\cite{weichslgartner2014daarm,singh2010communication,richthammer2018search} all assume a regular mesh ($N \times M$) \ac{NoC}-based topology and parametrize the architecture by the size of the mesh, $N,M$ as well as the core types and communication and memory parameters like worst-case latency values.
-In the Sesame framework~\cite{sesame}, an additional abstraction layer called the \emph{mapping layer} works as an intermediate virtual platform, in correspondence with the \ac{KPN}, application, which is then mapped to the target platform.\index{mapping layer}
+In the Sesame framework~\cite{pimentel2006systematic}, an additional abstraction layer called the \emph{mapping layer} works as an intermediate virtual platform, in correspondence with the \ac{KPN}, application, which is then mapped to the target platform.\index{mapping layer}
 In the DOL approach~\cite{thiele2007DOL}, architectures are modeled in an XML specification that implicitly models the architectures as graphs with specific annotations e.g. for memory sizes or resource sharing methods like \ac{FIFO}. 
 While this is an ad-hoc model, its graph-based nature is general enough to describe arbitrary architectures.
 This is common of the most general models at this level of abstraction: they are graph-based models.
 In~\cite{erbas2006multiobjective}, architectures are modeled as bi-partite graphs with cores and memories.
 This is bi-partite structure is actually similar to the constraint graphs defined in~\cite{weichslgartner2014daarm,richthammer2018search}, which basically describe the subset of the architecture used by a mapping. 
 In \ac{MAPS}~\cite{maps}, on the other hand, for the purposes of mapping, architectures are described by labeled graphs where only the cores are nodes and the edges represent communication.
-This is similar to the model described in~\cite{sesame}.
+This is similar to the model described in~\cite{pimentel2006systematic}.
 Some of these models~\footnote{Specifically, iterations on the \ac{MAPS} model by Silexica} have been an influence in the SHIM standard~\cite{mca_shim15} and the IEEE 2804-2019 Standard~\cite{ieee-2804-2019}.
 There are subtle differences between all these models, which makes comparing approaches difficult~\cite{goens_mcsoc16}.
 
@@ -347,7 +347,7 @@ As such, we will focus only on the graphs defined in this section for mapping sp
 
 The main problem we address in the first part of this thesis is the \emph{mapping problem}\cite{marwedel2011mapping}.
 The mapping problem is the decision problem of assigning physical resources (hardware) to the logical tasks and data (software) of an application.
-As can be seen from Figure~\ref{fig:software_synthesis_flow} in the introduction, this is a central problem in software synthesis.
+As can be seen from Figure~\ref{fig:software_synthesis_flows} in the introduction, this is a central problem in software synthesis.
 
 We commonly think of assigning the tasks and communication channels (or data) to the physical resources, and not the other way around. 
 The reason we do not choose to do so again has a mathematical background, as we will explain here.

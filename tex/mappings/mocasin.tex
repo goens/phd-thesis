@@ -5,8 +5,8 @@ As such, this section will explain the tool in-depth, to enable the description 
 
 \begin{figure}[h]
 	\centering
-   \includegraphics[width=0.95\textwidth]{figures/mocasin.pdf}
-	\caption{The \mocasin architecture. Adapted from \cite{menard_rapido21} (Figure~2).}
+   \includegraphics[width=0.75\textwidth]{figures/mocasin.pdf}
+	\caption{The \mocasin architecture. Adapted from Figure~2 in \cite{menard_rapido21}}
 	\label{fig:mocasin_arch}
 \end{figure}
 
@@ -19,7 +19,7 @@ The \mocasin architecture is composed of multiple modules that can be combined t
 
 In general, simulating a KPN requires four inputs, as explained in Section~\ref{sec:simulating_mappings}: the \ac{KPN} graph, a platform description, execution traces and a mapping.
 The \mocasin tool has data internal structures for these four inputs that reflect the models as explained insection~\ref{sec:kpn_basic}-\ref{sec:mapping_problem}.
-The tool boasts multiple readers to generate the internal data structures from established formats like \texttt{tgff}~\cite{tgff}, \texttt{sdf3}~\cite{sdf3} or the \texttt{MAPS} formats. \index{tgff}\index{\acs*{\SDFFF}}
+The tool boasts multiple readers to generate the internal data structures from established formats like \texttt{tgff}~\cite{dick1998tgff}, \texttt{sdf3}~\cite{sdf3} or the \texttt{MAPS} formats. \index{tgff}\index{\acs*{\SDFFF}}
 Instead of a concrete trace, \mocasin expects a trace generator, which can generate the trace on the fly: this is useful e.g. for non-deterministic models computation, but for KPNs the two are equivalent.
 The \ac{KPN} trace generator, for example, simply reads the trace from a file.
 A mapping, while required for simulation, does not need to be provided: it can be calculated in a \acl{DSE}.
