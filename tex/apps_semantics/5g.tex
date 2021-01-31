@@ -1,4 +1,5 @@
-A second use-case we have investigated for for the Reactors model is the 5G standard. 
+Having defined Reactors formally, we consider some applications for the model.
+In this section we will discuss Reactors in the 5G standard.
 
 Telecommunication standards evolve constantly, pushing the limits of signal processing systems from almost every angle.
 Consumer demands adapt to increases in capabilities. This results in a feedback loop that not only raises the demands themselves, but also their heterogeneity.
@@ -25,6 +26,7 @@ Details on the requirements, like the sizes and numbers of \ac{FFT} nodes depend
 However, the dependencies between the resources required for the baseband processing and the parameters of the workload are non-trivial.
 Figure~\ref{fig:5g_radar} shows a small selection of parameter combinations for \ac{LTE} baseband processing and how the required computations depend on them.
 In the figure, the number of antennas and layers are both fixed at $1$. These also affect the required numbers of \ac{FFT}, \ac{IFFT}, equalization, demodulation and channel inversion nodes.
+The length of the values in the radar plot shows the relative amount of kernels required for each type of operation.
 
 \begin{figure}[t]
 	\centering
@@ -41,38 +43,38 @@ A model that ensures deterministic execution for easy debugging and time semanti
 %Determinism in the execution is an invaluable tool for this.
 %Due to the real-time nature of the problem, having a timed model is also very useful.
 For this reason, we propose to use the Reactors model~\cite{wittig_ict20}.
-We adapted the WiBench benchmark~\cite{wibench} (cf. Figure~\ref{fig:reactors_wibench}), dealing with the PHY layer in LTE, using Lingua Franca~\cite{lingua_franca}.
-Lingua Franca is an implementation of the Reactors model, which we will discuss in Chapter~\ref{chap:pl}.
+We adapted the WiBench benchmark~\cite{wibench} (cf. Figure~\ref{fig:reactors_wibench}), dealing with \acs{PHY} in \ac{LTE}, using Lingua Franca~\cite{lingua_franca}.
+Lingua Franca is an implementation of the Reactors model.
 
 \subsubsection{Adaptability in 5G and beyond}
 
 We used LTE traces to extrapolate information about the dynamicity of the demands for 5G and beyond.
-These traffic traces, collected over a $5$ hour period spread over $15$ days feature real data with over $1.2$ million Radio Network Temporary Identifiers (RNTIs) from $24$ different base stations~\cite{budhdev2020isoran}.
-They were generously provided by Arka Maity, Nishant Budhev and Tulika Mitra.
+These traffic traces, collected over a $5$ hour period spread over $15$ days feature real data with over $1.2$ million \acp{RNTI} from $24$ different base stations~\cite{budhdev2020isoran}.
+They were generously shared by Arka Maity, Nishant Budhev and Tulika Mitra.
 
 Figure~\ref{fig:statistics} shows statistical data points extracted from the traces.
 In the figure, every point represents the workload of a base station at a particular set of subframes.
-We consider the relationship between the number of User Equipment units (UEs) and the total number of resource blocks required at those subframes.
-The size of each point represents how many subframes in the trace had those precise requirements in terms of UEs and total resource blocks.
+We consider the relationship between the number of \ac{UE} units and the total number of resource blocks required at those subframes.
+The size of each point represents how many subframes in the trace had those precise requirements in terms of \acp{UE} and total resource blocks.
 %We also classify three types of design points, as follows:
 
 \begin{figure}[t]
 	\centering
 	%\includegraphics[width=0.46\textwidth]{figures/statistics.pdf}
 	\resizebox{0.95\textwidth}{!}{\inputTikz{lte_statistics.tex}}
-	\caption{Possible configurations in a resource-constrained LTE environment. The number of UEs are depicted with a meaningless random jitter for visibility. Adapted from Figure~2 in~\cite{wittig_ict20}.}
+	\caption{Possible configurations in a resource-constrained \acs{LTE} environment. The number of UEs are depicted with a meaningless random jitter for visibility. Adapted from Figure~2 in~\cite{wittig_ict20}.}
 	\label{fig:statistics}
 \end{figure}
 
-In a traditional setup, with a static implementation of the PHY layer, we would make worst-case assumptions.
-This includes the number of UEs and resource blocks per UE that we can support, as dictated by resource constraints.
-Let's assume that, given our limited resources, our PHY layer implementation supports at most $10$ UEs and $47$ resource blocks per UE.
-These numbers are admittedly low, even for LTE.
+In a traditional setup, with a static implementation of a \acs{PHY}, we would make worst-case assumptions.
+This includes the number of \acp{PE} and resource blocks per \ac{UE} that we can support, as dictated by resource constraints.
+Let's assume that, given our limited resources, our \acs{PHY} implementation supports at most $10$ \acp{UE} and $47$ resource blocks per \ac{UE}.
+These numbers are admittedly low, even for \acs{LTE}.
 However, we choose this low threshold deliberately.
-This way we can use these LTE traces to extrapolate the possible dynamicity of behaviors in 5G and beyond.
+This way we can use these \ac{LTE} traces to extrapolate the possible dynamicity of behaviors in 5G and beyond.
 Out of the $3017424$ considered subframes in the traces, slightly over half ($1689447$) could be processed with these static resource constraints.
 These design points we classify as ``Static'' and depict as green points in Figure~\ref{fig:statistics}.
-Consider a dynamic system that can adapt to the current workload, e.g. by supporting less UEs but more resource blocks per UE, or vice-versa.
+Consider a dynamic system that can adapt to the current workload, e.g. by supporting less \acp{UE} but more resource blocks per \ac{UE}, or vice-versa.
 We can estimate the resources required for different configurations by generating task graphs for each and comparing the computational resources required.
 Some design points in Figure~\ref{fig:statistics} can be supported by a dynamic system using the same resources as in the static version.
 We classify them as ``Dynamic''.
@@ -100,27 +102,26 @@ It also can help define well-behaved dynamic behavior through the use of mutatio
 \end{figure}
 
 
-We adapted the WiBench benchmark~\cite{wibench} to work with Lingua Franca, an implementation of Reactors. 
+In ongoing (unpublished) work with Robert Wittig and Christian Menard, we adapted the WiBench benchmark~\cite{wibench} to work with Lingua Franca, an implementation of Reactors. 
 Figure~\ref{fig:reactors_wibench} depicts the Reactor network implementing this benchmark. 
 Since WiBench is single threaded, we only compared to a single threaded version in Reactors.
 In particular, we did not leverage data level parallelism throughout the layer, nor the pipeline parallelism that we get from the network's topology for free.
 This is a worst-case assumption we made to analyze the overhead.
 By using the Reactor model, the benchmark is deterministic, even if it was to run using this parallelism~\cite{lohstroh_cyphy19}.
 More importantly though, we can use the model's time semantics to define the constraints that ensure each subframe is processed on time.
-At the time of this writing, Lingua Franca does not support the mutations~\cite{lohstroh_cyphy19} described in the model.
-Our implementation is thus still static (cf. Figure~\ref{fig:reactors_wibench}).
-However, this implementation presents a great opportunity to research and develop safe mutations for 5G.
+Our implementation is thus still static (cf. Figure~\ref{fig:reactors_wibench}), since we have not yet specified well-defined mutations.
+This implementation presents a great opportunity for future work to research and develop safe mutations for 5G.
 
 Our implementation of the Reactor-based WiBench had an overhead of $15\%$ (median over $100$ executions), compared to the baseline implementation of WiBench.
-There is certainly potential to improve this, e.g. as the scheduler of the C++ implementation on Lingua Franca, used for this implementation, is not optimized at all.
+There is certainly potential to improve this, e.g. as the scheduler of the C++ implementation on Lingua Franca, used for this implementation, was not optimized at all.
 Nevertheless, this is a purely software-based implementation, so it serves only as a very rough estimation of the overhead; it is best suited to study the model's suitability and develop Reactor mutations for adaptability.
 An efficient implementation in practice could work with reconfigurable hardware, e.g. implementing a \ac{PRET}~\cite{pret} machine, which is well-suited to Reactors' semantics.
 
 In general, these preliminary results open up many avenues for research in adaptability in 5G. We can the Reactors model, at the semantic level to support the necessary adaptability in 5G. Similarly, we can design reconfigurable hardware that implements it.
 
-\subsubsection{Other applications}
+\subsubsection{Other applications: Automotive}
 
 The reactors model has many desirable properties for designing reliable \acp{CPS}, which can be applied in a multitude of domains.
 An important example is the automotive domain, where the high-performance requirements of autonomous driving and modern entertainment are coupled with the timed \ac{CPS} including the car and its surroundings.
 To keep the scope of this thesis limited, we omit a thorough discussion of an application of Reactors in the automotive domain.
-We showed how we can use the Reactors model to achieve determinism in the AUTOSAR \ac{AP}~\cite{menard_date20}, a modern automotive standard.
+In~\cite{menard_date20}, we showed how we can use the Reactors model to achieve determinism in the AUTOSAR \ac{AP}, a modern automotive standard.
