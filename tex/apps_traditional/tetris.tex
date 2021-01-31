@@ -38,7 +38,7 @@ Figure~\ref{fig:tetris_variant_selection} depicts the principle behind this symm
 At this point we assume a mapping has been selected, which we call the \emph{canonical mapping} in reference to the canonical representative of the equivalence class (orbit).\index{\ac{TETRiS} ! canonical mapping}
 \ac{TETRiS} keeps track of the system's status, knowing where other running applications are mapped.
 The idea behind the variant selection is then to apply the generators $g_i \in G$ of the automorphism group $G$ for the mapping space. 
-We call the process of applying these generators \emph{\ac{TETRiS} rotations}, informed by the geometric intuition of these transformations\index{\ac{TETRiS} ! rotations}\footnote{This might be reminiscent of the commercial game Tetris. Note that the \ac{TETRiS} system is an independent research project and any resemblance is purely coincidental.}
+We call the process of applying these generators \emph{\ac{TETRiS} rotations}, informed by the geometric intuition of these transformations\index{\ac{TETRiS} ! rotations}\footnote{This might be reminiscent of the commercial game Tetris. Note that the \ac{TETRiS} system is an independent research project and any resemblance is purely coincidental.}.
 
 \begin{figure*}[th]
 	\centering
@@ -62,8 +62,7 @@ We tested this on an Odroid XU4 system running a pthread-based implementation\fo
 	\label{fig:tetris_experiment}
 \end{figure*}
 
-Figure~\ref{fig:tetris_experiment} shows the results of this test.
-It compares the Linux \ac{CFS} with our \ac{TETRiS} system when running for instances of the audio filter benchmark (\ac{CPN}).
+Figure~\ref{fig:tetris_experiment} shows the results of this test, running different instances of the audio filter benchmark (\ac{CPN}).
 The three mappings $T_1$, $T_2$ and $T_3$ are three different Pareto points in terms of wall-clock time, CPU time and energy consumption. 
 The mapping \ac{CFS} refers to an execution using Linux' \ac{CFS} scheduler and thus technically without a (static) mapping, which we measured for comparison.
 For each mapping we executed the four concurrent instances of the application and measured the wall-clock and execution times as well as the total energy consumption.

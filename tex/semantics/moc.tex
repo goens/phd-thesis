@@ -2,7 +2,7 @@ This section will survey some of the most important concurrent models of computa
 
 \subsection{Partial Computation: Scott Domains}
 
-When Dana Scott proposed his mathematical theory of computation~\cite{scott1970}, he used the term mathematical to contrast it with operational computation.
+When Scott proposed his mathematical theory of computation~\cite{scott1970}, he used the term mathematical to contrast it with operational computation.
 In practice, the steps of a computation are defined by the \ac{ISA} of the machine executing them.
 Most people don't write programs directly for the \ac{ISA}, however. They write them in an abstract programming language, which is translated by a compiler into machine instructions.
 Thus, in practice, the implementation of a compiler is what defines the (operational) semantics of programs.
@@ -13,11 +13,12 @@ In particular, a crucial abstraction introduced by his theory is that of partial
 His theory makes it possible to express a computation as a series of partial results, without regarding the actual implementation of these.
 We will now introduce the basics of Scott's mathematical theory of computation.
 
-Two related concepts define computation in Scott's formulation, $\omega$-complete partial orders~\cite{gunter} or complete semi-lattices~\cite{lee_matsikoudis_semantics}. \index{$\omega$-complete partial order}
+Two related concepts can be used to computation in Scott's semantics, $\omega$-complete partial orders~\cite{gunter} or complete semi-lattices~\cite{lee_matsikoudis_semantics}. \index{$\omega$-complete partial order}
 We will use the latter.
 Let $\langle A, \leq \rangle$ be a \ac{poset}. For a subset $B \subseteq A$, we say $a$ is an upper or lower bound of $B$ if $a \geq b$ (resp. $\leq$) for all $b \in B$. 
-Similarly, we say $a$ is a \emph{greatest lower bound}/\emph{least upper bound} of $B$ if $a$ is a lower/upper bound of $B$ and for all other lower/upper bounds $a'$ we have $a \leq/\geq b$.\index{(greatest) lower bound}\index{(least) upper bound}
+Similarly, we say $a$ is a \emph{greatest lower bound}/\emph{least upper bound} of $B$ if $a$ is a lower/upper bound of $B$ and for all other lower/upper bounds $a'$ we have $a \leq/ b$ or $a \geq b$, respectively.\index{(greatest) lower bound}\index{(least) upper bound}
 A nonempty set $D \subseteq A$ is then called \emph{directed} if every nonempty subset of $D$ has an upper bound \index{directed set}. If every such set $D$ has a least upper bound, we say that $A$ is directed-complete.
+In that case, we denote the least upper bound of $D$ as $\sqcup D$.
 If $A$ additionally has a least element $\bot \in A$ with $\bot \leq a$ for all $a \in A$, we say that $A$ is a complete partial order.
 If, instead, $A$ is directed-complete and every non-empty subset has a greatest lower bound, we say $A$ is a complete semilattice.\index{complete semilattice}
 
@@ -27,35 +28,37 @@ We then define $S = \Sigma^* \cup \Sigma^\omega$ as the set of (finite or infini
 The set of sequences $S$ is obviously a \ac{poset} with the prefix relation $\sqsubseteq$, where $s \sqsubseteq s'$ iff there exists a $t \in S$ with $s.t = s'$.
 Here, $(.) : S \rightarrow S$ denotes the concatenation operator (which coincidentally makes $S$ a monoid with neutral element $\epsilon$, the empty string).
 In fact, $S$ is a complete semilattice with regards to $\sqsubseteq$ (cf.~\cite{lee_matsikoudis_semantics}).
-In Scott's model, these sequences describe the partial steps of a computation, which generate data in discrete steps (not necessarily all at once). 
+In Scott's model, these sequences describe the partial steps of a computation process, generating data in discrete steps (not necessarily all at once). 
 
-A function $f : S \rightarrow S$ is called monotone if for $s \sqsubseteq s'$ it holds that $f(s) \sqsubseteq s'$.\index{Scott ! monotone function}
-As a model of computation, this means models causality: having more input data cannot change the data that has already been output.
+A function $f : S \rightarrow S$ is called monotone if for $s \sqsubseteq s'$ it holds that $f(s) \sqsubseteq f(s')$.\index{Scott ! monotone function}
+Interpreting $f$ as computation, this models causality: having more input data cannot change the data that has already been output.
 In other words, the future cannot change the past.
-A more technical term is continuity.\index{Scott ! continuity}
+An additional, more technical definition is that of continuity.\index{Scott ! continuity}
 A monotone function $f : S \rightarrow S$ is called continuous if for all directed sets $D$ in $S$, it holds that $f (\sqcup D) = \sqcup f(D) := \sqcup \{ f(s) \mid s \in D \}$.
-This is distinct from monotone only for infinite sequences. It means that a function will not produce its output only after reading an infinite amount of input.
+This concept is distinct from that of a monotone function only for infinite sequences.
+It means that a function will not produce its output only after reading an infinite amount of input.
 We call this continuous because the prefix relation defines a topology on the set $S$, the Scott topology.\index{Scott ! topology}
 
 \subsection{Concurrent Computation}
-Scott's computation model implicitly assumed a sequential computation and Scott-continuous functions are a powerful method for describing partial sequential computations.
+\label{sec:concurrent_mocs}
+Scott's computation model implicitly assumed a sequential computation process, and Scott-continuous functions are a powerful method for describing partial sequential computations.
 Can we also use this model to describe parallel computation?
 Gilles Kahn did precisely this, four years after Scott published his mathematical theory of computation. 
-He used the formalism of Scott to define a model of parallel computation, based on what he coined as process networks, now known as \acf{KPN}\cite{kahn74}.
+He used the formalism of Scott to define a model of parallel computation, based on what he coined as process networks, now known as \acfp{KPN}\cite{kahn74}.
 
-The basic idea to generalize the Scott theory of computation for concurrent (parallel) execution is simple.
-We compose functions in networks of Scott functions, these are the \ac{KPN}.
+The basic idea to generalize the Scott theory of computation for concurrent execution is simple.
+We compose functions in networks of Scott functions, these are the \acp{KPN}.
 These composed functions yield a system of equations.
 For example, we can compose a Scott continuous function $f$ with itself by applying it to its output.
 This yields an equation: $f(s) = f(f(s))$, which is solved by a fixed point of $f$ (i.e. a sequence $s \in S$ with $f(s)= s$).
-A series of related results on such systems of equations and fixed-points by Tarski, Kleene show that such a system always has a least fixed point.
+A series of related results on such systems of equations and fixed-points by Tarski, Kleene and others show that such a system always has a least fixed point.
 This defines the semantics of \ac{KPN}.
 For example, for the case of the single function $f$ as above, if $f$ is the identity function, this least fixed point is $\epsilon$.
 This solves problems with loops in the system by giving well-defined semantics, and even yields a procedure to find the fixed points, by recursively applying the functions.
 In particular, this means that \ac{KPN} are deterministic (as per their fixed-point semantics).
 
 There are other related models that span from the same time period, like the Hewitt-Agha actor model\index{actor model}~\cite{DBLP:conf/ijcai/HewittBS73,Agha:86:Actors}.
-This was also a model of parallell computation. In it, actors communicate with other actors via mailboxes in a non-deterministic fashion. 
+This was also a model of parallell computation. In it, actors communicate with other actors via messages in a non-deterministic fashion. 
 Actors can also be dynamically created and the connections between them are also dynamic.
 While this yields much more flexibility, it comes with a high price: deteriminism. 
 
@@ -68,13 +71,15 @@ They are well-known for describing systems and specifying their behavior, e.g. i
 Technically, however, these are also very abstract models of computation.
 
 Figure~\ref{fig:dataflow_mocs} shows an overview of the different models of computation and their properties.
+The dotted nodes refer to abstract properties of the models, whereas the filled nodes are concrete models.
+Concretely, the ones colored blue are that we review and use more in detail in this thesis.
 Timed models, like reactors, will be discussed in Section~\ref{sec:reactors}, and dataflow models in the section below.
 This figure was inspired by Figure~1.6 in~\cite{Ptolemaeus:14:SystemDesign}.
 
 \begin{figure}[h]
 	\centering
-   \resizebox{0.95\textwidth}{!}{\input{figures/mocs.tex}}
-	\caption{Overview of different models of computation.}
+   \resizebox{1.00\textwidth}{!}{\input{figures/mocs.tex}}
+	\caption{Overview of different models of computation. Color-filled nodes refer to concrete models, dotted ones are abstract properties. }
 	\label{fig:dataflow_mocs}
 \end{figure}
 
@@ -82,62 +87,62 @@ This figure was inspired by Figure~1.6 in~\cite{Ptolemaeus:14:SystemDesign}.
 \subsection{Dataflow Models of Computation}
 
 A series of models stands out in the context of software synthesis and also in the domain of embedded system software, these are dataflow models of computation.
-Wore dataflow models have been with diverse semantics have been proposed than we could reasonably list here.
+More dataflow models have been proposed than what we could reasonably list and describe here.
 The original idea however, or at least one of the first to be published, goes back to Dennis~\cite{dennis1974first,dennis1986data}\index{Dataflow ! Dennis}
 These dataflow models were also related with \ac{KPN}, in so-called dataflow process networks~\cite{lee1995dataflow,lee_matsikoudis_semantics}
-Common among most dataflow models is the concepts of actors, which encapsulate computation and which have \emph{firing} semantics.\index{firing}
+Common among most dataflow models is the concept of actors, which encapsulate computation and which have \emph{firing} semantics.\index{firing}
 Actors communicate exclusively via explicit input and output channels, which work as \acs{FIFO} buffers.
 An actor fires when certain conditions are met, consuming tokens in (some of) its input channels, and producing other tokens in its output channels.
 
 We will describe Dennis dataflow using a formalism similar to the one described in~\cite{Parks:M95:105,lee_matsikoudis_semantics}.
 This formalism is very general and allows to describe many other dataflow paradigms as special cases.
 The basis of the formalism are the \emph{firirng rules}\index{firing rules}.
-An actor has a finite set $\mathcal{R}$ of firing rules, and each rule $R \in \mathcal{R}$ is a finite tuple of word over the alphabet of values $\bar \Sigma := \Sigma \cup {\bot}$.
-Here, $\bot$ represents an \emph{abscent} value\index{abscent value}, which means no data has to be present in that channel for the actor to fire.
+An actor has a finite set $\mathcal{R}$ of firing rules, and each rule $R \in \mathcal{R}$ is a finite tuple of words over the alphabet of values $\bar \Sigma := \Sigma \cup \{\bot\}$.
+Here, $\bot$ represents an \emph{abscent} value\index{absent value}, which means no data has to be present in that channel for the actor to fire.
 %In the literature\footnote{}, the formulation it is not clear about whether $\mathcal{R}$ has to be finite, but we will demand it is for simplicity, since we don't see any practical value in the case where it is truly infinite.
-The patterns sometimes are also interpreted to be words in an extended alphabet with wildcards, e.g. $\Sigma \cup {\bot,*}$, where $*$ stands for any value.
+The patterns are sometimes also interpreted to be words in an extended alphabet with wildcards, e.g. $\Sigma \cup \{\bot,*\}$, where $*$ stands for any value in $\Sigma$.
 Note that, mathematically speaking, both $\bot$ and $*$ are unnecessary, as the empty string $\epsilon$ has the same effect as $\bot$ and $*$ can be replaced by a series of rules, one for each value in $\Sigma$.
 In most pratical instances of dataflow, on the other hand, rules only consist of values in $\{\bot,*\}$, which is why they are very useful for descriptions.
 
 An actor fires whenever there is enough tokens in the input channels to satisfy a rule.
-Here, satisfying a rule specifically means the rule $R$ is a prefix of the channel values $C$, $R \sqsubseteq C$.
+Here, satisfying a rule specifically means the rule $R$ is a prefix of the channel values $C$, i.e. $R \sqsubseteq C$.
 If we include special values $\bot$ and $*$, the pattern has to be interpreted, e.g. by transforming it into the mathematically equivalent variants explained above.
 In this case, the tokens are consumed from the channels and the actor executes, computing something and potentially producing some outputs, which are not part of the specification in the firing rules.
 
 Note that there is nothing preventing multiple rules to apply simultaneously. For example, an actor with two inputs could have the rules $(*,\bot)$ and $(\bot,*)$, firing as soon as one of the two channels has a token.
 If multiple rules apply simultaneously, there is no general order in which the actor fires and consumes the inputs. 
 This means that this model is non-deterministic.
-We call this very general, dynamic variant of dataflow \ac{DDF} (alternatively, Dennis Data Flow).\index{Dataflow ! Dynamic}
+We denote this very general, dynamic variant as \ac{DDF} (alternatively, Dennis Data Flow).\index{\ac{DDF}}
 
 If we add an additional condition, requiring that for two rules $R,R'$ there is no upper bound $S$ (i.e. with $R \sqsubseteq S, R' \sqsubseteq S$), then we can show that the model is deterministic.
 We can even relax this condition somewhat and keep determinism. In~\cite{lee_matsikoudis_semantics}, the authors show this by explicitly constructing a Scott-continuous function from actor firings and embedding the model into \ac{KPN}.
 They also discuss possible relaxations.
-This deterministic variant of (Dennis) Dataflow is sometimes referred to as \ac{DPN}.\index{Dataflow ! Process Networks}
+This deterministic variant of (Dennis) Dataflow is sometimes referred to as \ac{DPN}.\index{\ac{DPN}}
 
 All these models are very expressive, so much so that they do not permit very strong analysis of their behavior.
-In contrast, the \ac{SDF} model\index{Dataflow ! SDF}~\cite{lee1987sdf} has a very well-defined behavior and allows much more analysis to be done statically, like scheduling or bounding the sizes of the channels~\cite{Parks:M95/105}
-The firing rates in the \ac{SDF} model are fixed. In the formalism, this means the firing rules are always of the form $(*^{n_1},\ldots,*^{n_k})$, where $*^0 = \epsilon \equiv \bot$.
+In contrast, the \ac{SDF} model\index{Dataflow ! SDF}~\cite{lee1987sdf} has a very well-defined behavior and allows more analysis to be done statically, like scheduling or bounding the sizes of the channels~\cite{Parks:M95:105}
+The firing rates in the \ac{SDF} model are fixed. In the formalism, this means the firing rules are always of the form $(*^{n_1},\ldots,*^{n_k})$, where $*^0 = \epsilon \mathrel{\widehat{=}} \bot$.
 Moreover, the number of tokens \emph{produced} is also fixed statically, which is not part of the formalism of firing explained above. 
 An apparently more strict variant of \ac{SDF} is \ac{HSDF}, in which all the rates are $1$. However, these two are equivalently expressive: every \ac{SDF} graph can be unrolled to an equivalent \ac{HSDF} graph.
 The semantics of \ac{HSDF} are basically equivalent with the widespread model of \emph{task graphs}\index{task graphs}, which are widespread in the design of embedded systems and \ac{HLS}.
 
 
 We discuss two additional variants of dataflow which sit semantically between \ac{SDF} and \ac{DDF}. 
-The first variant is \ac{CSDF}\index{Dataflow ! CSDF}~\cite{bilsen1996cycle}, in which the static values of \ac{SDF} are replaced with cycles that repeat, allowing for some controlled dynamism while retaining the analysability.
-Finally, \ac{SADF}\index{Dataflow ! SADF}~\cite{theelen2006scenario} is a more general model which allows to enable and disable certain paths in the graph, which are otherwise static.
+The first is \ac{CSDF}\index{\ac{CSDF}}~\cite{bilsen1996cycle}, in which the static values of \ac{SDF} are replaced with cycles that repeat, allowing for some controlled dynamism while retaining the analysability.
+Finally, \ac{SADF}\index{\ac{SADF}}~\cite{theelen2006scenario} is a more general model which allows to enable and disable certain paths in the graph, which are otherwise static.
 
 Figure~\ref{fig:dataflow_mocs} shows a Venn diagram of the dataflow models discussed here and their relationship.
 Here we draw the distinctions as strict as possible.
-For example, we draw \ac{HSDF} as a subset of \ac{SDF} since definitionally it is, even though they have the same semantic expressive power.
-In other words, \ac{HSDF} is an \ac{SDF}, and conversely, not every \ac{SDF} is an \ac{HSDF}, and even though there is exists an equivalent (unrolled) \ac{HSDF}, it is just equivalent, not identical.
+For example, we draw \ac{HSDF} as a subset of \ac{SDF} since, definitionally, it is, even though they have the same semantic expressive power.
+In other words, every \ac{HSDF} is an \ac{SDF}, and conversely, not every \ac{SDF} is an \ac{HSDF}, even though there exists an equivalent (unrolled) \ac{HSDF}, it is just equivalent, not identical.
 We also include \ac{KPN} and the \ac{KMQ} blocking-reads semantics since they are commonly discussed as dataflow models as well.
 Since the models are fundamentally different, we have depict them in the Venn diagram as what is embeddable semantically.
-Note that we depict\ac{DPN} as being included in \ac{KMQ} (which is proven in~\cite{lee_matsikoudis_semantics}), but we do not know if this inclusion is strict, in other words, if there are \ac{KMQ} models which are not expressable as \ac{DPN}.
-We will discuss the difference between \ac{KMQ} and \ac{KPN} in Section~\ref{sec:macqueen}, and show that this inclusion is indeed strict.
+Note that we depict \ac{DPN} as being included in \ac{KMQ} (which is proven in~\cite{lee_matsikoudis_semantics}), but we do not know if this inclusion is strict, in other words, if there are \ac{KMQ} models which are not expressable as \ac{DPN}.
+We will discuss the difference between \ac{KMQ} and \ac{KPN} in Section~\ref{sec:macqueen}, where we also show that this inclusion is strict.
 
 \begin{figure}[h]
 	\centering
-   \resizebox{0.55\textwidth}{!}{\input{figures/dataflow_mocs.tex}}
+   \resizebox{0.65\textwidth}{!}{\input{figures/dataflow_mocs.tex}}
 	\caption{Relationships between different dataflow models of computation.}
 	\label{fig:dataflow_mocs}
 \end{figure}

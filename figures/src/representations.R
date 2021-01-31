@@ -1,8 +1,11 @@
 library(tidyverse)
 library(readr)
 library(grid)
+library(ggforce)
 library(tikzDevice)
 library(RColorBrewer)
+#library(extrafont)
+#font_import()
 
 #http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_%28ggplot2%29/
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
@@ -105,7 +108,7 @@ summarized <- mutate(summarized,
 
 p1 <- filter(summarized,platform == 'exynos') %>%
   ggplot() +
-  geom_col(position="dodge2",mapping = aes(x=mapper,y=relative_best_gmean,fill=representation)) + 
+  geom_col(position = position_dodge(preserve='single'),mapping = aes(x=mapper,y=relative_best_gmean,fill=representation)) + 
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=relative_best_gmean_min,ymax=relative_best_gmean_max))  +
   scale_fill_manual(values = brewer.pal(name="Greens",n=8)[c(4:8)],guide=F,na.value='grey50') +
   labs(x=element_blank(),y="Rel. mapper results (log)") +
@@ -116,7 +119,7 @@ p1 <- filter(summarized,platform == 'exynos') %>%
 
 p2 <- filter(summarized,platform == 'exynos') %>%
   ggplot() +
-  geom_col(position="dodge2",mapping = aes(x=mapper,y=relative_total_gmean,fill=representation)) + 
+  geom_col(position = position_dodge(preserve='single'),mapping = aes(x=mapper,y=relative_total_gmean,fill=representation)) + 
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=relative_total_gmean_min,ymax=relative_total_gmean_max))  + 
   scale_fill_manual(values = brewer.pal(name="Greens",n=8)[c(4:8)],na.value='grey50') +
   labs(x=element_blank(),y="Rel. exploration time (log)") +
@@ -127,7 +130,7 @@ p2 <- filter(summarized,platform == 'exynos') %>%
 
 p3 <- filter(summarized,platform == 'mppa_coolidge') %>%
   ggplot() +
-  geom_col(position="dodge2",mapping = aes(x=mapper,y=relative_best_gmean,fill=representation)) + 
+  geom_col(position=position_dodge(preserve='single'),mapping = aes(x=mapper,y=relative_best_gmean,fill=representation)) + 
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=relative_best_gmean_min,ymax=relative_best_gmean_max))  +
   scale_fill_manual(values = brewer.pal(name="Blues",n=8)[c(4:8)],guide=F,na.value='grey50') +
   labs(x=element_blank(),y="Rel. mapper results (log)") +
@@ -138,7 +141,7 @@ p3 <- filter(summarized,platform == 'mppa_coolidge') %>%
 
 p4 <- filter(summarized,platform == 'mppa_coolidge') %>%
   ggplot() +
-  geom_col(position="dodge2",mapping = aes(x=mapper,y=relative_total_gmean,fill=representation)) + 
+  geom_col(position = position_dodge(preserve='single'),mapping = aes(x=mapper,y=relative_total_gmean,fill=representation)) + 
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=relative_total_gmean_min,ymax=relative_total_gmean_max))  + 
   scale_fill_manual(values = brewer.pal(name="Blues",n=8)[c(4:8)],na.value='grey50') +
   labs(x=element_blank(),y="Rel. exploration time (log)") +
@@ -148,11 +151,11 @@ p4 <- filter(summarized,platform == 'mppa_coolidge') %>%
   facet_grid(rows=vars(benchmark),scales='free')
 
 tikz("generated/multiple_representations_exynos.tex",width = 8, height=6,standAlone = F)
-print(multiplot(p1,p2,cols=1))
+print(ggarrange(p1,p2, nrow=2,common.legend=TRUE, legend='bottom'))
 dev.off()
 
 tikz("generated/multiple_representations_coolidge.tex",width = 8, height=6,standAlone = F)
-print(multiplot(p3,p4,cols=1))
+print(ggarrange(p3,p4, nrow=2,common.legend=TRUE, legend='bottom'))
 dev.off()
 
 p5 <- filter(summarized,platform == 'mppa_coolidge' & (mapper == 'tabu_search' | mapper == 'simulated_annealing') & representation != 'Symmetries') %>%
@@ -162,7 +165,7 @@ p5 <- filter(summarized,platform == 'mppa_coolidge' & (mapper == 'tabu_search' |
   scale_fill_manual(values = brewer.pal(name="Blues",n=8)[c(4:8)],guide=F,na.value='grey50') +
   labs(x=element_blank(),y="Rel. mapper results",legend=element_blank()) +
   scale_x_discrete(labels=mapper_labels) +
-  theme(text=element_text(size=12))+
+  theme(text=element_text(size=12),axis.text.x=element_text(angle=15,vjust=0.3))+
   facet_wrap(~benchmark)
 p6 <- filter(summarized,platform == 'mppa_coolidge' & (mapper == 'tabu_search' | mapper == 'simulated_annealing') & representation != "Symmetries") %>%
   ggplot() +
@@ -171,12 +174,13 @@ p6 <- filter(summarized,platform == 'mppa_coolidge' & (mapper == 'tabu_search' |
   scale_fill_manual(values = brewer.pal(name="Blues",n=8)[c(4:8)],na.value='grey50') +
   labs(x=element_blank(),y="Rel. exploration time (log)") +
   scale_x_discrete(labels=mapper_labels) +
-  theme(text=element_text(size=12))+
+  theme(text=element_text(size=12),axis.text.x=element_text(angle=15,vjust=0.3),legend.spacing.x = unit(0.6, 'cm'))+
   scale_y_log10() +
+  guides(fill=guide_legend(title = element_blank(),nrow=1)) +
   facet_wrap(~benchmark)
-
+leg <- get_legend(p6)
 tikz("generated/geometric_heuristics_coolidge.tex",width = 8, height=4,standAlone = F)
-print(multiplot(p5,p6,cols=2))
+print(ggarrange(p5,p6, nrow=1,common.legend=TRUE, legend='bottom',legend.grob = leg))
 dev.off()
 
 

@@ -91,7 +91,7 @@ p1 <- filter(results_summary, platform == "exynos") %>%
   ggplot() +
   geom_col(position='dodge2',mapping = aes(x=mapper,y=relative_best_gmean,fill=mapper)) +
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=min_best_gmean,ymax=max_best_gmean))  +
-  geom_text(size = 4,vjust=0.8, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_best_gmean,digits=2))) +
+  geom_text(size = 4,vjust=0.5, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_best_gmean,digits=2))) +
   scale_fill_manual(values =mixed_palette,guide=F) +
   theme(axis.text.x = element_blank(),text=element_text(size=11),axis.ticks.x = element_blank())+
   labs(x=element_blank(),y="Rel. mapper results",title="Odroid XU4")
@@ -99,7 +99,7 @@ p2 <- filter(results_summary, platform == "mppa_coolidge") %>%
   ggplot() +
   geom_col(position='dodge2',mapping = aes(x=mapper,y=relative_best_gmean,fill=mapper)) +
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=min_best_gmean,ymax=max_best_gmean)) +
-  geom_text(size = 4,vjust=0.8, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_best_gmean,digits=2))) +
+  geom_text(size = 4,vjust=0.5, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_best_gmean,digits=2))) +
   scale_fill_manual(values =mixed_palette,guide=F) +
   theme(axis.text.x = element_blank(),text=element_text(size=11),axis.ticks.x=element_blank())+
   labs(x=element_blank(),y="Rel. mapper results",title="MPPA3 Coolidge")
@@ -108,7 +108,7 @@ p3 <- filter(results_summary, platform == "exynos") %>%
   ggplot() +
   geom_col(position='dodge2',mapping = aes(x=mapper,y=relative_time_gmean,fill=mapper)) +
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=min_time_gmean,ymax=max_time_gmean)) +
-  geom_text(size = 4,vjust=0.7, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_time_gmean,digits=2))) +
+  geom_text(size = 4,vjust=0.5, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_time_gmean,digits=2))) +
   scale_fill_manual(values =mixed_palette, labels=mapper_labels)  +
   theme(legend.position='top',legend.title=element_blank(),axis.text.x = element_blank(),text=element_text(size=11),axis.ticks.x = element_blank())+
   labs(x=element_blank(),y="Rel. exploration time",title="")
@@ -116,7 +116,7 @@ p4 <- filter(results_summary, platform == "mppa_coolidge") %>%
   ggplot() +
   geom_col(position='dodge2',mapping = aes(x=mapper,y=relative_time_gmean,fill=mapper)) +
   geom_errorbar(position='dodge2',mapping = aes(x=mapper,ymin=min_time_gmean,ymax=max_time_gmean)) +
-  geom_text(size = 4,vjust=0.8, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_time_gmean,digits=2))) +
+  geom_text(size = 4,vjust=0.5, position = position_dodge(width=TRUE),mapping = aes(x=mapper,y=0,label=round(relative_time_gmean,digits=2))) +
   scale_fill_manual(values =mixed_palette,guide=F) +
   theme(axis.text.x = element_blank(),text=element_text(size=11),axis.ticks.x = element_blank())+
   labs(x=element_blank(),y="Rel. exploration time",title="")

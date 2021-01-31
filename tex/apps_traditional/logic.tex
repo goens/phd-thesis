@@ -1,29 +1,31 @@
-Depending on the context, different representations of the mapping space might offer extremely efficient ways of answering a particular type of question about a mapping.
-In the \texttt{SimpleVector} representation, the question ``Is Task$_A$ mapped to PE$_3$'' is very easy to answer, whereas answering the question ``is the expected latency between Task$_B$ and Task$_C$ below $10$ ns?'' is more difficult to answer.
-Conversely, in a representation based on a metric space topology defined by the communication distances between hardware resources, the difficulty of these two last questions might be reversed.
-In order to efficiently find mappings thus, depending on the objectives, an algorithm might want to use a representation or the other, or perhaps a combination of them.
+The \acf{IoT} is a term used to describe the phenomenon that many modern embedded devices have internet connectivity and can all be interconnected this way.
+This opens many opportunities for automation and increased interconnectivity. 
+Sensors and actuators in \ac{IoT} devices can be combined to add new functionalities to the system that would not be possible for the individual devices.
+In~\cite{weber_phdthesis} a case is made for \emph{spatial ontologies} through a logical language they call \emph{semantic localization}, to reason about distances in the real world in multiple representations, as found in the different \ac{IoT} devices.\index{ontologies}
+These different representations of distances are not unlike the different representations of mappings discussed in Section~\ref{sec:representations}.
+In analogy to semantic localization, in this section we describe how we can define a locgical language that permits querying and combine representations of mappings, or \emph{mapping ontologies}\footnote{Ontologies have a well-defined meaning in logic and theoretical computer science, which we allude to, but not precisely mean here. We use the word here in its more everyday (philosophical) sense of meaning its existence or reality.}, in a uniform fashion.
+This language is based on first-order logic and also includes implicit domains and relations to define and combine statements in the different ontological representations of mappings.
 
-We aim to do so by defining a language that shall permit to query and combine ontologies in a uniform fashion.
-This language will be based in propositional or first-order logic, and also include implicit domains and ontology relations to define and combine statements in the different ontological representations of mappings.
+Depending on the context, different representations of the mapping space might offer extremely efficient ways of answering a particular type of question about a mapping.
+In the \texttt{SimpleVector} representation, the question ``Is Task$_A$ mapped to PE$_3$'' is very easy to answer, whereas answering the question ``is the expected latency between Task$_B$ and Task$_C$ below $10 \mu s$?'' is more difficult to answer.
+Conversely, in the representation based on the metric space topology,\texttt{MetricSpaceEmbedding}, with a metric defined by the communication distances between hardware resources, the difficulty of these two last questions might be reversed.
+In order to efficiently find mappings thus, depending on the objectives, an algorithm might want to use a representation or the other, or perhaps a combination of them.
 
 There is a distinct advantage in defining a language, as opposed to simply defining a series of programming interfaces to the different representations, and letting algorithm programmers combine them in a programmatic way using a general-purpose language, like Python.
 By defining a domain-specific query language, we are creating a new level of abstraction that will hopefully allow researchers to reason about the mapping problem in new ways, transcending the simple usages to combine queries that will be presented in this section.
 
-We describe some representations of mappings (ontologies) in a superficial way, focusing on the kinds of questions they are well-suited to answer.
+We describe go over the representations as defined in Section~\ref{sec:representations}, focusing on the kinds of questions they are well-suited to answer.
 We then proceed to give examples of questions that might be asked, and how these could be combined using the language.
-Finally, we describe a draft of the language and a query-evaluation strategy that might be usable to find mappings using this language.
-
-\subsection{Example Ontologies}
-
-In the following we present some ontologies as examples of where questions could be asked, describing only the rough idea and what kinds of questions might be easy to answer in them.
+A language was implemented by Felix Teweleitt~\cite{teweleitt_studienarbeit} for \mocasin based on these principles.
+We omit the details of the actual syntax and implementation of the language, as it falls outside the contribution of this thesis.
 
 \paragraph{\texttt{SimpleVector} Representation}
-This representation is, as described in the problem formulation, the typical mapping representation that uses vectors of the form $ m = (p_1,\ldots,p_k,c_1,\ldots,c_l)$ to define the mapping.
+This representation is, as described throughout the previous chapters, the typical mapping representation that uses vectors of the form $ m = (p_1,\ldots,p_k,c_1,\ldots,c_l)$ to define the mapping.
 This representation is well-suited to answer questions of the form:
 \begin{itemize}
   \item Is task $A$ mapped to $PE_1$?
   \item Does $PE_2$ execute any process?
- \item Do tasks $A$ and $B$ execute on the same PE?
+ \item Do tasks $A$ and $B$ execute on the same \ac{PE}?
 \end{itemize}
 
 \paragraph{\texttt{Symmetries} Representation}
@@ -31,74 +33,54 @@ This representation normalizes mappings that are equivalent to a single (canonic
 This representation is well-suited to answer questions of the form:
 \begin{itemize}
 \item Is this mapping equivalent to mapping $m'$?
-\item Do tasks $A$ and $B$ execute on the same PE?
-\end{itemize}
-
-\paragraph{Metric Space Representation without Embeddings}
-This representation uses the communication topology to define meaningful distances between PEs, and by extension, between mappings.
-This representation is well-suited to answer questions of the form:
-\begin{itemize}
-\item Is this mapping very similar to mapping $m'$? \textbf{(can give false positives)}
-\item Is the expected latency between tasks $A$ and $B$ under $10$ ns?
-\item Do tasks $A$ and $B$ execute on the same PE?
+\item Do tasks $A$ and $B$ execute on the same \ac{PE}?
 \end{itemize}
 
 \paragraph{\texttt{MetricSpaceEmbedding} Representation}
-This is similar to the metric space representation, but computationally much more efficient, at the expense of a bit of accuracy.
+This representation uses the communication topology to define meaningful distances between \acp{PE} and by extension, between mappings.
 This representation is well-suited to answer questions of the form:
 \begin{itemize}
-\item Is this mapping very similar to mapping $m'$? \textbf{(can give false positives)}
-\item Is the expected latency between tasks $A$ and $B$ under $10$ ns?
+\item Is this mapping very similar to mapping $m'$? (can give false positives, as seen in Section~\ref{sec:metric})
+\item Is the expected latency between tasks $A$ and $B$ under $10 \mu s$?
 \end{itemize}
 
-\paragraph{Metric Space Symmetry Representation}
-This representation combines the metric space structure with the symmetry reduction. It is computationally very inefficient (WIP to improve!)
+\paragraph{\texttt{SymmetryEmbedding} representation}
+This representation combines the metric space structure with the symmetry reduction. 
+It is well suited for questions like:
 \begin{itemize}
 \item Is this mapping very similar to mapping $m'$? 
 \item Is this mapping equivalent to mapping $m'$?
 \item Is the expected latency between tasks $A$ and $B$ under $10$ ns?
-\item Do tasks $A$ and $B$ execute on the same PE?
+\item Do tasks $A$ and $B$ execute on the same \ac{PE}?
 \end{itemize}
 
-\paragraph{Inclusion-Hierarchy-Based Spatial Ontology}
-This representation is not implemented, and thus, not very mature.
-It should have a way to define a PE hierarchy with refinements (PEs $\in$ clusters $\in$ chips) and similarly for hierarchical applications (like Composites in Ptolemy II).
+Other representations, not necessarily based on metric spaces, could readily be added to this language. 
+For example, we could design a hierarchy or inclusion-based distance with a way to define a \ac{PE} hierarchy with refinements (PEs $\in$ clusters $\in$ chips) and similarly for hierarchical applications.
 
 \subsubsection{The Language}
-It should be based on propositional logic or first-order logic (with quantifiers only valid for some domains).
-It would have the following implicit domains:
-\begin{itemize}
-\item Mappings
-\item Processing elements
-\item Hardware communication resources
-\item Tasks (or Processes or Actors or Composites, etc.)
-\item Communication channels
-\item Distances (e.g. the natural numbers)
-\item Hierachical strutures? E.g. composites in the application or clusters in a multicore (This might be difficult to get right, in an instance-independent way. Perhaps only having abstract hierarchy levels?)
-\end{itemize}
 
-The statements would always refer to a mapping, i.e. every mapping in the mapping space would either satisfy or not such a statement, and our solver would try to find a solution to a statement (i.e. a mapping) or a set of such solutions.
+The statements in the language refer to a mapping, i.e. every mapping in the mapping space either satisfies such a statement or it does not.
+Thus, the questions motivated for the different representations above can be combined in a single statement, like:
+``Is this mapping very similar to $m'$ (distance $\leq 100$) \emph{and} \emph{not} Is this mapping equivalent to $m'$ \emph{and} (\emph{there exists} a PE $p$ such that tasks $A, B$ and $C$ are mapped to $p$ \emph{or} (the expected latency between tasks $A$ and $B$ is small than $10$ \emph{and} the expected latency between tasks $B$ and $C$ is smaller than $10$ \emph{and} the expected latency between tasks $A$ and $C$ is smaller than $15 \mu s$)).''
 
-The following are examples of statements that might be made of a mapping.
-\begin{enumerate}
-\item Is task $A$ mapped to $PE_1$?
-\item Does $PE_2$ execute any process?
-\item Do tasks $A$ and $B$ execute on the same PE?
-\item Is this mapping equivalent to mapping $m'$?
-\item Is this mapping very similar (distance < 10) to mapping $m'$? 
-\item Is the expected latency between tasks $A$ and $B$ under $10$ ns?
-\item Do tasks $A$ and $B$ execute on the same PE?
-\item Are all task-groups at the highest level of hierarchy in the application mapped to PE-groups at the highest level of the hierachy? (e.g. composites at the highest level to the same PE cluster)
-\end{enumerate}
+In this language, a special solver tries to find a solution to a statement (i.e. a mapping) or a set of such solutions by evaluating the propositions in the statement in a specific order.
+For example, if we have a propositional statement in conjunctive normal form, we can solve the different conjuncts iteratively.
+Since a mapping has to satisfy each of them, the final mapping can be found by first filtering a large portion of mappings with the strongest conjunct, and iterating from there.
+In his work, Felix Teweleitt designed a solver for \mocasin which utilizes a simple heuristic with precisely this principle to solve some queries~\cite{teweleitt_studienarbeit}, but there is potential for much more sophisticated solving methods.
 
-Of course, the idea is to be able to combine them, for example:
-`` Is this mapping very similar to $m'$ (distance $\leq 100$) \textbf{and} \textbf{not} Is this mapping equivalent to $m'$ \textbf{and} (\textbf{there exists} a PE $p$ such that tasks $A, B$ and $C$ are mapped to $p$ \textbf{or} (the expected latency between tasks $A$ and $B$ is small than $10$ \textbf{and} the expected latency between taskts $B$ and $C$ is smaller than $10$ \textbf{and} the expected latency between tasks $A$ and $C$ is smaller than $15$))''
-\subsection{Evaluation Strategies}
-A central point of this implementation and project is an evaluation strategy of how to find a mapping in this space.
-An exhaustive search is infeasible (otherwise we would not be doing this in the first place!).
-However, the different ontologies have different methods for iterating through the mappings, which could be leveraged by the approach. A rough sketch of what we would want to do so far is the following:
-\begin{itemize}
-\item Reorder statements to have an ideal execution strategy (this might happen at runtime)
-\item Have some sort of iterator for the mappings that depends on the ontology
-\item Have ontology-specific constraints be available to pass to the iterators
-\end{itemize}
+We choose to extend propositions about mappings to first-order logic so that we can have quantifiers only valid for some specific domains, like mappings, \acp{PE}, hardware communication resources, tasks (or processes or actors), communication channels.
+It is clear why and how these domains are the ones we can quantify over for first-order formulas describing mappings.
+An additional idea would be to include physical distances (over a discrete set of distances).
+This can be combined with different spatial ontologies in semantic localization for the \acf{IoT}~\cite{weber_phdthesis}. 
+This way, we could define \ac{IoT}-mappings that have specific requirements specified in our logical mapping  language.
+
+A vision of such \ac{IoT} mappings could be the following example:
+A smart autonomous car enters a smart parking lot.
+The parking lot is dark and pretty full already, and the car is low on battery, so that it needs to find a parking space with a suitable recharge station.
+To navigate in this dark environment, the smart car needs to offload its pedestrian recognition algorithm to a service in the parking lot, which it does by using an ontology-powered service discovery~\cite{weber2019service} mechanism.
+Since the large concrete structure of the mapping space blocks the signal, only some very close-by servers in the smart parking lot are suitable for offloading computation with low latency and high reliability.
+Spatial ontologies have to be included in the mapping query to offload the high-performance pedestrian recognition in a dark environment.
+Furthermore, for legal reasons, the car cannot offload some decision-critical parts of the computation to an external device.
+This complex set of constraints on the \ac{IoT} mapping can be formulated in a mixed-ontology sentence, which includes a successor of our logical mapping language with multiple representations, as well as other \ac{IoT}-ontologies like semantic localization.
+
+Clearly this vision is very far removed from today's reality, but it explains the motivation for a logical language and mapping ontologies based on the representations as discussed in this thesis.

@@ -8,29 +8,30 @@
  ]
 
  \tikzstyle{process} = [
-     %cicrle,
+     ellipse,
      draw = black,
      thick,
      fill = white,
-     minimum size = 4mm
+     minimum height = 3em,
+     minimum width = 3em
  ]
  \tikzstyle{dots} = [
-     draw = black,
      thick,
      fill = white,
      minimum size = 4mm
  ]
 
  \node[process] (src) {src};
- \node[dots] (wdots) [right of=src] {$\ldots$};
- \node[process] (wn) [below of=wdots] {$w_n$};
- \node[process] (w1) [above of =wdots] {$w_1$};
- \node[process] (sink) [right of=wdots] {sink};
+ \node[dots] (wdots) at (2,-0.5) {\Large $~~\vdots$};
+ \node[process] (wn) [below right =of src] {$w_n$};
+ \node[process] (w1) [above right =of src] {$w_1$};
+ \node[process] (w2) at (2.1,0.8) {$w_2$};
+ \node[process] (sink) [right =3cm of src] {sink};
 
  \path[->] (src) edge node {}(w1);
- \path[->] (src) edge node {}(wdots);
+ \path[->] (src) edge node {}(w2);
  \path[->] (src) edge node {}(wn);
  \path[->] (w1) edge node {}(sink);
- \path[->] (wdots) edge node {}(sink);
+ \path[->] (w2) edge node {}(sink);
  \path[->] (wn) edge node {}(sink);
 \end{tikzpicture}

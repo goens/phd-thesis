@@ -1,50 +1,70 @@
 The \ac{KPN} model was defined by Gilles Kahn in 1974~\cite{kahn74}.
 While in this paper he motivated examples of such networks could we defined, the
-semantics of a concrete language to were only postulated by Kahn with MacQueen
+semantics of a concrete language were only later postulated by Kahn with MacQueen
 in 1976~\cite{kahn_macqueen}.
 However, there is a gap in the semantics of formally defined networks (\ac{KPN})
 and the concrete networks that can be defined by the Kahn-MacQueen
 blocking-reads execution semantics: These concrete semantics are not as general
 as the formal model allows them to be.
-More interestingly, there are networks which fall under the \ac{KPN} formalism
+More concretely, there are networks which fall under the \ac{KPN} formalism
 that cannot be expressed using the Kahn-MacQueen blocking-reads semantics.
-We call this gap in the semantics ``the MacQueen gap'', as the gap between the formal model by Kahn and the concrete execution semantics by Kahn and MacQueen~\cite{lee_matsikoudis_semantics,,khasanov_parmaditam18}. 
+We call this gap in the semantics ``the MacQueen gap'', as the gap between the formal model by Kahn and the concrete execution semantics by Kahn and MacQueen~\cite{lee_matsikoudis_semantics,khasanov_parmaditam18}. 
 
-In this Section we explore the MacQueen gap by showing the difference is between the two formalisms, and see how we can exploit it. The theoretical advantage from this semantics gap is the contribution of this thesis with regards to this subject. To better understand it, however, we also discuss the results of a practical implementation of a library implemented by Khasanov~\cite{khasanov_parmaditam18} that exploits this gap in the semantics. 
+In this Section we explore the MacQueen gap by showing the difference is between the two formalisms, and see how we can exploit it.
+The contribution of this thesis is limited to the theoretical advantage from this semantics gap.
+The practical implementation and evaluation of the library that we describe in~\cite{khasanov_parmaditam18}, which exploits this gap in the semantics is, accordingly, beyond the scope of this thesis. 
 
 \subsection{The MacQueen Gap}
 
-Recall the definition of a \ac{KPN} from~\ref{sec:mocs}.
-A Kahn Process Network is a directed graph $K = (V,E)$ where the edges $V$ are Scott-continuous~\cite{scott1970} functions $f \in V$ mapping from the set of sequences from the input channels $S_{i_1} \times S_{i_k}$ to the set of output channels $S_{o_1} \times S_{o_l}$, and the edges represent the corresponding sequence domains.
+Recall from sections~\ref{sec:kpn_basic,sec:concurrent_mocs} that a \ac{KPN} can be modeled as a directed graph $K = (V,E)$ where the edges $V$ are Scott-continuous functions $f \in V$ mapping from the set of sequences from the input channels $S_{i_1} \times S_{i_k}$ to the set of output channels $S_{o_1} \times S_{o_l}$, and the edges represent the corresponding Scoott-domains of sequences.
 
-Conversely, the Kahn-MacQueen blocking reads semantics are defined in a more operational fashion. The model of computation is defined implicitly by the semantics of a language\cite{kahn_macqueen}, characterized mainly through blocking reads to channels. While the original semantics by Kahn~\cite{kahn74} do suggest a programming paradigm similar to the Kahn-MacQueen blocking-read semantics, Kahn's original examples in a programing language made the waiting explicit in the program, not implicit in the read semantics. Neither paper aims to prove that the semantics emerging from the proposed languages correspond to the mathematical semantics of the networks in terms of Scott-continuous functions.
+The \acf{KMQ} blocking reads semantics are defined in a more operational fashion.
+The model of computation is defined implicitly by the semantics of a language\cite{kahn_macqueen}, characterized mainly through blocking reads to channels.
+While the original semantics by Kahn~\cite{kahn74} do suggest a programming paradigm similar to the \ac{KMQ} blocking-read semantics, Kahn's original examples in a programming language made the waiting explicit in the program, not implicit in the read semantics.
+Neither paper aims to prove that the semantics emerging from the proposed languages correspond to the mathematical semantics of the networks in terms of Scott-continuous functions.
 
-A central point of this distinction is the level at which these two semantics are defined: while the Kahn Process Network semantics are defined at a denotational level, the Kahn-MacQueen blocking-read semantics are operational in nature, and thus, more fine grained. This distinction is also crucial for understanding the semantics gap, since the gap itself is operational in nature as well. 
+A central point of this distinction is the level at which these two semantics are defined:
+While the \ac{KPN} semantics are defined at a denotational level, the \ac{KMQ} blocking-read semantics are operational in nature, and thus, more fine grained.
+This distinction is also crucial for understanding the semantics gap, since the gap itself is operational in nature as well. 
 
 To understand the difference between the semantics we will first consider both from a denotational point of view. It is obvious that the basic semantics of the language describe a finite directed graph, and conversely, that any finite directed graph can be defined this way, by sequentially listing every node and all incoming and outgoing edges.
-Thus, we can think of every Kanh-MacQueen process as a function $f$ mapping from the set of sequences from the input channels $S_{i_1} \times S_{i_k}$ to the set of output channels $S_{o_1} \times S_{o_l}$.
-The pertinent question for characterizing Kahn-MacQueen processes is the continuity. 
+Thus, we can think of every \ac{KMQ} process as a function $f$ mapping from the set of sequences from the input channels $S_{i_1} \times S_{i_k}$ to the set of output channels $S_{o_1} \times S_{o_l}$.
+The pertinent question for characterizing \ac{KMQ} processes is the continuity. We sketch a proof of this in Theorem~\ref{thm:macqueen}.
 
 \begin{theorem}
 \label{thm:macqueen}
-A Kahn-MacQueen process is Scott-continuous.
-\begin{proof}
-\todo{prove}
+A \ac{KMQ} process is Scott-continuous.
+\begin{proof}\emph{(Sketch)}
+
+Let $P$ be a \ac{KMQ} process.
+Since $P$ is sequential, and the reads and writes are blocking, there is exactly one sequence of read and write operations that will be executed for given inputs.
+This means we can divide $P$ into segments of execution between reads and writes, resulting in a sequence $(s_1,c_1).(s_2,c_2).\ldots$ where for each $i$ $s_i \in \Sigma$ is a value and $c_i$ is the channel to/from which the value is read. 
+We can then construct the corresponding (Scott-continuous) function $f$.
+We discuss the case for $f : S \rightarrow S$, for a single input channel $r$ and a single output channel $w$, the others are analogous.
+Let $i_1$ be such that $s_1.\ldots.s_{i_1} \text{ where } c_1 = \ldots c_{i_1} = w, c_{i_1+1} = r$.
+The index $i_1$, as well as $s_1,\ldots,s_{i_1}$ have to be identical for all sequences, since they cannot depend on any inputs, by defnition.
+We set $f(\epsilon) = s_1.\ldots.s_{i_1} =: f_0$.
+Similarly,  we let $i_2,i_3$ be such that  \[c_{i+1} = \ldots c_{i_2} = r \neq w = c_{i_2+1} = \ldots c_{i_3} \neq r = c_{i_3+1}.\]
+We define $x_1 := s_{i_1 + 1}.\ldots.s_{i_2}$ and set $f(x_1) = f_0.s_{i_2+1}.\ldots.s_{i_3}$, and continue this process for all $(s_i,c_i)$.
+It is clear that such a construction will produce a Scott-continuous function if it is well-defined.
+To see that it is well-defined we need to prove with the concrete semantics of the programming language that the same input produces the same output.
 \end{proof}
 \end{theorem}
 
+Clearly, the proof sketch in Theorem~\ref{thm:macqueen} is not a formal proof, since we don't have formal semantics for the concrete language that defines the \ac{KMQ} blocking-reads.
+Defining these and proving Theorem~\ref{thm:macqueen} properly is beyond the scope of this thesis.
+We got the following corollary immediately by definition:
+
 \begin{cor}
 \label{cor:macqueen}
-Every Kahn-MacQueen Network is a Kahn Process Network.
+Every \acl{KMQ} Network is a \acl{KPN}.
 \end{cor}
 
-What about the converse implication? Can every Kahn Process Network be realized by a program following the Kahn-MacQueen blocking-reads semantics?
+What about the converse implication? Can every \ac{KPN} be realized by a program following the \ac{KMQ} blocking-reads semantics?
 To understand the challenges this imposes, consider the network defined in Figure~\ref{fig:macqueen_counterexample}.
-%\begin{minipage}
-%\end{minipage}
 
 \begin{figure}[h]
-	%\centering
+	\centering
    \resizebox{0.85\textwidth}{!}{\input{figures/macqueen_counterexample.tex}}
 	\caption{An example of a \ac{KPN} which admits non-blocking-read semantics.}
 	\label{fig:macqueen_counterexample}
@@ -63,14 +83,22 @@ Now consider the following three cases:
 It is clear that the first two cases are prefixes of the third.
 By the definition of $f$, only this third case will generate an output $(2)$, whereas the first two cases will result in an empty stream on the output channel $o_1$. 
 However, operationally, there are different ways of processing these streams.
-A Kahn-MacQueen program has to choose to read one channel first, blocking, then read the second channel, blocking, and then output the sum.
-Listing~\ref{todo} shows an example of code in their original language proposed by Kahn and MacQueen.
-\fbox{
+A \ac{KMQ} program has to choose to read one channel first, blocking, then read the second channel, blocking, and then output the sum.
+Listing~\ref{lst:detmerge} shows an example of code in their original language proposed by Kahn and MacQueen.
+
+\begin{listing}
+	\caption{A deterministic merge (sum) in the POP-2-based language of \ac{KMQ}.}
+	\label{lst:detmerge}
+\begin{minted}{systemverilog}
 Process F in I1,I2 out O1 ;
- Vars x,y ;
- repeat GET(I1) -> x; GET(I2) -> y; PUT(x+y,O1);
+ Vars x,y;
+ repeat
+ GET(I1) -> x;
+ GET(I2) -> y;
+ PUT(x+y,O1);
  forever
-}
+\end{minted}
+\end{listing}
 
 This implementation will block in Case 1 leaving unread data in channels, while it will execute normally in cases 2 and 3.
 This is because we (arbitrarily) choose to read $i_1$ before $i_2$.
@@ -81,7 +109,7 @@ This is because the blocking-read semantics forces a deterministic ordering of r
 
 \begin{figure}[h]
 	%\centering
-   \resizebox{0.85\textwidth}{!}{\input{figures/macqueen_example_gantt.tex}}
+   \resizebox{1.00\textwidth}{!}{\input{figures/macqueen_example_gantt.tex}}
 	\caption{Examples of Gantt Charts corresponding to implementations of the Kahn Function $f$.}
 	\label{fig:macqueen_example_gantt}
 \end{figure}
@@ -92,14 +120,14 @@ This does not contradict the converse direction to Theorem~\ref{thm:macqueen}.
 
 \begin{figure}[h]
 	%\centering
-   \resizebox{0.85\textwidth}{!}{\input{figures/macqueen_proper_counterexample.tex}}
+   \resizebox{0.65\textwidth}{!}{\input{figures/macqueen_proper_counterexample.tex}}
 	\caption{A counterexample of the equivalence of Kahn-MacQueen and Kahn processes.}
 	\label{fig:macqueen_proper_counterexample}
 \end{figure}
 
 By exploiting the problem exposed in the first example, we can come up with a proper counterexample to the reverse direction of Theorem~\ref{thm:macqueen}.
 The example depicted in Figure~\ref{fig:macqueen_proper_counterexample} is again clearly a Kahn process (Scott continuous), which just forwards the two incoming channels independently.
-In practice, this Kahn process is not very useful, but it serves formally as a simple counterexample to the equivalence of Kahn-MacQueen blocking-reads processes and Kahn processes.
+In practice, this Kahn process is not very useful, but it serves formally as a simple counterexample to the equivalence of \ac{KMQ} blocking-reads processes and Kahn processes.
 To this, consider again as inputs streams $(i_1,i_2)$ the three cases from the first example: 
 \begin{enumerate}
 \item $x = \epsilon, y = (1)$
@@ -107,30 +135,34 @@ To this, consider again as inputs streams $(i_1,i_2)$ the three cases from the f
 \item $x = (1), y = (1)$
 \end{enumerate}
 
-Unlike $f$, $g$ has a different behavior for every case:
+Unlike $f$, the function $g$ has a different behavior for every case:
 \begin{enumerate}
 \item $g(\epsilon,1) = (1,\epsilon)$
 \item $g(1,\epsilon) = (\epsilon,1)$
 \item $g(1,1) = (1,1)$
 \end{enumerate}
 
-This process cannot be realized by a Kahn-MacQueen process with blocking reads. Assume there was such a process. Then, from the sequentiality of code, either $i_1$ or $i_2$ will be read first. Without loss of generality let us assume that $i_1$ is read first. Then for the input stream $(\epsilon,1)$ however, the process will block and will never output the $1$ from channel $i_2$, which yields the contradiction.
+This process cannot be realized by a \ac{KMQ} process with blocking reads. Assume there was such a process.
+Then, from the sequentiality of code, either $i_1$ or $i_2$ will be read first.
+Without loss of generality let us assume that $i_1$ is read first.
+Then for the input stream $(\epsilon,1)$ however, the process will block and will never output the $1$ from channel $i_2$, which yields the contradiction.
 
+\subsection{Exploiting the Gap}
 
-\subsection{Exploting the Gap}
 We have seen in the previous section how there is a gap in the operational blocking-read semantics proposed by Kahn and MacQueen and the denotational \ac{KPN} semantics. While the counterexample from Figure~\ref{fig:macqueen_proper_counterexample} does not seem very useful, the gap in the operational nature shown in Figure~\ref{fig:macqueen_example_gantt} readily suggests how this gap could be exploited.
 In general, the Scott continuity of \acp{KPN} requires the arrival of tokens to be determistic, but it does not require the execution of independent nodes to follow the same order as the tokens, as required by the Kahn-MacQueen blocking-read semantics. Thus, as suggested by the example, the MacQueen gap can be exploited for asynchronous computation, as long as it does not break determinism.
 
-This asynchronous execution can be used to execute multiple workers in a data-parallel fashion.
-Figure~\ref{fig:data_parallel_kpn} shows an example of a network which does this.
 \begin{figure}[h]
-	%\centering
+	\centering
    \resizebox{0.45\textwidth}{!}{\input{figures/data_parallel_kpn.tex}}
 	\caption{An example of data-parallelism exploiting the MacQueen gap.}
 	\label{fig:data_parallel_kpn}
 \end{figure}
 
-The worker processes $w_1, \ldots, w_n$ can exploit data parallelism by dividing a workload into different parts. This allows us to asynchronously execute the workloads, as long as we take care to preserve the order at the sink node. 
-We can achieve this by making it part of the logic of the channels. In joint work with R. Khasanov we proposed to exploit this gap and tested an implementation of this in the SLX framework which modified the FIFO libraries of nodes labeled as data-parallel to relax the deterministic semantics of the Kahn-MacQueen blocking-reads and allowed asynchronous execution of data-parallel workers while preserving the deterministic \ac{KPN} execution~\cite{khasanov_parmaditam18}. The implementation of this library is beyond the contribution of this thesis, which is limited to the theoretical part of identifying the semantics gap and ways of exploiting it.  
-
-\todo{Question: Should I nevertheless discuss some results?}
+This asynchronous execution can be used to execute multiple workers in a data-parallel fashion.
+Figure~\ref{fig:data_parallel_kpn} shows an example of a network which does this.
+The worker processes $w_1, \ldots, w_n$ can exploit data parallelism by dividing a workload into different parts.
+This allows us to asynchronously execute the workloads, as long as we take care to preserve the order at the sink node. 
+We can achieve this by making it part of the logic of the channels.
+In~\cite{khasanov_parmaditam18} we proposed to exploit this gap and tested an implementation of this in \ac{MAPS}, which modified the FIFO libraries of nodes labeled as data-parallel to relax the deterministic semantics of the \ac{KMQ} blocking-reads and allowed asynchronous execution of data-parallel workers while preserving the deterministic \ac{KPN} execution.
+The implementation of this library is beyond the contribution of this thesis, which is limited to the theoretical part of identifying the semantics gap and ways of exploiting it.  

@@ -15,7 +15,7 @@ This is certainly the case for many discrete optimization problems in general, t
 Commonly, meta-heuristics tend to find better results provided enough time, but require accordingly more time to do so.
 
 A particular difficulty of comparing mapping approaches and algorithms are the different models used by different algorithms~\cite{goens_mcsoc16}.
-With \mocasin we designed a common framework that allows us to compare between mapping algorithms~\cite{menard_rapido21}.
+With the \mocasin tool we designed a common framework that allows us to compare between mapping algorithms~\cite{menard_rapido21}.
 In particular, in \mocasin we have two heuristics for mapping: the \ac{GBM} heuristic~\cite{castrillon_dac12} and a static mapping variant~\cite{menard_rapido21} of the \ac{CFS} scheduler from Linux.
 Additionally, we have implemented genetic algorithms based on and inspired by those found in Sesame~\cite{erbas2006multiobjective,quan2014towards,goens_mcsoc16}, a simulated annealing~\cite{simulated_annealing} mapping algorithm and a tabu search~\cite{tabu_search}.
 \index{genetic algorithm}\index{simulated annealing}\index{tabu search}\index{random walk}
@@ -29,8 +29,8 @@ For the genetic algorithm we run an evolutionary $\mu + \lambda$ strategy for $2
 For the \ac{GBM} algorithm we set the parameters as \texttt{bx\_m} of $1$, \texttt{bx\_p} of $0.95$, \texttt{by\_m} of $0.5$,\texttt{by\_p} of $0.75$, 
 The simulated annealing heuristic we execute with an initial temperature of $1$ and a final temperature of $0.1$, with a temperature proportionality constant of $0.5$  and a random movement starting radius of $5$.
 Finally, for the tabu search mapper we set a maximum of $30$ iterations, each of size $5$ and with a move set size of $10$ and tabu tenure of $5$, and a random candidate move update radius of $2$.
-These parameters were chosen such that the mappers seemed to yield good result, yet not systematically (e.g. using something like Bayesian optimization or general (hyper-)parameter optimization approaches).
-A deliberate choice in the parameters however is that the exploration times should be comparable between the meta-heuristics, i.e. such that the iterative mappers evaluate a similar amount of mappings.
+These parameters were not chosen systematically (e.g. using something like Bayesian optimization or general (hyper-)parameter optimization approaches), but through manual testing on examples to find sensible defaults.
+A deliberate choice in the parameters, however, is that the exploration times should be comparable between the meta-heuristics, i.e. such that the iterative mappers evaluate a similar amount of mappings.
 
 \begin{figure}[h]
 	\centering
@@ -48,10 +48,10 @@ We then aggregate all values with the geometric mean.
 The error bars in the plot are calculated by taking the average value $\pm$ the estimated standard deviation and norming each of the two extremes, the results of which are the extremes shown in the plot.
 
 We first examine the results for the Odroid XU4 architecture.
-The two heuristics find considerably lower results in average, but they do so in considerably less time.
+The two heuristics find comparatively worse results than meta-heuristics, in average, but they do so in considerably less time.
 More concretely, they yield about an order of magnitude worse results in about an order of magnitude less time.
 The results of the random walk heuristic are significantly worse than those of the more structured metaheuristics, even though it takes a comparable amount of time.
-This is due to a deliberate choice, since as explained above, the number of random mappings was chosen specifically to be comparable to the number the number of mappings evaluated by the other meta-heuristics.
+This is the case since, as explained above, the number of random mappings was chosen specifically to be comparable to the number of mappings evaluated by the other meta-heuristics.
 Since $500$ mappings is not a small amount, it is not terribly surprising that the random mapper beats the two heuristics.
 Finally, the best mappings are found by the simulated annealing meta-heuristic, albeit only by $3\%$ compared to the genetic algorithm.
 
@@ -71,25 +71,26 @@ We can interpret this as a consequence of the growing design space and its compl
 As motivated when discussing them in Section~\ref{sec:symmetries}, symmetries can be used to improve \ac{DSE} in the mapping problem.
 There are two distinct applications of symmetries in \ac{DSE}.
 The first application is for speeding up meta-heuristics (without modifying them), as shown in~\cite{goens_taco17}, by leveraging the equivalence of symmetric mappings in a symmetry-aware cache.
-The second application is by pruning the design space as seen by the meta-heuristic~\cite{goens_mcsoc18,goens_tcad21}, effectively changing the meta-heuristic.
+The second application is by pruning the design space as seen by the meta-heuristic, effectively changing the meta-heuristic~\cite{goens_mcsoc18,goens_tcad21}.
 
 We will first discuss the idea of a symmetry-aware cache.\index{symmetry-aware cache}
 As discussed before, meta-heuristics work through an iterative principle, where they evaluate mappings and drive the search based on the results of the evaluation.
-While the evaluation is fast and light-weight by design (cf. sections~\ref{sec:sec:simulating_mappings} or~\ref{sec:architecture_models}), it still usually dominates the execution time of the exploration (cf. Figure~\ref{fig:heuristics_vs_metaheuristics}).
+While the evaluation is fast and light-weight by design (cf. sections~\ref{sec:simulating_mappings} or~\ref{sec:arch_models}), it still usually dominates the execution time of the exploration (cf. Figure~\ref{fig:heuristics_vs_metaheuristics}).
 A defining property of the symmetries is how simulation results are invariants of the equivalence classes of orbits (cf. Section~\ref{sec:symmetries}).
 This means that if we know the results of a simulation for a mapping, we know the results for all mappings in its equivalence class.
-We can leverage this by designing a symmetry-aware mapping cache, which stores simulations results by equivalence class instead of by mapping~\cite{goens_taco17}.
+We can leverage this by designing a symmetry-aware mapping cache, which stores simulations results by equivalence class instead of storing them for each mapping~\cite{goens_taco17}.
 This yields a trade-off, where computations about the symmetry have to be executed every time a mapping is going to be looked-up in the cache or evaluated.
+Ideally, these calculations would require but a fraction of the time saved on simulations.
 
 We implemented a symmetry-aware cache in \mocasin which uses \mpsym and its Python interface.
 We used this to evaluate the method of symmetry-aware caching on the \ac{E3S} benchmarks by accelerating the various meta-heuristics discussed in Section~\ref{sec:heuristics_vs_metaheuristics}.
 We can also evaluate the domain-specific methods of mpsym~\cite{goens_tcad21} by applying this method to multiple architecture topologies.
 In addition to the Odroid XU4 and MPPA3 Coolidge, which we used consistently throughout this thesis, we also test the methods on the exploration of two additional architectures: \ac{HAEC} and a simple generic cluster.
-The \ac{HAEC} architecture (cf. Figure~\ref{fig:HAEC}) is a \ac{PCB} design with low-latency optical interconnects on layers with a $4 \times 4$ regular-mesh structure.
-Four such layers are then connected, using low-latency wireless interconnects to communicate between adjacent layers.
-While in the \ac{HAEC} design each node of the layer is an \ac{MPSoC}, we model the topology by placing cores in those nodes and considering the board as a single \ac{MPSoC}.
+The \ac{HAEC} architecture (cf. Figure~\ref{fig:haec}) is a \ac{PCB} design with low-latency optical interconnects on layers with a regular-mesh structure (we modeled it as a $4 \times 4$ mesh).
+Multiple such layers (we model $4$) are then connected, using low-latency wireless interconnects to communicate between adjacent layers.
+While in the \ac{HAEC} design, each node of the layer is an \ac{MPSoC}, we model the topology by placing cores in those nodes and considering the board as a single \ac{MPSoC}.
 This serves to evaluate our methods on this topology.
-The generic cluster architecture we evaluate is the simplest non-trivial clustered architecture topology.
+The generic cluster architecture we evaluate is the simplest non-trivial clustered architecture topology possible.
 It consists of two identical clusters, each of which with two identical cores.
 Each cluster shares a cache, and the two clusters can communicate over main memory.
 
@@ -106,7 +107,7 @@ We reduced the number of generations of the genetic algorithm to $10$, the numbe
 
 Figure~\ref{fig:symmetry_cache} shows the results of evaluating a symmetry-aware cache on the different meta-heuristics on different architecture topologies.
 It reports the execution time of the full exploration, separating the overhead from symmetry calculations from the rest of the exploration time for the symmetry-aware cache.
-These relative times are normed such that the regular exploration has a time of $1$. Both variants were executed $10$ times with identical seeds, for each benchmark. 
+These relative times are normed such that the exploration using a regular (non symmetry-aware) cache has a time of $1$. Both variants were executed with identical seeds, for $10$ different seeds and for each benchmark. 
 Thus, they executed the exact same exploration, evaluating the exact same mappings and returning the same result.
 
 Unsurpisingly, the symmetry-aware cache does not offset the overhead of symmetry calculations for the random walk meta-heuristic.
@@ -116,16 +117,16 @@ The other meta-heuristics are much more structured, and clearly do benefit from 
 For the Odroid XU4, the symmetry-aware cache consistently yields a large speedup of the exploration time, around $1.4-1.7 \times$.
 For the simple cluster and the \ac{HAEC} architectures, the results are similar.
 The best results are achieved for the MPPA3 Coolidge topology, which despite its complexity has a very well-defined structure we can exploit with our wreath-product construction (cf. Section~\ref{sec:symmetries}).
-For the simulated annealing meta-heuristic, our symmetry-aware cache sped up the simulation in \textbf{average} by $14.5 \times$!
+For the simulated annealing meta-heuristic, our symmetry-aware cache sped up the simulation in \emph{average} by $14.5 \times$!
 
 We see that our \mpsym-powered symmetry-aware cache is very useful for speeding up \ac{DSE}.
 It can still be improved, however.
 In~\cite{goens_taco17} we also included application symmetries in the cache, which actually made a significant difference, as we were not using the more optimized algorithms from \mpsym.
-Application symmetries have a much potential, which is also intuitive if we consider the cardinality of the mapping space $|V_A|^{|V_K|}$ grows exponentially with the number of processes.
-However, as explained in Section~\ref{sec:app_arch_symmetries}, we have no systematic method of reliably detecting these application symmetries yet, which is why we do not include them in \mocasin.
+Application symmetries have much potential, which is also intuitive if we consider the cardinality of the mapping space $|V_A|^{|V_K|}$ grows exponentially with the number of processes.
+However, as explained in Section~\ref{sec:arch_app_symmetries}, we have no systematic method of reliably detecting these application symmetries yet, which is why we do not include them in \mocasin.
 The other improvement comes from partial permutations. While we described them in Section~\ref{sec:partial_symmetries} and have a partial implementation in \mpsym, we still need efficient algorithms on partial permutations for exploiting the partial symmetries of the mapping space.
-This is evident in the comparison between the results of the MPPA3 Coolidge and \ac{HAEC} topologies in Figure\ref{fig:symmetry_cache}.
-The \ac{HAEC} topology has partial symmetries in each of the meshes (cf. Section~\ref{sec:partial_symmetries}), and it also has partial symmetries in the symmetry group of the clusters (the larger group from the wreath product).
+This is evident in the comparison between the results of the MPPA3 Coolidge and \ac{HAEC} topologies in Figure~\ref{fig:symmetry_cache}.
+The \ac{HAEC} topology has potentially useful partial symmetries in each of the meshes (cf. Section~\ref{sec:partial_symmetries}), and it also has potentially useful partial symmetries in the symmetry group of the clusters (the larger group from the wreath product).
 Since the first and last layers cannot communicate with each other directly (the topology is not toric), the symmetries of the clusters are all only partial.
 
 We can also leverage symmetries in \ac{DSE} by changing the underlying space as seen by the meta-heuristic.
@@ -139,12 +140,12 @@ In this way, the meta-heuristics see the factor space and are effectively change
 	\label{fig:symmetry_changed_operations}
 \end{figure}
 
-We tested this with the same setup as before, the results of which can be seen in Figure~\ref{fig:symmetries_changed_operations}.
+We tested this with the same setup as before, the results of which can be seen in Figure~\ref{fig:symmetry_changed_operations}.
 It shows both, the relative results of the mapper (in terms of the runtime of the best mapping) and the relative exploration times.
 The times shown are relative to the random walk meta-heuristic in the regular implementation, i.e. without symmetries.
 It is not surprising that most times for the best mapping results are thus $<1$, as the random walk meta-heuristic is not as good as the other meta-heuristics.
 The more interesting comparison, however, is between both variants of each mapping algorithm.
-For the simpler platforms, Odroid-XU4 and the simple cluster  the symmetry-enabled variant speeds up the execution in a fashion similar to the symmetry-enabled cache, while yielding similar results.
+For the simpler platforms, Odroid-XU4 and the simple cluster, the symmetry-enabled variant speeds up the execution in a fashion similar to the symmetry-enabled cache, while yielding similar results.
 For the more complex platforms, \ac{HAEC} and the Kalray MPPA3 Coolidge, the results vary between both.
 The results of the mapping algorithm are considerably better on the MPPA3 Coolidge, while being very similar for both representations in the \ac{HAEC} platform.
 The exploration time was also improved consistently for both platforms.
@@ -173,7 +174,7 @@ The genetic algorithm seems to continue to profit from the symmetries for larger
 
 \subsection{Leveraging Metric Spaces}
 
-The same way we used the \texttt{Symmetry} representation to improve \ac{DSE}, we can use the \ac{MetricSpaceEmbedding} representation and see if this improves the performance of mapping algorithms.
+The same way we used the \texttt{Symmetry} representation to improve \ac{DSE}, we can use the \texttt{MetricSpaceEmbedding} representation and see if this improves the performance of mapping algorithms.
 The two meta-heuristics that are primarily based on an underlying metric space structure of the search space are tabu search and simulated annealing.
 We compare the results of these two meta-heuristics on both the \ac{E3S} and \ac{CPN}-based benchmarks.
 For each meta-heuristic, each representation and each benchmark application, we measure the results of $10$ runs with different random seeds.
@@ -190,7 +191,7 @@ We see that the results of the exploration are significantly better for both met
 This modest improvement does come at a cost in exploration time, which is clearly attributable to the increased dimension of the embedding spaces in these representations.
 We have also seen in the previous results that these meta-heuristics perform poorly for the MPPA3 Coolidge with its complex topology and large design space.
 
-The results still provide some insight into the nature of the design space and the usefulness of the embedding-based representations.
+The results provide some insight into the nature of the design space and the usefulness of the embedding-based representations.
 We can concretely make two observations from these results and combine them to produce a new meta-heuristic.
 The first one is the knowledge that geometry-based heuristics indeed benefit from a better metric, independent of if the resulting heuristics are overall good.
 The second observation is more subtle, it's about the general structure of the design space. 
@@ -223,7 +224,7 @@ Figure~\ref{fig:visualization_simpvec_symemb} shows the results of this visualiz
 The best indicator of this, however, are the vertical lines in the relative distances from the metric spaces (cf. Figure~\ref{fig:metric_comparison_exynos} and Figure~\ref{fig:metric_comparison_coolidge}).
 Since the abscissa in these two plots represents the (relative) mapping distance in the corresponding metric, vertical lines indicate equidistant points. 
 The fact that there are points with the full range of relative execution times in these equidistant ranges is consistent with such ``performance islands''.
-If the mapping space landscape was more regular, the plots would more closely resemble those where we only considered the maxima (cf. Figure~\ref{fig:metric_comparison_max_exynos} and Figure~\ref{fig:metric_comparison_max_coolidge} respectively).
+If the mapping space landscape was more uniform, the plots would more closely resemble those where we only considered the maxima (cf. Figure~\ref{fig:metric_comparison_max_exynos} and Figure~\ref{fig:metric_comparison_max_coolidge} respectively).
 
 We can use this observation to derive a new meta-heuristic for exploring the mapping space.
 Our ``performance islands'' hypothesis implies the mapping space is full of local minima.
@@ -231,7 +232,7 @@ Guiding a local search towards an optimum should thus not be as conducive to goo
 Instead, we can use a simple and fast meta-heuristic to find a local minimum quickly and apply it to multiple points spread around the design space's geometry. 
 As meta-heuristic for finding local minima we use the well-known gradient descent optimization algorithm with the momentum method~\cite{rumelhart1986learning}.
 For the step-size we use the Barzilai-Borwein \cite{barzilai1988two} method.
-In its regular form this heuristic will quickly get stuck in a local minimum and produce poor mapping results, as confirmed by experiments (which we omit here).
+In its regular form, this heuristic will quickly get stuck in a local minimum and produce poor mapping results, as confirmed by experiments (which we omit here).
 However, we can add a simple additional meta-heuristic to leverage the ``performance islands'' hypothesis.
 We start the heuristic at multiple random points, uniformly distributed in the design space, as defined the distance metric.
 In these spread-out locations we execute (parallel) gradient descent optimizations which we cancel as soon as they reach a local minimum, which empirically happens after a handful of iterations.
@@ -259,7 +260,7 @@ The more interesting results are for those for the considerably more complex top
 	\label{fig:multiple_representations_coolidge}
 \end{figure}
 
-Figure\ref{fig:multiple_representations_coolidge} shows the same comprehensive comparison of all meta-heuristics and all representations on all benchmarks, this time for the MPPA3 Coolidge platform. 
+Figure\ref{fig:multiple_representations_coolidge} shows the same comprehensive comparison of all heuristics and meta-heuristics with all representations on all benchmarks, this time for the MPPA3 Coolidge platform. 
 Besides from the results already seen and discussed before in figures~\ref{fig:symmetry_changed_operations},~\ref{fig:heuristics_vs_metaheuristics} and \ref{fig:coolidge_geometric}, the most notable results are the results for our new island-based gradient descent meta-heuristic.
 Despite its simplicity, this meta-heuristic significantly outperforms all the other more sophisticated meta-heuristics.
 The two embedding-based representations yield worse results, which is consistent with our ``performance islands'' hypothesis.
@@ -270,16 +271,16 @@ In a smaller space it is more likely to find an island with a higher local minim
 \begin{figure}[h]
 	\centering
    \resizebox{0.7\textwidth}{!}{\inputTikz{2d_mapping_heatmap_orig}}
-	\caption{The actual mapping space of  GSM two-task application from \ac{E3S} on the Odroid XU4 that inspired Figure~\ref{fig:mapping_space_example}.}
+	\caption{The actual mapping space of a \acs{GSM}-based two-task application from \ac{E3S} on the Odroid XU4 that inspired Figure~\ref{fig:mapping_space_motivation}.}
 	\label{fig:gsm_actual_mapping_space}
 \end{figure}
 
 
-Recall the intuition of Figure~\ref{fig:mapping_space} of all representations for the simple two-task example.
-We can see how the \texttt{Symmetries} representation has two islands, with fast mappings, whereas the \ac{SymmetryEmbedding} representation only has one.
+Recall the intuition of Figure~\ref{fig:mapping_space_full} of all representations for the simple two-task example.
+We can see how the \texttt{Symmetries} representation has two islands, with fast mappings, whereas the \texttt{SymmetryEmbedding} representation only has one.
 For such a simple example the symmetries capture all different execution times.
-In the original task graph, a \ac{GSM} application from the \ac{E3S} benchmarks, the differences in execution times were much lower. 
+In the original task graph, a \acs{GSM} application from the \ac{E3S} benchmarks, the differences in execution times were much lower. 
 Figure~\ref{fig:gsm_actual_mapping_space} shows the actual mapping space. Since the differences in execution times are barely visible from the color coding, the times (in ms) are also explicitly written in the figure to show the differences.
 This shows one of the limitations of the symmetries and a possible explanation for the ``performance islands'' hypothesis: many mappings are not equivalent, but very similar.
-In future work we could capture these similarities in mappings in a more formal fashion.
+In future work we could capture these similarities in mappings in a more formal fashion, e.g. using partial symmetries as motivated at the end of Section~\ref{sec:partial_symmetries}.
 This should allow us to better explore the design space.

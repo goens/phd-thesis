@@ -46,13 +46,11 @@ data_matrix_orig <- matrix(c(
   c(times_orig[5], times_orig[5], times_orig[5], times_orig[5], times_orig[4], times_orig[4], times_orig[4], times_orig[3])
 ), nrow=8,ncol=8)
 
-data <- expand.grid(x = seq(1,8),y = seq(1,8)) %>%
-  tibble() %>%
-  mutate(time = data_matrix[x+8*(y-1)])
+data <- as_tibble(expand.grid(x = seq(1,8),y = seq(1,8))) #%>%
+data <-  mutate(data, time = data_matrix[x+8*(y-1)])
 
-data_orig <- expand.grid(x = seq(1,8),y = seq(1,8)) %>%
-  tibble() %>%
-  mutate(time = data_matrix_orig[x+8*(y-1)],
+data_orig <- as_tibble(expand.grid(x = seq(1,8),y = seq(1,8))) 
+data_orig <- mutate(data, time = data_matrix_orig[x+8*(y-1)],
          time_formated = format(time,digits=2))
 
 tikz("generated/2d_mapping_heatmap.tex",standAlone = FALSE, height = 4, width = 5)
@@ -69,7 +67,7 @@ tikz("generated/2d_mapping_heatmap_orig.tex",standAlone = FALSE, height = 4, wid
 print(
 ggplot(data=data_orig) +
   geom_tile(mapping = aes(x=factor(x),y=factor(y),fill=time),color='black') +
-  geom_text(mapping=aes(x=factor(x),y=factor(y),label=time_formated),size=4) +
+  geom_text(mapping=aes(x=factor(x),y=factor(y),label=time_formated),size=4,color='gray31') +
   scale_fill_viridis_c(direction=-1) +
   labs(x="T$_1$ mapping (PE)", y = "T$_2$ mapping (PE)") +
   theme(legend.text = element_blank(),text=element_text(size=18))  

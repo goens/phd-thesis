@@ -146,7 +146,7 @@ print(
     labs(x='Cache Type', y='Relative exploration time') + 
     scale_fill_brewer(palette="Set1", name=element_blank(), labels=c('runtime overhead','simulation time')) + 
     facet_grid(cols=vars(platform),rows=vars(mapper),labeller = labeller(mapper = mapper.labs, platform = platform.labs))  +
-    theme(legend.position = "top")  
+    theme(legend.position = "top",legend.spacing.x = unit(0.6,'cm'))  
 )
 dev.off()
 filter(cache_times_normed_totals,platform == 'mppa_coolidge') %>%
