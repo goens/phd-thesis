@@ -95,7 +95,7 @@ We map the Clojure-based Ohua to an internal expression \acsu{IR}, as is shown i
 	\label{fig:clojure_to_yauhau}
 \end{figure}
 
-The expression \ac{IR} defined in Figure~\ref{fig:clojure_to_yauau} is based on $\lambda$ calculus with a \texttt{let} construction for lexical scoping and explicit conditionals (\texttt{if}).
+The expression \ac{IR} defined in Figure~\ref{fig:clojure_to_yauhau} is based on $\lambda$ calculus with a \texttt{let} construction for lexical scoping and explicit conditionals (\texttt{if}).
 The central innovations of the language are the two particular terms, \texttt{ff} for foreign functions, which is any (possibly stateful) function.
 The other term is \texttt{io}, which is an explicit annotation that a function does \ac{I/O}\index{\"{Y}auhau ! io}.
 The premise is to optimize the number of annotated \ac{I/O} calls leveraging the concurrency from the dataflow semantics derived from this language.

@@ -16,7 +16,7 @@ The practical implementation and evaluation of the library that we describe in~\
 
 \subsection{The MacQueen Gap}
 
-Recall from sections~\ref{sec:kpn_basic,sec:concurrent_mocs} that a \ac{KPN} can be modeled as a directed graph $K = (V,E)$ where the edges $V$ are Scott-continuous functions $f \in V$ mapping from the set of sequences from the input channels $S_{i_1} \times S_{i_k}$ to the set of output channels $S_{o_1} \times S_{o_l}$, and the edges represent the corresponding Scoott-domains of sequences.
+Recall from sections~\ref{sec:kpn_basic} and~\ref{sec:concurrent_mocs} that a \ac{KPN} can be modeled as a directed graph $K = (V,E)$ where the edges $V$ are Scott-continuous functions $f \in V$ mapping from the set of sequences from the input channels $S_{i_1} \times S_{i_k}$ to the set of output channels $S_{o_1} \times S_{o_l}$, and the edges represent the corresponding Scoott-domains of sequences.
 
 The \acf{KMQ} blocking reads semantics are defined in a more operational fashion.
 The model of computation is defined implicitly by the semantics of a language\cite{kahn_macqueen}, characterized mainly through blocking reads to channels.

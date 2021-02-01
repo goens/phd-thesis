@@ -65,8 +65,12 @@ This way, the neighborhoods are not restricted to balls $B_r(m)$ around the poin
 	\centering
    \resizebox{0.95\textwidth}{!}{\inputTikz{design_center_mapping_spaces.tex}}
 	\caption{Examples of possible neighborhoods around design centers in two-dimensional random projections of the design space for the \texttt{audio filter} application on the Odroid XU4.}
-	\label{fig:design_centering_exynos}
+	\label{fig:design_centering_exynos_examples}
 \end{figure}
+
+Figure~\ref{fig:design_centering_exynos_examples} shows examples of possible design centers in two-dimensional projections like those used for Figure~\ref{fig:visualization_design_centering_spaces} (without the artistic rendering).
+These are mappings for the audio filter application to the Odroid XU4 platform.
+We see how the shape of the balls is also stretched and rotated by the covariance matrix.
 
 These methods all rely on the metric space structure of the mapping space, as distances between mappings and the concept of neighborhoods all rely on the metric space structure.
 Strictly speaking, neighborhoods can be defined on any topology, but not with radii as in the $L_p$ algorithm.
