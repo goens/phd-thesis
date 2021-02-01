@@ -36,7 +36,7 @@
 \pdfbookmark{Dedication}{dedication}
 \thispagestyle{empty}
 \begin{center}
-  \Large \emph{Dedicated to ...}
+  \emph{Dedicated to all who are unjustly opressed only for being born with a specific sex, race or species.} 
 \end{center}
 \cleardoublepage
 \chapter*{Preamble}
@@ -45,23 +45,23 @@
 \epigraph{All models are wrong, but some are useful}{George Box (Attributed)}
 \section*{Abstract}
 \label{sec:abstract}
-\addcontentsline{toc}{section}{\nameref{sec:abstract}}
+%\addcontentsline{toc}{section}{\nameref{sec:abstract}}
 \input{tex/abstract.tex}
-\ifthenelse{\boolean{printversion}}{
-\cleardoublepage
-\tableofcontents
-}{}
 \cleardoublepage
 \section*{Publications}
 \label{sec:publications}
-\addcontentsline{toc}{section}{\nameref{sec:publications}}
+%\addcontentsline{toc}{section}{\nameref{sec:publications}}
 Some contents of this thesis have been published previously, including ideas and some figures. The following are the publications cited in this thesis that I co-authored: \\ \vspace{1cm}
 \printbibliography[heading=none,keyword={contribution}]
 \cleardoublepage
 \section*{Acknowledgments}
 \label{sec:acks}
-\addcontentsline{toc}{section}{\nameref{sec:acks}}
+%\addcontentsline{toc}{section}{\nameref{sec:acks}}
 \input{tex/acknowledgements}
+\ifthenelse{\boolean{printversion}}{
+\cleardoublepage
+\tableofcontents
+}{}
 \cleardoublepage
 \pagenumbering{arabic} 
 \chapter{Introduction}

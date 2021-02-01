@@ -95,7 +95,7 @@ In general, the productivity of developers cannot keep up with the pace of devel
 We speak of a ``software productivity gap''~\cite{ecker2009hardware,castrillon2014thesis}\index{software productivity gap}. 
 
 When programming multicore systems, abstractions that proved very useful for programming single-cores become inadequate.
-This is exacerbated by the problem that machines are designed for backwards-compatibility with machine models which are also sequential at the instruction level~\cite{cisnotll}.
+This is exacerbated by a problem with the legacy of \acsp{ISA}. They are usually based on  machine models which are also sequential at the instruction level~\cite{cisnotll}.
 A universal concept in programming is that of repeating an action multiple times, or looping. 
 For example, consider the task of iterating through a bunch of pictures and determining which of them contain cats.
 For instructing a human, we can probably say something like ``look through those pictures and sort out the ones that have cats''.
@@ -103,27 +103,27 @@ A modern x86 chip, on the other hand, would understand something closer to this:
 
 \begin{minted}{Nasm}
 LBB0_1:                                 
-	cmp	dword ptr [rbp - 56], 10
-	jge	LBB0_4
-	mov	edi, dword ptr [rbp - 56]
-	call	_read_picture
-	mov	qword ptr [rbp - 64], rax
-	mov	rdi, qword ptr [rbp - 64]
-	call	_contains_cats
-	movsxd	rcx, dword ptr [rbp - 56]
-	mov	dword ptr [rbp + 4*rcx - 48], eax
-	mov	eax, dword ptr [rbp - 56]
-	add	eax, 1
-	mov	dword ptr [rbp - 56], eax
-	jmp	LBB0_1
+  cmp	dword ptr [rbp - 56], 10
+  jge	LBB0_4
+  mov	edi, dword ptr [rbp - 56]
+  call	_read_picture
+  mov	qword ptr [rbp - 64], rax
+  mov	rdi, qword ptr [rbp - 64]
+  call	_contains_cats
+  movsxd	rcx, dword ptr [rbp - 56]
+  mov	dword ptr [rbp + 4*rcx - 48], eax
+  mov	eax, dword ptr [rbp - 56]
+  add	eax, 1
+  mov	dword ptr [rbp - 56], eax
+  jmp	LBB0_1
 LBB0_4:
-	mov	eax, dword ptr [rbp - 52]
-	mov	rcx, qword ptr [rip + ___stack_chk_guard@GOTPCREL]
-	mov	rcx, qword ptr [rcx]
-	mov	rdx, qword ptr [rbp - 8]
-	cmp	rcx, rdx
-	mov	dword ptr [rbp - 68], eax 
-	jne	LBB0_6
+  mov	eax, dword ptr [rbp - 52]
+  mov	rcx, qword ptr [rip + ___stack_chk_guard@GOTPCREL]
+  mov	rcx, qword ptr [rcx]
+  mov	rdx, qword ptr [rbp - 8]
+  cmp	rcx, rdx
+  mov	dword ptr [rbp - 68], eax 
+  jne	LBB0_6
 \end{minted}
 
 This snippet is a very oversimplified version of the task, but it serves to make the point.

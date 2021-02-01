@@ -134,7 +134,8 @@ So far, in this thesis, we have strongly motivated graph-based representations o
 It is certainly not a new insight that graphs are well-suited to represent code in its non-linearity.
 Compiler construction in general is based on multiple graphs, like syntax trees or \acp{CDFG}.
 
-Based on this observation, we investigated graph-based representations of code for machine learning, specifically focusing on compilers~\cite{brauckmann_cc20}.
+Based on this observation, we investigated graph-based representations of code for machine learning.
+We focused specifically on compilers~\cite{brauckmann_cc20}.
 Graph models in machine learning are an emerging field, with \acp{GGNN}~\cite{gnn} being successful in multiple reasoning tasks.
 In the context of programming language models, \acp{GGNN} and related graph models have also been very successful~\cite{allamanis2017learning,cummins_programl,ye2020deep,paliwal2020graph}.
 These models use a iterative message-passing semantics to learn the dependencies from adjacent nodes in a graph. 
@@ -170,7 +171,7 @@ Instead of random disjoint subsets of equal sizes, we split the kernels for test
 One suite is used for testing, all others for training, and we again report the geometric mean of the accuracy.
 This is the second setup, the grouped split.
 
-The results in Figure~\ref{fig:graph_representations_code} show that graph-based models generally achieved better accuracy than sequence-based ones.
+The results in Figure~\ref{fig:graph_representations_code} show that graph-based models achieved better accuracy than sequence-based ones, in general terms.
 This is not surprising, as it has been discussed that they are better at exposing the non-linear structure of code.
 Also not surprising is that all models do worse in the grouped split, when forced to generalize across benchmark suites.
 However, it is worth noting that the \ac{CDFG}-based representations performed better on the random split, and the \ac{AST}-based representations performed better on the grouped split.

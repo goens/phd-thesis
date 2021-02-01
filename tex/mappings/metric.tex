@@ -160,7 +160,7 @@ A mapping $\iota : M \hookrightarrow \mathbb{R}^n$ such that there exists a $D >
 \begin{align}\label{eqn:distortion} D^{-1} d(x,y) \leq \| \iota(x) - \iota(y) \| \leq d(x,y) \end{align}
 is called an embedding with distortion $D$ (cf. Appendix~\ref{appendix:metric}).
 In other words, the \emph{relative error} of the distances is at most $D$.
-We can calculate a low-distortion embedding for a finite metric space using convex optimization~\cite{matouvsek}.
+Using convex optimization~\cite{matouvsek}, we can calculate a low-distortion embedding for a finite metric space.
 This allows us to work with vectors of real numbers which make many algorithmic tasks scalable, e.g. computing random points in a ball.
 
 Since the size of the mapping space grows exponentially with the number of tasks and changes for every application, computing such an embedding for a large mapping space every time we want to do \ac{DSE} would also be intractable.

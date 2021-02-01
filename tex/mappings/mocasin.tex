@@ -39,30 +39,32 @@ This infrastructure is the \texttt{platform\_designer} module of \mocasin.
 
 \begin{listing}
 \begin{minted}[]{python}
-designer = PlatformDesigner(self)
-designer.setSchedulingPolicy('FIFO', 1000)
-designer.newElement("Odroid-XU4")
+pd = PlatformDesigner(self)
+pd.setSchedulingPolicy('FIFO', 1000)
+pd.newElement("Odroid-XU4")
 # cluster 0 with l2 cache
-designer.addPeClusterForProcessor("cluster_a7", processor_0, num_little)
+pd.addPeClusterForProcessor("cluster_a7", processor_0,
+                            num_little)
 # Add L1/L2 caches
-designer.addCacheForPEs("cluster_a7", 1, 0, 8.0, float('inf'),
-                        frequencyDomain=1400000000.0, name='L1_A7')
-designer.addCommunicationResource("L2_A7", ["cluster_a7"], 250, 250,
-                                  float('inf'), float('inf'),
-                                  frequencyDomain=1400000000.0)
+pd.addCacheForPEs("cluster_a7", 1, 0, 8.0, float('inf'),
+                  frequencyDomain=1400000000.0, name='L1_A7')
+pd.addCommunicationResource("L2_A7", ["cluster_a7"], 250, 250,
+                            float('inf'), float('inf'),
+                            frequencyDomain=1400000000.0)
 # cluster 1, with l2 cache
-designer.addPeClusterForProcessor("cluster_a15", processor_1, num_big)
+pd.addPeClusterForProcessor("cluster_a15", processor_1, num_big)
 # Add L1/L2 caches
-designer.addCacheForPEs("cluster_a15", 1, 4, 8.0, 8.0,
-                        frequencyDomain=2000000000.0, name='L1_A15')
-designer.addCommunicationResource("L2_A15", ["cluster_a15"], 250, 250,
-                                  float('inf'), float('inf'),
-                                  frequencyDomain=2000000000.0)
+pd.addCacheForPEs("cluster_a15", 1, 4, 8.0, 8.0,
+                  frequencyDomain=2000000000.0, name='L1_A15')
+pd.addCommunicationResource("L2_A15", ["cluster_a15"], 250, 250,
+                            float('inf'), float('inf'),
+                            frequencyDomain=2000000000.0)
 # RAM connecting all clusters
-designer.addCommunicationResource("DRAM", ["cluster_a7", "cluster_a15"],
-                                  120, 120, 8.0, 8.0,
-                                  frequencyDomain=933000000.0)
-designer.finishElement()
+pd.addCommunicationResource("DRAM",
+                           ["cluster_a7", "cluster_a15"], 120,
+                           120, 8.0, 8.0,
+                           frequencyDomain=933000000.0)
+pd.finishElement()
 \end{minted}
 \caption{The Odroid-XU4 Platform with the Platform Designer}
 \label{listing:designer_odroid}
@@ -101,7 +103,7 @@ This allows us to implement different contributions of this thesis as \mocasin m
 	\label{fig:mocasin_kpn_simulation}
 \end{figure}
 
-Many concepts that are central contributions of this thesis are implemented in \mocasin. 
+Many contributions of this thesis are implemented in \mocasin. 
 This is done as modules, using the \mocasin toolbox infrastructure. 
 Figure~\ref{fig:mocasin_kpn_simulation} shows a family of \mocasin flows for mapping and simulating \ac{KPN} or \ac{TGFF} applications.
 Different contributions of this thesis and the corresponding references are described in the figure and marked as such (with light-green coloring).

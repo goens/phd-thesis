@@ -8,7 +8,7 @@ There, we also discuss other models of computation and how they relate to each o
 
 We can think of a \ac{KPN} as computation distributed among different \emph{processes}\index{KPN ! process} (originally derived from coroutines).
 Each of these processes executes sequentially and is Turing complete. However, the processes share no memory, they have local memories accessible only to themselves.
-They communicate between each other using \emph{channels}\index{KPN ! channel}, which work as unbounded \acs{FIFO} buffers. 
+They communicate between each other using \emph{channels}\index{KPN ! channel}. These channels work as unbounded \acs{FIFO} buffers. 
 Processes have sets of outgoing and incoming channels.
 As an instruction, any process can write to one of its outgoing channels or read from one of its incoming channels.
 They do so in discrete tokens of data.
@@ -113,7 +113,7 @@ It always resides in $\Sigma^*$, the Kleene closure of $\Sigma$.\index{Kleene cl
 For a (Scott-continuous) function, this sequence can be modeled as a finite string in the computation domain.
 
 In a concurrent execution, multiple entities concurrently execute steps.
-As modeled by Kahn, these entities all implement individual (Scott-continuous) functions.
+As modeled by Kahn, these entities all implement individual functions.
 As such, there is not a unique series of steps that can be said to be the execution trace of the computation.
 To see this, consider the example depicted in Figure~\ref{fig:audio_filter_traces}:
 It shows multiple execution orders for the audio filter \ac{KPN} application.
@@ -201,7 +201,7 @@ semiconductor components like transistors implementing digital switches are used
 Logic gates are used in increasingly complex logic diagrams for building components like an \ac{ALU}.
 These components are combined into digital machines in a microarchitecture to expose a well-defined \acf{ISA} in a \ac{PE}~\cite{lee2017plato}.
 \acp{PE} can then be connected via on-chip interconnects to on-chip memory and other peripherials to make an \ac{MPSoC}.
-The boundaries between these levels of abstraction or \emph{platforms}, as A. Sangiovanni-Vincentelli calls them~\cite{sangiovanni2007quo}, are clear.
+There are mostly clear boundaries between these \emph{platforms}, as A. Sangiovanni-Vincentelli calls them~\cite{sangiovanni2007quo} (which are levels of abstraction).
 Designers at each level expose a small amount of complexity through these established abstractions, in what is commonly referred to an hourglass design~\cite{10.1145/3274770}.
 
 \begin{figure}[h]
