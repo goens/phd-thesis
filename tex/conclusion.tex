@@ -62,14 +62,16 @@ We need tools and environments that make it easier for programmers to design app
 
 The Lingua Franca project, which implements Reactors, is a great avenue for fostering adoption.
 Its polyglot design allows programmers to use known languages to write reactors, while still being a coordination language that can enforce the \ac{MoC} semantics.
-The use of known language has two distinct advantages, as it reduces the learning curve and allows  twofold is especially 
+The use of known language has two distinct advantages, as it reduces the learning curve and allows to use legacy code. 
+Currently, the compiler does not understand nor type-check the target language, leaving that task to the compiler.
+In future work we could add a type system to Lingua Franca, reinfoncing the ``freedom from choice'' it provides.
 
 A potential disadvantage from the Lingua Franca project, on the other hand, could be its coordination language. 
 Explicitly writing the networks can be confusing for developers.
 This is exacerbated by the fact that Reactors is a complex model, difficult to grasp and learn.
 We believe the approach by Ohua of making the network implicit is a great avenue for future work.
 Another example to follow is the Elm language, a functional language for the web.
-Elm started as a language with an explicit Functional Reactive Programming paradigm, which was confusing for users.
+Elm started as a language with an explicit \ac{FRP} paradigm, which was confusing for users.
 They made this paradigm implicit~\footnote{\url{https://elm-lang.org/news/farewell-to-frp}}, which translated into a success for the learning curve and the language's adoption.
 This is part of a general vision, where compilers and languages are thought of as assistants that make development easier for programmers, instead of only focussing on correctness and performance.
 We believe we should follow similar paths for the design of software using \acp{MoC} like Reactors or \ac{KPN}.

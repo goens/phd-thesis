@@ -1,6 +1,6 @@
 The nature of this thesis is not focused enough for us to discuss related work from a general point of view.
 Perhaps the closest in spirit to the work presented in this thesis is the Ptolemy project~\cite{Ptolemaeus:14:SystemDesign}.
-It is a tool for exploring model-based design and has a strong focus on \acp{cps}.
+It is a tool for exploring model-based design and has a strong focus on \acp{CPS}.
 The Ptolemy project is very comprehensive and studies and implements several \acp{MoC} discussed in this thesis (cf. Section~\ref{sec:mocs_overview}).
 The scope of the Ptolemy project is far larger and more detailed than this thesis.
 It is, however, aimed at application developers.
@@ -18,7 +18,7 @@ Section~\ref{sec:software_synthesis_flows} discusses these tools more in-depth.
 
 \paragraph{Other software synthesis tools}
 The tools above focus on software synthesis in a flow similar to the one described in this thesis, using \ac{KPN} or dataflow models and \ac{DSE} to find profitable mappings for executing applications in modern hardware.
-There are other tools which are focused more in the model's semantics, like Ptolemy~\cite{Ptolemaeus:14:SystemDesign} or CAL~\cite{eker2003cal} or synchronous languages like LUSTRE~\cite{pilaud1987lustre} or ESTEREL~\cite{boussinot1991esterel} which have discrete-event semantics, perhaps more closely related to Reactors than to dataflow.
+There are other tools which are focused more in the model's semantics, like Ptolemy~\cite{Ptolemaeus:14:SystemDesign} or CAL~\cite{eker2003cal} or synchronous languages like LUSTRE~\cite{lustre} or ESTEREL~\cite{esterel} which have discrete-event semantics, perhaps more closely related to Reactors than to dataflow.
 Even hardware description languages like VHDL or Verilog, and even SystemC~\cite{semantics_systemc} can be seen as related, in this case it being \ac{HLS}, which is in fact the inspiration for the term software synthesis.
 Also on the commercial side, Signal Processing Work System and Synopsys System Studio both from Synopsis join the LabVIEW Communications System Design Suite or Matlab Simulink~\cite{klikpo2016modeling} as model-based design tools with well-defined \acp{MoC}.
 In Section~\ref{sec:general_dataflow_tools} we review and discuss many of these tools and programming languages based on \acp{MoC}.
@@ -53,7 +53,7 @@ A related approach is the grammar-based method presented in~\cite{mckenzie1997ge
 In this thesis we discussed random benchmarking for evaluating optimizations, more so than for testing corner cases.
 The tools \ac{TGFF}~\cite{dick1998tgff} and \ac{\SDFFF}\cite{sdf3}, also discussed in Section~\ref{sec:representative_benchmarks} are more closely related to benchmarking as we investigated it.
 
-The direct connection between benchmarking and machine learning comes from CLGen~\cite{cummins_cgo17}.
+The direct connection between benchmarking and machine learning comes from CLGen~\cite{cummins_cgo2017}.
 Machine learning for code is a much broader subject and only a minor part of this thesis.
 A broader overview can be found in~\cite{allamanis2018survey}, although we will solely discuss work closely related to the contributions presented in this thesis. 
 We based our graph-based methods and the evaluation on the ideas presented in~\cite{cummins_pact17,inst2vec}.

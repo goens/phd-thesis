@@ -2,11 +2,13 @@ This section reviews some programming languages and how they provide ``freedom f
 There is a distinct sense in this is the central question of programming languages in general.
 By removing memory management through having no pointer arithmetic and garbage collection, Java frees its users from multiple families of errors that are possible in C.
 Rust's ownership types take a different approach, also removing complete families of memory-management based errors, without introducing large performance overheads or unpredictable behavior from the garbage collector.
+Elm~\cite{czaplicki_elm}, on the other hand, exposes a functional paradigm with a strong type-system for \acsu{GUI} development of web applications, which eliminates virtually all run-time errors.
 
-These kinds of ``freedom from choice'' in general-purpose languages are beyond the scope of this thesis, which focuses on \acp{MoC} like those described in Chapter~\ref{chap:mocs}.
-In well-defined \acp{MoC} like the ones discussed here, on the other hand, the temptation to break away from the semantics might be higher.
-A very interesting observation and discussion of this phenomenon can be found in~\cite{tasharofi2013scala}, which shows not only that developers commonly break away from the semantics if they are not enforced, but also gives multiple explanations why.
-This is why it is not advisable to expose these as a library, but rather as a full language, as much as possible. 
+These kinds of ``freedom from choice'' are beyond the scope of this thesis, which focuses on \acp{MoC} like those described in Chapter~\ref{chap:mocs}.
+In more constraining  \acp{MoC}, like the ones discussed here, the temptation to break away from the semantics might be higher.
+An interesting observation and discussion of this phenomenon can be found in~\cite{tasharofi2013scala}.
+Not only does it show that developers commonly break away from the semantics if these are not enforced, but also gives multiple explanations why.
+This is why we believe \acp{MoC} should not be exposed as a library, but rather as implicit in the semantics of a (full) language.
 Here we will briefly survey languages focused on \ac{MoC}-based paradigms.
 
 \subsection{Dataflow, Actors and Discrete Events}
@@ -15,11 +17,12 @@ Here we will briefly survey languages focused on \ac{MoC}-based paradigms.
 Most well-known languages that follow \acp{MoC} like the ones described here are based on the actor model.
 Compared to more sophisticated models, the actor model has mostly intuitive semantics.
 The Erlang language is a successful example of a language whose semantics are in principle an implementation of the (Hewitt-Agha) actor model.\index{Erlang}
-The Rebeca language~\cite{sirjani2004formal}, which is primarily a design and specification language used in model checking, is also an actor-based language.\index{Rebeca}
-Another prominent example is the CAL actor language~\cite{eker2003cal}, and has been used to define the \ac{RVC} standard~\cite{bhattacharyya2011overview}.
-The \ac{RVC}-CAL compiler\footnote{\url{https://sourceforge.net/projects/orcc/}} is an Eclipse-based compiler for the CAL actor language which is used to compile the \ac{RVC} reference implementations.\index{\ac{RVC}-CAL}
+Another example of an actor based language is Rebeca~\cite{sirjani2004formal}, which is primarily a design and specification language used in model checking.\index{Rebeca}
+Another prominent example is the CAL actor language~\cite{eker2003cal}.
+It has been used to define the \ac{RVC} standard~\cite{bhattacharyya2011overview}.
+The \ac{RVC}-CAL compiler\footnote{\url{https://sourceforge.net/projects/orcc/}} is an Eclipse-based compiler for the CAL actor language, which is used to compile the \ac{RVC} reference implementations.\index{\ac{RVC}-CAL}
 
-Another prominent \ac{MoC}-based programming environment from academia is Ptolemy~II\cite{Ptolemaeus:14:SystemDesign}. 
+Ptolemy~II\cite{Ptolemaeus:14:SystemDesign} is another prominent \ac{MoC}-centered programming environment.
 In contrast to most of the other frameworks, Ptolemy~II supports a plethora of \ac{MoC}, including most of the models discussed in this thesis. 
 Also in contrast to most other frameworks, \acp{MoC} are a central component of Ptolemy~II, which makes them explicit using \emph{directors}\index{Ptolemy~II}.
 The framework uses the Java programming language to allow the definition of arbitrary actors, but it also comes with a large library of pre-defined actors.
@@ -34,16 +37,18 @@ This implementation uses only pre-defined actors in Ptolemy~II.
 	%	\vspace{-1mm}
 \end{figure}
 
-In the case of discrete-event models, there are many more well-established languages which implement them.
+In the case of discrete-event models, there are many well-established languages which implement them.
 The hardware description languages VHDL and Verilog work with discrete-event semantics, since hardware does. 
 The SystemC language, well known for discrete event simulations (of hardware), also has discrete event semantics~\cite{semantics_systemc}.
-Finally, more on the software side are the Synchronous languages, like LUSTRE~\cite{lustre} or ESTEREL~\cite{esterel}, which are (complete) programming languages with a discrete event semantics.
+Similarly does the related SpecC language~\cite{specc}.
+Finally, more on the software side are the Synchronous languages, like LUSTRE~\cite{lustre} or ESTEREL~\cite{esterel}, which are (complete) programming languages with discrete-event semantics.
 
-Also in the discrete events domain is the Lingua Franca language~\cite{lohstroh_fdl20}\footnote{\url{https://github.com/icyphy/lingua-franca}}. 
-Lingua Franca is a complex framework that implements the Reactors model, described in Section~ref{sec:rectors}.
-This novel language is a self-described polyglot \emph{coordination language}, which means that it is not used to define the computation but rather to compose reactors written in a different language.
-Similar to \ac{CPN}, nothing prevents programmers from ``cheating'' in the code of the reactors and going around the semantics, yet it does enforce them more strongly than a library, as it is a full \ac{DSL} that generates Reactors-based applications in a source-to-source compilation process.
-Figure~\ref{fig:audio_filter_lf} shows the Lingua Franca programming environment with an implementation of the audio filter benchmark.
+The Lingua Franca language~\cite{lohstroh2020language}\footnote{\url{https://github.com/icyphy/lingua-franca}} is  also in the discrete events domain.
+Lingua Franca is a complex framework that implements the Reactors model, described in Section~\ref{sec:reactors}.
+This novel language is a self-described polyglot \emph{coordination language}, which means that it is not used to define the computation, but rather, to compose reactors written in a different language.
+Nothing prevents programmers from ``cheating'' in the code of the reactors and going around the semantics, yet it does enforce them more strongly than a library.
+Lingua Franca is a (complete) \ac{DSL} that generates Reactors-based applications in a source-to-source compilation process.
+Figure~\ref{fig:audio_filter_lf} shows the Eclipse-based programming environment of Lingua Franca, with an implementation of the audio filter benchmark.
 We will not discuss the framework more in detail, as the design and implementation of Lingua Franca is not part of the contribution of this thesis.
 
 \begin{figure}[t]
@@ -54,41 +59,43 @@ We will not discuss the framework more in detail, as the design and implementati
 	%	\vspace{-1mm}
 \end{figure}
 
-In Chapter~\ref{chap:mapping} we discussed the \ac{CPN} language at length, as well as the \ac{MAPS} framework which is used to lower \ac{CPN} to different implementations in heterogeneous systems.
+In Chapter~\ref{chap:mapping} we discussed the \ac{CPN} language, as well as the \ac{MAPS} framework which is used to lower \ac{CPN} to different implementations in heterogeneous systems.
 In contrast\footnote{As an extension of C, the \ac{CPN} language also does not fundamentally prevent programmers from breaking the semantics.}, e.g. the YAPI programming interface~\cite{yapi} defines process networks only as a runtime library and can be evaded just like Scala developers do with actor frameworks~\cite{tasharofi2013scala}.
-The Sesame framework uses YAPI-based programs, e.g. derived from Compaan~\cite{stefanov2003deriving} for \ac{dse}\cite{pimentel2006systematic}.
+The Sesame framework uses YAPI-based programs, e.g. derived from Compaan~\cite{stefanov2003deriving} for \ac{DSE}\cite{pimentel2006systematic}.
 Most of the software synthesis flows discussed in Section~\ref{sec:software_synthesis_flows} use the languages described here, e.g. TURNUS which uses CAL or SystemCoDesigner which is based on SystemC.
 Other systems like DAARM or \mocasin do not use actual source code for the applications but rather application models for \ac{DSE}.
 
 
-Most of the flows discussed above and in Section~\ref{sec:software_synthesis_flows} are academic and deal with more sophisticated models. 
+Most of the flows discussed above and in Section~\ref{sec:software_synthesis_flows} are academic and deal with more sophisticated \acp{MoC}. 
 Many ideas that seem good in academia do not hold up in a practical development environment, where the learning curve of the models and time-to-market considerations change the field.
 It is therefore not surprising that the more sophisticated models have seen less adoption.
+Nevertheless, some \ac{MoC}-based commercial systems do exist and have seen successful adoption.
 For example, the LabVIEW Communications System Design Suite restricts the LabVIEW language to a dataflow \ac{MoC}.
-Matlab Simulink has a dataflow-like semantic with time triggering, thus closer to discrete event models.
-On the discrete-events side 
+Similarly, Matlab Simulink has a dataflow-like semantic with time triggering, and is thus closer to discrete event models.
+On the discrete events side, as mentioned above, hardware description languages like Verilog or VHDL have discrete-event semantics.
+These languages are very widespread and are used commercially.
 
 \subsection{Implicit Dataflow}
 
 The languages surveyed so far are explicit about their abstractions: Actors, Reactors or Processes are declared explicitly.
-Similarly, channels describing the dataflow are made explicit either through channel declarations or through the connection of explicit ports.
+Similarly, channels describing the data flow are made explicit either through channel declarations or through the connection of explicit ports.
 A programmer writing in e.g. \ac{CPN} or Lingua Franca has to have a model of the network describing the application in their head (or in their \acs{IDE}).
-Implicit abstractions, on the other hand, work by generating implicit models from linguistic constructs that don't exhibit their structure directly.
+Implicit abstractions, on the other hand, work by generating implicit models from linguistic constructs that don't exhibit their structure directly.\index{implicit abstractions}
 
-Implicit abstractions as we just defined them are ubiquitous in programming languages.
-Again, objects in \ac{OOP} are an implicit abstraction for data encapsulation that is fundamentally similar to actors.
+Implicit abstractions, as we just defined them, are ubiquitous in programming languages.
+Objects in \ac{OOP}, for example, are an implicit abstraction for data encapsulation that is fundamentally similar to actors.
 A thorough classification  of these implicit models is outside the scope of this thesis.
 Instead, we will look closely at the Ohua programming paradigm~\cite{ertel_phdthesis}, which derives a dataflow execution from functional semantics.
 
-The Ohua programming model by S. Ertel and others is a powerful model of implicit parallelism which can be used to express parallelism at a language level without explict costructions like threads and locks. 
-\index{Ohua}
+The Ohua programming paradigm, by S. Ertel, and others is an implicit model of concurrency. \index{Ohua}
+It can  be used to express concurrency at a language level, without explicit constructions, like threads and locks. 
 As stated above, the parallelism comes from lowering an Ohua program into a dataflow-based execution.
 This model is not part of the original contribution of this thesis.
-However, it is central to several distinct original contributions of the thesis, and we will introduce it as background material.
+We will introduce it here as background material.
 
-Ohua itself is a general paradigm that works on multiple language, and the framework has evolved over the years of its development.
-The version of Ohua we will discuss here first is based on Clojure and Java, but the Ohua compiler and its principles work with many languages,
-and rutimes also exist at different levels of development e.g. for Rust, Javascript or Go.
+Ohua itself is a general paradigm that works on multiple languages, and the framework has evolved over the years of its development.
+The version of Ohua we will discuss here is based on Clojure and Java, but the Ohua compiler and its principles work with many languages.
+Rutimes also exist for Rust, Javascript or Go, at different levels of maturity.
 Ohua is best understood by diving directly into examples. Consider the code in Listing~\ref{listing:ohua_audio_filter}.
 
 \begin{listing}

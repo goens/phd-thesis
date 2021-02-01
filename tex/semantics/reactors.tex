@@ -86,9 +86,12 @@ Note that our definition is a restriction on the definition of reactions.
 As defined in~\cite{lohstroh_cyphy19} with an informal \emph{source code} ``object'', they can be interpreted in the semantics of the language of that source code.
 As such, they could implement any relation on $S^k \times S^m$.
 In particular, we assume reactions are deterministic (as mathematical functions) and respect causality (being Scott-continuous).
-Note that this does not mean they are stateless, state can be formalized as a ``self-edge'' i.e. an $i,j$ such that
-\[ f(*,\underbrace{s}_{i},*) = (*,\underbrace{s'}_{j},*) \text{ with } s \sqsubseteq s' \text{ for all } s,s' \in S, \]
-the $*$ being other sequences we don't care about here.
+Note that this does not mean they are stateless.
+State is implicit in the definition of a function on the complete history of inputs, as opposed to a function on a single input token.
+In the latter, for $f : \Sigma^k \rightarrow \Sigma^m$, state can be formalized as a ``self-edge'' i.e. an $i,j$ such that
+\[ f(*,\underbrace{s}_{i},*) = (*,\underbrace{s'}_{j},*) \text{ with } s ,s' \in \Sigma, \]
+the $*$ being other values we don't care about here.
+However, we use the denotational formalization of computation of functions by Scott as complete sequences of inputs and outputs, which makes the state implicit.
 
 Definition~\ref{defn:reaction} also has strong theoretical consequences.
 It implies that every monotone reaction is Scott-continuous, since it is equivalent with $|f(s)| \geq |s|$ for all $s \in S$, which avoids the pathological cases that distinguish monotone and Scott-continuous functions.
@@ -190,17 +193,14 @@ a set of edges $E$, which we require to be pairs of indices, $E \subseteq I \tim
 For this multigraph we require that for any two distinct reactors $r_1 \neq r_2 \in V$ the input and output ports are paairwise disjoint,
 i.e. $\operatorname{Input}(r_i) \cap \operatorname{Output}(r_j) = \emptyset$ for all $i,j \in \{ 1, 2 \}$ and every edge is a tuple consisting of an output port and an input port,
 i.e. for all $(i,j) = e \in E \subseteq I \times I$ there exist $r_1,r_2 \in V$ such that $i \in \operatorname{Output}(r_1)$ and $j = \operatorname{Input}(r_2)$.
+We additionally require that the multigraph has no self-edges, i.e. $|\xi(e)| > 1$ for all $e \in E$.
 \end{defn}
 
 Recall that a multigraph is a graph that can have multiple edges, and the function $\xi : E \rightarrow \{ \{r_1, r_2\} \mid r_1, r_2 \in V \}$ defines which vertices are connected by each edge.
 Here, the edges themselves carry semantics as well. They define which ports specifically they connect in the reactor.
 We define the set $I(\mathcal{R}) = \bigcup_{r \in V}(\operatorname{Input}(r) \cup \operatorname{Output}(r))$ as the set of ports of $\mathcal{R}$.
 
-We make some additional remarks about Definition~\ref{defn:timeless_network}. 
-There is nothing preventing self edges in the definition.
-Indeed, a self edge in a timeless reactor network can be used to model state in the reaction functions.
-This differs from the original definition where state is made explicit and separate, but does not fundamentally change the model's semantics.
-The other important point worth mentioning is that we don't require all ports to be connected.
+We make an additional remark about Definition~\ref{defn:timeless_network}, namely that we don't require all ports to be connected.
 Indeed, some ports we explicitly want to leave disconnected to define the general, timed model. 
 
 \subsubsection{Timed Networks}
