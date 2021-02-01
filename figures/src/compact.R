@@ -52,7 +52,7 @@ tikz("generated/compact_cases.tex",standAlone = FALSE, width = 8,height = 4)
 print(ggplot(data = filter(ungroup(by.scenario.allapps.full), app == 0)) +
           labs(y = "Average network delay / cycles", x="Mapping type") +
           geom_boxplot(mapping = aes(x=type,y=delay.avg..cycles.,color=case),position=position_dodge()) +
-          facet_wrap(~fire.rate, labeller = labeller(fire.rate = append.freqstr)) +
+          facet_wrap(~fire.rate, labeller = labeller(fire.rate = append.freqstr),scale='free') +
           scale_color_manual(values = mixed_palette) +
           theme(text = element_text(size=18),legend.position="top") +
           scale_y_log10() )

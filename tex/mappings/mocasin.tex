@@ -5,8 +5,8 @@ As such, this section will explain the tool in-depth, to enable the description 
 
 \begin{figure}[h]
 	\centering
-   \includegraphics[width=0.75\textwidth]{figures/mocasin.pdf}
-	\caption{The \mocasin architecture. Adapted from Figure~2 in \cite{menard_rapido21}}
+   \resizebox{0.95\textwidth}{!}{\input{figures/mocasin_flow.tex}}
+	\caption{Mapping and simulating KPN Applications in \mocasin.}
 	\label{fig:mocasin_arch}
 \end{figure}
 
@@ -16,6 +16,7 @@ which can be understood as a tool for rapid prototyping of prototyping tools.
 Multiple dataflow \acp{MoC} are supported by \mocasin, like \ac{SDF} or task graphs.
 These models, among others, can be seen as specializations of \ac{KPN}~\cite{lee1995dataflow} and will be discussed more in-depth in Chapter~\ref{chap:mocs}.
 The \mocasin architecture is composed of multiple modules that can be combined to create a specific tool (e.g. for mapping or simulation). 
+In the figure we show the modules that are relevant for this thesis.
 
 In general, simulating a KPN requires four inputs, as explained in Section~\ref{sec:simulating_mappings}: the \ac{KPN} graph, a platform description, execution traces and a mapping.
 The \mocasin tool has data internal structures for these four inputs that reflect the models as explained insection~\ref{sec:kpn_basic}-\ref{sec:mapping_problem}.
@@ -27,8 +28,10 @@ This is not surprising, since a significant part of this thesis concerns itself 
 
 A central part of \mocasin is a discrete-event simulator~\cite{menard_norcas16} that uses the principles outlined above to simulate KPN applications based on their traces (as well as other models of computation).\index{discrete-event simulator}
 We will not dwell on the design of the \texttt{simulate} module since it goes beyond the contribution and scope of this thesis.
+Many contributions of this thesis are implemented in \mocasin. 
+This is done as modules, using the \mocasin toolbox infrastructure. 
+Different contributions of this thesis and the corresponding references are described in the figure and marked as such (with light-green coloring).
 In the following, we will describe some other central modules of \mocasin. 
-
 
 \subsubsection{platform designer}
 
@@ -94,16 +97,3 @@ Figure~\ref{fig:mocasin_arch} depicts this to the right, for an example simulati
 This configuration philosophy allows us to work in a modular fashion, with the modules as depicted in the \mocasin toolbox in the figure.
 This allows us to implement different contributions of this thesis as \mocasin modules.
 
-\subsubsection{contributions}
-
-\begin{figure}[h]
-	\centering
-   \resizebox{0.95\textwidth}{!}{\input{figures/mocasin_flow.tex}}
-	\caption{Mapping and simulating KPN Applications in \mocasin.}
-	\label{fig:mocasin_kpn_simulation}
-\end{figure}
-
-Many contributions of this thesis are implemented in \mocasin. 
-This is done as modules, using the \mocasin toolbox infrastructure. 
-Figure~\ref{fig:mocasin_kpn_simulation} shows a family of \mocasin flows for mapping and simulating \ac{KPN} or \ac{TGFF} applications.
-Different contributions of this thesis and the corresponding references are described in the figure and marked as such (with light-green coloring).
