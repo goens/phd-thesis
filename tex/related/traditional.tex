@@ -10,7 +10,7 @@ Instead of discussing related work generally, we will go over on the different m
 In most chapters and sections we discuss related work directly.
 While we will systematically go over related work here, we refer to the according chapters and sections for discussion.
 
-\paragraph{Dataflow-based Software Synthesis}
+\subsection{Dataflow-based Software Synthesis}
 
 There are many software synthesis tools and methods~\cite{lin1998softwaresynthesis,ritz1992softwaresynthesis,bhartacharyya2000softwaresynthesis,pino1995softwaresynthesis,bhattacharyya2012softwaresynthesis}.
 For discussing \ac{KPN}-based software synthesis, we focused on the \ac{MAPS}~\cite{maps} framework and its spinoff in Silexica, as well as the \mocasin tool where we implemented many contributions of this thesis.
@@ -20,7 +20,7 @@ Section~\ref{sec:software_synthesis_flows} discusses these tools more in-depth.
 
 
 
-\paragraph{Other software synthesis tools}
+\subsection{Other software synthesis tools}
 The tools above focus on software synthesis in a flow similar to the one described in this thesis, using \ac{KPN} or dataflow models and \ac{DSE} to find profitable mappings for executing applications in modern hardware.
 There are other tools and languages which are focused more in the model's semantics. Besides Ptolemy~II~\cite{Ptolemaeus:14:SystemDesign}, these include the CAL~\cite{eker2003cal} language and the related \ac{RVC}-CAL compiler.
 Synchronous languages like LUSTRE~\cite{lustre} or ESTEREL~\cite{esterel}, which have discrete-event semantics, are also relevant. These are more closely related to Reactors than to dataflow.
@@ -28,7 +28,7 @@ Even hardware description languages like VHDL or Verilog, and even SystemC~\cite
 Also on the commercial side, Signal Processing Work System and Synopsys System Studio both from Synopsis join the LabVIEW Communications System Design Suite or Matlab Simulink~\cite{klikpo2016modeling} as model-based design tools with well-defined \acp{MoC}.
 In Section~\ref{sec:general_dataflow_tools} we review and discuss many of these tools and programming languages based on \acp{MoC}.
 
-\paragraph{Mapping Representations}
+\subsection{Mapping Representations}
 Symmetries have been explored in software synthesis implicitly in many cases, e.g. in~\cite{singh2010communication,thompson2013exploiting}. 
 In fact, when researchers or developers just distinguish between core types in architectures with simple memory subsystems they are implicitly considering the symmetries of the problem.
 The problem becomes more difficult when the architecture topologies are more complex.
@@ -43,7 +43,7 @@ The work by Thompson and Pimentel~\cite{thompson2013exploiting} is more explicit
 The work from Richthammer and others~\cite{richthammer2018search,richthammer_todaes20} is very similar in nature to the applications discussed in Chapter~\ref{chap:mapping_applications}.
 They also aim to improve \ac{DSE} methods from an algorithm-agnostic fashion, although the concrete structure they exploit is different.
 
-\paragraph{Language-based optimizations} 
+\subsection{Language-based optimizations} 
 The MacQueen gap is generally ignored in literature, where \ac{KPN} are equated with Kahn MacQueen blocking reads semantics. 
 We were not the first to recognize the gap, however.
 The two models are also treated as separate in~\cite{lee_matsikoudis_semantics}.
@@ -52,7 +52,7 @@ Run-time transformations have been explored generally, where the most prominent 
 In terms of language-based transformations for \ac{I/O} optimization, we discussed the main related work in Section~\ref{sec:yauhau}, namely Haxl~\cite{marlow2014haxl} and Muse~\cite{muse},
 as well as the unpublished Stitch~\cite{stitch} from Twitter.
 
-\paragraph{Random Benchmark Generation and Machine Learning}
+\subsection{Random Benchmark Generation and Machine Learning}
 A prominent example of random code generation is CSmith~\cite{csmith}, used to stress-test compilers.
 A related approach is the grammar-based method presented in~\cite{mckenzie1997generating}.
 In this thesis we discussed random benchmarking for evaluating optimizations, more so than for testing corner cases.

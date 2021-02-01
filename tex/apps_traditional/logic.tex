@@ -19,41 +19,30 @@ We then proceed to give examples of questions that might be asked, and how these
 A language was implemented by Felix Teweleitt~\cite{teweleitt_studienarbeit} for \mocasin based on these principles.
 We omit the details of the actual syntax and implementation of the language, as it falls outside the contribution of this thesis.
 
-\paragraph{\texttt{SimpleVector} Representation}
-This representation is, as described throughout the previous chapters, the typical mapping representation that uses vectors of the form $ m = (p_1,\ldots,p_k,c_1,\ldots,c_l)$ to define the mapping.
-This representation is well-suited to answer questions of the form:
+The \texttt{SimpleVector} representation is, as described throughout the previous chapters, the typical mapping representation that uses vectors of the form $ m = (p_1,\ldots,p_k,c_1,\ldots,c_l)$ to define the mapping.
+It is well-suited to answer questions of the form:
 \begin{itemize}
   \item Is task $A$ mapped to $PE_1$?
   \item Does $PE_2$ execute any process?
  \item Do tasks $A$ and $B$ execute on the same \ac{PE}?
 \end{itemize}
 
-\paragraph{\texttt{Symmetries} Representation}
-This representation normalizes mappings that are equivalent to a single (canonical) mapping, while still using the vector form.
-This representation is well-suited to answer questions of the form:
+The \texttt{Symmetries} representation representation normalizes mappings that are equivalent to a single (canonical) mapping, while still using the vector form (cf. Section~\ref{sec:symmetries}).
+Some examples of well-suited questions for it are:
+
 \begin{itemize}
 \item Is this mapping equivalent to mapping $m'$?
 \item Do tasks $A$ and $B$ execute on the same \ac{PE}?
 \end{itemize}
 
-\paragraph{\texttt{MetricSpaceEmbedding} Representation}
-This representation uses the communication topology to define meaningful distances between \acp{PE} and by extension, between mappings.
-This representation is well-suited to answer questions of the form:
+The \texttt{MetricSpaceEmbedding} representation uses the communication topology to define meaningful distances between \acp{PE} and by extension, between mappings (cf. Section~\ref{sec:metric}).
+This representation is well-suited to answer questions like:
 \begin{itemize}
 \item Is this mapping very similar to mapping $m'$? (can give false positives, as seen in Section~\ref{sec:metric})
 \item Is the expected latency between tasks $A$ and $B$ under $10 \mu s$?
 \end{itemize}
 
-\paragraph{\texttt{SymmetryEmbedding} representation}
-This representation combines the metric space structure with the symmetry reduction. 
-It is well suited for questions like:
-\begin{itemize}
-\item Is this mapping very similar to mapping $m'$? 
-\item Is this mapping equivalent to mapping $m'$?
-\item Is the expected latency between tasks $A$ and $B$ under $10$ ns?
-\item Do tasks $A$ and $B$ execute on the same \ac{PE}?
-\end{itemize}
-
+The \texttt{SymmetryEmbedding} representation combines the \texttt{Symmetries} and \texttt{MetricSpaceEmbedding} representations. As such, it combines the both their strengths and weaknesses as a mapping ontology.
 Other representations, not necessarily based on metric spaces, could readily be added to this language. 
 For example, we could design a hierarchy or inclusion-based distance with a way to define a \ac{PE} hierarchy with refinements (PEs $\in$ clusters $\in$ chips) and similarly for hierarchical applications.
 
