@@ -7,16 +7,18 @@ We say that $(G, \circ)$ is a \emph{group}\index{group} if the following hold:
 \item For every $g \in G$ there is an \emph{inverse} element $g^{-1} \in G$ such that $g \circ g^{-1} = g^{-1} g = e$.
 \end{itemize}
 \end{defn}
-By abuse of notation we normally identify the structure $(G,\circ)$ with the set $G$ and say $G$ is a group.
+By abuse of notation, we normally identify the structure $(G,\circ)$ with the set $G$ and say $G$ is a group.
 Similarly, when the operation $\circ$ is understood from context we commonly abbreviate it as multiplication, without writing it explicitly: $g \circ h =: gh$.
-Groups are ubiquitous in mathematics. For example the natural numbers form a group with addition $(\mathbb{N},+)$, as do the reals (without 0) with multiplication $(\mathbb{R}\setminus{0},\cdot)$.
+Groups are ubiquitous in mathematics. For example, the natural numbers form a group with addition $(\mathbb{N},+)$, as do the reals (without 0) with multiplication $(\mathbb{R}\setminus\{0\},\cdot)$.
 
-An important example is the so-called \emph{symmetric group}\index{symmetric group}\index{$S_n$}
+An important example of a group is the so-called \emph{symmetric group}\index{symmetric group}\index{$S_n$}:
 \begin{ex}
-Let $X$ be a finite set, then the set of bijections $X \rightarrow X$ from $X$ to itself is a group with regard to function composition.
-Indeed, if $f,g : X \rightarrow X$ are bijections, then so is $f \circ g :  \rightarrow X$, the identity function $\operatorname{Id}_X : x \mapsto x$ is the neutral element and the inverse function $f^{-1}$ is the group inverse of $f$,
+Let $X$ be a finite set.
+Then, the set of bijections $X \rightarrow X$ from $X$ to itself is a group with regard to function composition.
+Indeed, if $f,g : X \rightarrow X$ are bijections, then so is $f \circ g : X \rightarrow X$.
+The identity function $\operatorname{Id}_X : x \mapsto x$ is the neutral element and the inverse function $f^{-1}$ is the group inverse of $f$,
 since $f \circ f^{-1} = f^{-1} f = \operatorname{Id}_X.$ We call the group of bijections on $X$ the symmetric group on $X$ and write $\operatorname{Sym}(X)$.
-If $n \in \mathbb{N}$ is a natural number and $X = \{ 1 ,\ldots, n \}$, then we write $S_n$ to refer to $\operatorname{Sym}(\{1,\ldots,n\}).$
+If $n \in \mathbb{N}, n > 0$ is a natural number and $X = \{ 1 ,\ldots, n \}$, then we write $S_n$ to refer to $\operatorname{Sym}(\{1,\ldots,n\}).$
 \end{ex}
 This is an important example because every finite group can be found in $S_n$ for some $n$, as a subgroup, which we will define shortly.
 We first want to introduce cycle notation. A permutation $\pi : \{ 1, \ldots, n \} \rightarrow \{ 1 , \ldots, n \}$ can be written in different ways.
@@ -30,11 +32,13 @@ The simplest way to do this is to write it in a two-row matrix:
 \right)
 \end{equation*}
 
-While this is simple to understand, there is a more concise way to write permutations that has many advantages, including some computational advantages, namely cycle notation.
-We write a permutation as a product of cycles $(i \pi(i), \pi(\pi(i)), \ldots, \pi^k(i))$, maximal such that the values don't repeat. We can do this since $n$ is finite and thus for some $k$, $\pi^{k+1}(i)  = i$, and we choose the minimal $k$ with that property.
-For example, the cycle $(1,2,3)$ is the permutation $1 \mapsto 2, 2 \mapsto 3, 3 \mapsto 1$. It is clearer perhaps why they are called a cycle, since the last element maps to the first one, cyclically.
-By convention, $1$-cycles are not written explicitly, so the identity mapping can be sometimes be written as $()$ , but could equivalently be $(1)(2)\ldots(n)$.
-So, for example, the permutation $1 \mapsto 2, 2 \mapsto 1, 3 \mapsto 3, 4 \mapsto 5, 5 \mapsto 4$ can be written as $(1,2)(3,4)$.
+While this is simple to understand, there is a more concise way to write permutations that has many advantages, including some computational advantages.
+It is called cycle notation.
+We write a permutation as a product of cycles $(i~\pi(i) ~ \pi(\pi(i)) ~ \ldots ~ \pi^k(i))$, maximal such that the values don't repeat. We can do this since $n$ is finite and thus for some $k$, $\pi^{k+1}(i)  = i$, and we choose the minimal $k$ with that property.
+For example, the cycle $(1,2,3)$ is the permutation $1 \mapsto 2, 2 \mapsto 3, 3 \mapsto 1$.
+From this example it perhaps is clearer why they are called cycles, since the last element maps to the first one, cyclically.
+By convention, $1$-cycles are not written explicitly. The identity mapping can be sometimes be written as $()$ , but could equivalently be $(1)(2)\ldots(n)$.
+For another example, the permutation $1 \mapsto 2, 2 \mapsto 1, 3 \mapsto 3, 4 \mapsto 5, 5 \mapsto 4$ can be written as $(1,2)(3,4)$.
 
 \begin{defn}
 Let $H \subseteq G$ be a subset of a group $G$.
@@ -43,27 +47,28 @@ Equivalently, if $e \in H$ and for every $g, h \in G$ we have $g h^{-1} \in G$.
 \end{defn}
 
 We normally write $H \leq G$ to denote that $H$ is a subgroup of $G$ (and $H < G$ if, additionally, we know that $G \neq H$).
+
 In group theory in particular, and in mathematics in general, mappings that preserve the structures of the objects being studied are a very powerful tool.
 We proceed to define these mappings for groups.
 
 \begin{defn}
-For two groups $G, G'$, a mapping $\varphi : G \rightarrow G'$ is called a group homomorphism\index{group homomoprhism} (or a morphism of groups) if it respects the groups structure, i.e. 
+For two groups $G, G'$, a mapping $\varphi : G \rightarrow G'$ is called a group homomorphism\index{group homomoprhism} (or a morphism of groups) if it respects the group's structure, i.e. 
 if $\varphi(gh) = \varphi(g) \varphi(h)$ for all $g,h \in G$ and $\varphi(e_G) = e_G'$. 
 \end{defn}
 
-The definition of homomorphisms as above already implies that $\varphi(g^{-1}) = \varphi(g)^{-1}$.
+The definition above already implies that $\varphi(g^{-1}) = \varphi(g)^{-1}$.
 As mentioned before, these structure-preserving mappings are very important in the theory of groups, as they are used to relate different mappings. 
 A group homomorphism $\varphi : G \rightarrow H$ is called a \emph{monomorphism} (or embedding) if it is injective, \emph{epimorphism} if it is surjective and \emph{isomorphism} if it is bijective.\index{group isomorphism}
 A group isomorphism from a group $G$ to itself, $\varphi : G \rightarrow G$ is called an \emph{automorphism}\index{group automorphism}.
 Isomorphisms play a central role in mathematics (e.g. in their more general definition for categories).
-They define equivalence classes of objects, i.e. being isomorphic is an equivalence relation. We usually write $G \cong H$ to say that $G$ and $H$ are isomoprhic, that is to say there exists an isomoprhism $\varphi: G \rightarrow H$.
+They define equivalence classes of objects, i.e. being isomorphic is an equivalence relation. We usually write $G \cong H$ to say that $G$ and $H$ are isomoprhic, that is to say, if there exists an isomoprhism $\varphi: G \rightarrow H$.
 Two objects that are isomorphic are usually consider to be ``the same'', since any structural property has to be an invariant of the isomorphism class. 
 In fact, this indistinguishability between isomorphic objects is at the center of the univalance axiom in homotopy type theory as a foundation of mathematics~\cite{hott_book}.
 
-In the case of groups there is a particular property that most other structures in mathematics do not have.
-The set of isomorphisms, i.e. mappings that preserve the structure of an object and define equivalences between objects are themselves a group!
+In the case of groups, there is a particular property that most other structures in mathematics do not have.
+The set of isomorphisms, i.e. the set of mappings that preserve the structure of an object and define equivalences between objects, is itself a group!
 Such groups of structure-preserving mappings are common in mathematics, not only group automorphism but also other structures (e.g. homeomoprhisms in topological spaces, graph isomorphisms in graphs, invertible matrices in vector spaces).
-In this case there is a direct relationship between this structure and the structure preserving mappings, as the mappings can transform these structures.
+In all these cases there is a direct relationship between the structure and the structure preserving mappings, as the mappings can transform these structures.
 This concept is generalized with group \emph{actions}. 
 \begin{defn}
     Let $G$ be a group and $X$ be a set.\index{group action}
@@ -75,7 +80,7 @@ We also say that $X$ is a $G$-set.
 
 As an example, consider a regular polygon with $n$ sides, a regular $n$-gon.
 Figure~\ref{fig:square} shows this for the example of a square (a square is a regular $4$-gon).
-We name the four edges of the graph as $1,2,3,4$.
+We name the four corners of the square as $1,2,3,4$.
 This could thus be interpreted as a graph $G = (V = \{1,2,3,4\}, E = \{ \{1,2\}, \{2,3\},\{3,4\},\{4,1\} \})$.
 
 \begin{figure}[h]
@@ -106,8 +111,8 @@ For example, consider the permutation $(1,2)$ which swaps the two nodes $1$ and 
 
 Figure~\ref{fig:square_permutation_wrong} shows the example of the action of $(1,2)$ on the square.
 We note that the square is not a square anymore, it has lost its structure.
-A natural question to ask is, what are the permutations that leave a square as a renctangle, i.e. preserve the structure of the square?
-We also call these the \emph{symmetries} of the square~\index{symmetry group}.
+A natural question to ask is, what are the permutations that leave a square as a square, i.e. preserve its structure?
+We call these the \emph{symmetries} of the square~\index{symmetry group}.
 
 \begin{figure}[h]
 	\centering
@@ -120,7 +125,7 @@ We also call these the \emph{symmetries} of the square~\index{symmetry group}.
    \label{fig:square_rotation}
 \end{figure}
 
-Consider a rotation by $90^\circ$ counter-clockwise. We can write this as the permutation $\rho = (1,2,3,4)$. 
+Consider a rotation by $90^\circ$, counter-clockwise. We can write this as the permutation $\rho = (1,2,3,4)$. 
 Figure~\ref{fig:square_rotation} depicts the action of $\rho$ on the square, and indeed, it preserves the structure.
 We can think of two additional rotations, by $180^\circ$ and $270^\circ$, which would also preserve the structure of the square.
 It is worth noting that a rotation by $180^\circ$ is the same as rotating by $90^\circ$ twice, and similarly, $\rho^3$ is the rotation by $270^\circ$.
@@ -128,7 +133,7 @@ It is also important to note that a rotation by $360^\circ$ and $0^\circ$ are in
 In fact, these four rotations form a sub-group $C_4 < S_4$, called a cyclic group. More generally, the rotations that preserve the structure of a regular $n$-gon are a cyclic group of order $n$, $C_n$.
 
 \begin{defn}
-     The cyclic group $C_n$ is the group formed by an $n$-cycle $a = (1,\ldots,n)$ in $S_n$, i.e. $C_n  = \{ a, a^2, \ldots, a^n = () \}$.
+     The cyclic group $C_n$ is the group formed by an $n$-cycle $a = (1,\ldots,n)$ in $S_n$, i.e. $C_n  = \{ a, a^2, \ldots, a^n = \operatorname{Id}_n \}$.
 \end{defn}
 
 We have seen that the rotation $\rho$ in the example above is enough to find all elements of the group $C_4$.
@@ -151,18 +156,19 @@ For the case of finite groups, we can characterize $\langle X \rangle$ as the se
 
 Rotations are not all the symmetries of the square, we can also have reflections. 
 Figure~\ref{fig:square_reflection} shows the action of a reflection along the vertical axis, namely $\sigma = (1,2)(3,4)$, on the square. 
-This is fundamentally different from rotations, no rotation could achieve this transformation.
+Reflections are fundamentally different from rotations, no rotation could achieve this transformation.
 We can also have a reflection along the horizontal axis and both diagonals, for a total of $4$ reflections.
 It is perhaps not obvious at first, but if we combine reflections and rotations on the square, we always get a reflection or a rotation.
 In fact, these $8$ transformations form another group $D_4$, with $C_4 < D_4 < S_4$.
-The dihedral group on four points, $D_4$, in generated by the rotation $\rho$ and rotation $\sigma$, i.e. $D_4 = \langle \rho, \sigma \rangle$.
+The dihedral group on four points, $D_4$, in generated by the rotation $\rho$ and the reflection $\sigma$, i.e. $D_4 = \langle \rho, \sigma \rangle$.
 
 In the action of permutations on the graph, the group elements act simultaneously on both the nodes and edges.
 If we look at the action only on the nodes, the action of $C_4$  (and $D_4$) can take any point to any other point.
 But if we look at the whole graph, we see that there is no way to take the original square to the square in Figure~\ref{fig:square_reflection} with the action of $C_4$.
 Similarly, we cannot use any group element of $D_4$ to take the shape in Figure~\ref{fig:square_permutation_wrong}, which is not a square anymore.
-This is precisely the property we want from $D_4$. 
-These questions of which elements can be taken which others are common in group theory, which is why there is a definition to describe these sets: we call them orbits~\index{orbit}.
+This is precisely the property that defines $D_4$ as the symmetry group of the square. 
+These questions, concerning which elements can be taken which others, are common in group theory.
+This is why there is a definition to describe these sets: we call them orbits~\index{orbit}.
 
 \begin{defn}
 Let $G$ be a group and $X$ be a $G$-set. Further, let $x \in X$ be an element of $X$. 
@@ -170,20 +176,21 @@ We define the \emph{orbit} of $x$ to be the set $Gx := \{ gx \mid g \in G\}$ of 
 We further call $X / G := \{ Gx \mid x \in X \}$ the set of orbits of $X$.
 \end{defn}
 
-For example, the squares are precisely the orbit of $D_4 S$, where $S$ is the graph of the square from the examples above.
-Orbits define a partition on the set $X$, meaning that any two orbits $Gx, Gy$ are either equal or disjoint and $X = \dot{\cup}_{x \in X} Gx$.
+For example, all squares are precisely the elements in the orbit of $D_4 s$, where $s$ is the graph of the square from the examples above.
+Orbits define a partition on the set $X$, meaning that any two orbits $Gx, Gy$ are either equal or disjoint and $X = \bigcup_{x \in X} Gx$.
 
 Finally, we discuss how we can construct other groups from existing groups.
-The simplest construction is called the direct product, written $G \times H$ for groups $G,H$, and it endows the Cartesian product with a component-wise multiplication (i.e. $(g,h)(g',h') = (gg',hh')$ for all $g,g' \in G, h,h' \in H$).
-There is a more general construction called a semi-direct product, which is a generalization of the product. 
+The simplest construction is called the direct product.
+For groups $G,H$, we write $G \times H$, endowing the Cartesian product with a component-wise multiplication (i.e. $(g,h)(g',h') = (gg',hh')$ for all $g,g' \in G, h,h' \in H$).
+There is a more general construction called a semi-direct product, which is a generalization of the direct product. 
 Here we will only discuss a special case of semi-direct products, namely the \emph{wreath product} $G \wr H$\index{wreath product}.
 
 Let $G$ be a group and let $H \leq S_n$ for an $n \in \mathcal{N}$.
 We consider the direct product of $n$ copies of $G$: 
-\[ G^n := \underbrace{G \times \ldots \times G}_{n \text{ times }} \]
-Then the group $H$ acts on these $n$ copies of $G$ by permuting their instances. Let $(g_1,\ldots,g_n) \in G^n, h \in H$:
-\[ \prescript{h}{} (g_1 \ldots, g_n) = (g_{h1},\ldots,g_{hn}), \] 
-in other words, $h$ permutes the order of the elements in the $n$-tuple of elements of $G^n$.
+\[ G^n := G \underbrace{\times \ldots \times}_{n \text{ times }} G \]
+Then, the group $H$ acts on these $n$ copies of $G$ by permuting their instances. Let $(g_1,\ldots,g_n) \in G^n, h \in H$. We define: 
+\[ \prescript{h}{} (g_1 \ldots, g_n) := (g_{h1},\ldots,g_{hn}), \] 
+where $h$ permutes the order of the elements in the $n$-tuple of elements of $G^n$.
 This defines an action of $H$ on $G^n$.
 We can use this action to construct the wreath product $G \wr H$ on the Cartesian product $G^n \times H$, by defining the multiplication as:
 \begin{align*} ((g_1,\ldots,g_n),h)((g'_1,\ldots,g'_n),h') \\

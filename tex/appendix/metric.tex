@@ -3,7 +3,7 @@ A metric space is the mathematical formalization of distances.
 We define a metric to be able to measure distances in a particular space. 
 
 \begin{defn}
-Let $M$ be a set and let $d : M \times M \rightarrow \mathbb{R}_{\geq 0}$ be a mapping.
+Let $M$ be a set and let $d : M \times M \rightarrow \mathbb{R}_{\geq 0}$ .
 We say that $d$ is a metric on $M$ and, equivalently, $(M,d)$ is a metric space, if the following hold:
 \begin{enumerate}
 \item\label{ax:zero} For all $m,m' \in M, d(m,m') = 0 \Leftrightarrow m = m'$.
@@ -12,9 +12,9 @@ We say that $d$ is a metric on $M$ and, equivalently, $(M,d)$ is a metric space,
 \end{enumerate}
 \end{defn}
 
-These properties are intuitively clear.
-Property~\ref{ax:zero} says two things, first that there is no distance from an element to itself, and second, that no two equal elements are in the same place (have no distance between them).
-If we don't require the second property (i.e. replace $\Leftrightarrow$ with $\Rightarrow$ in Property~\ref{ax:zero}, we get what is called a pseudo-norm (or a degenerate norm).
+The motivation for these properties is intuitively clear.
+Property~\ref{ax:zero} says two things, first, that there is no distance from an element to itself, and second, that no two equal elements are in the same place (have no distance between them).
+If we don't require the second property (i.e. replace $\Leftrightarrow$ with $\Rightarrow$ in Property~\ref{ax:zero}, we get what is called a pseudo-metric (or a degenerate metric).
 The second property, Property~\ref{ax:symm} states that distance is symmetric.
 Finally, Property~\ref{ax:triangle} is the triangle inequality: it states that the shortest path between two elements is always the direct path, their distance.
 
@@ -26,7 +26,7 @@ A norm is a more restrictive concept than a metric, but we will not define norms
 \end{ex}
 
 The case for $p = 2$ is the well-known Euclidean distance in vector spaces.
-Also well-known is the case of of $p=1$, which is sometimes called the Mahattan norm or Taxi distance, in allusion to the distance when moving through the streets of a neighborhood that look like a regular mesh, like in Manhattan.
+Also well-known is the case of of $p=1$, which is sometimes called the Mahattan or Taxi distance, in allusion to the distance when moving through the streets of a neighborhood that look like a regular mesh, like in Manhattan.
 
 In this thesis we are particularly interested in the case where $M$ is finite, which we will assume from here on. 
 If $M = \{ m_1, \ldots, m_n \}$ is finite, we can write $d$ as a matrix, such that $d(m_i,m_j) = D_{i,j}$.:
@@ -34,8 +34,8 @@ If $M = \{ m_1, \ldots, m_n \}$ is finite, we can write $d$ as a matrix, such th
     D = 
 \left(
 \begin{array}{cccc}
-d(m_1,m_1) & d(m_1,m_2) & \ldots & d(m1,m_n) \\
-d(m_2,m_1) & d(m_2,m_2) & \ldots & d(m2,m_n) \\
+d(m_1,m_1) & d(m_1,m_2) & \ldots & d(m_1,m_n) \\
+d(m_2,m_1) & d(m_2,m_2) & \ldots & d(m_2,m_n) \\
 \vdots & \vdots & \ddots & \vdots \\
 d(m_n,m_1) & d(m_n,m_2) & \ldots & d(m_n,m_n) \\
 \end{array}
@@ -44,7 +44,7 @@ d(m_n,m_1) & d(m_n,m_2) & \ldots & d(m_n,m_n) \\
 
 The structure preserving mappings (moprhisms) of metric spaces are called \emph{isometries}\index{isometry}. They have the particular property that they are always injective, due to Property~\ref{ax:zero}.
 \begin{defn}
-Let $M,M'$ be We say that a mapping $\varphi : M \rightarrow M'$ is an \emph{isometry} if for all $m,m' \in M$, $d_M(m,m') = d_{M'}(\varphi(m),\varphi(m'))$.
+Let $M,M'$ be metric spaces. We say that a mapping $\varphi : M \rightarrow M'$ is an \emph{isometry} if for all $m,m' \in M$, $d_M(m,m') = d_{M'}(\varphi(m),\varphi(m'))$.
 \end{defn}
 An isometry is thus always an embedding (monic), since for any two points $m,m' \in M$ with $\varphi(m) = \varphi(m')$ we have $0 = d_{M'}(\varphi(m),\varphi(m')) = d_{M}(m,m')$.
 
@@ -53,13 +53,13 @@ While we did not discuss it as thoroughly, the basis of all computation we are c
 $S_n$\footnote{In computational group theory there are other branches like matrix groups or black-box groups, where embedding into an $S_n$ is infeasible,
 but we are not concerned with these in this thesis.}.
 The question is, can we find an equivalent method for metric spaces, using isometries to (finite subsets of) $\mathbb{R}^n$? 
-The unfortunate answer is that no, in general there for a finite metric space $M$ there is not always $n,p$, such that there exists an isometry from $M$ to $(\mathbb{R}^n,\|\cdot\|_p)$ (see~\cite{matouvsek} for a proof).
+The unfortunate answer is that no, for a finite metric space $M$ there is not always $n,p$ such that there exists an isometry from $M$ to $(\mathbb{R}^n,\|\cdot\|_p)$ (see~\cite{matouvsek} for a proof).
 Fortunately, however, when dealing with real numbers we can always look for approximations.
 
 \begin{defn}
-Let $M$ be a metric space and $\iota: M \hookrightarrow \mathcal{R}^n$ be an embedding onto $\mathcal{R}^n$. 
+Let $M$ be a metric space and $\iota: M \hookrightarrow \mathbb{R}^n$ be an embedding onto $\mathbb{R}^n$. 
 We say that $\iota$ has distortion $D > 0$ if 
-\begin{align}\label{eqn:distortion} \frac{1}{D} d(x,y) \leq \| \iota(x) - \iota(y) \| \leq d(x,y) \end{align}
+\begin{align*} \frac{1}{D} d(x,y) \leq \| \iota(x) - \iota(y) \| \leq d(x,y) \end{align*}
 \end{defn}
 
 While, in general, we cannot find an isometry, we can search for an embedding with a low distortion.

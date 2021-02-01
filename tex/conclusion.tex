@@ -1,12 +1,13 @@
 Programming computers is notoriously difficult.
-This thesis certainly will not change that, and more generally, this statement will probably remain true for a long time.
+This thesis certainly will not change that.
+More generally, this statement will probably remain true for a long time.
 This does not mean, however, that we cannot make progress towards easing the process of programming computers.
 
 In this thesis we have argued for model-based design of software systems.
-This is much more common in the hardware world, where models are central to design and deterministic behavior.
+This is much more common in the hardware world, where models are central to design, commonly used for ensuring deterministic behavior.
 The success of this paradigm is what allows us to have programmable digital computers in the first place.
 
-In the software world, where the level of abstraction is higher and the barrier to entry lower, models are usually more implicit, less strict, or both.
+In the software world, where the level of abstraction is higher and the entry barrier lower, models are usually more implicit, less strict, or both.
 When using well-defined \acfp{MoC} for programming, however, we can reason about software and its performance.
 Concretely, software synthesis flows and the mapping problem result from doing precisely this.
 
@@ -14,7 +15,7 @@ In this thesis we studied such \ac{MoC}-based software synthesis flows, with a f
 We surveyed multiple dataflow \acp{MoC}, and discussed the advantages and disadvantages of them. 
 The \ac{KPN} \ac{MoC} allows us to express concurrency in computation in a deterministic fashion, while remaining very expressive.
 Compared to most dataflow \acp{MoC}, it allows for maximally dynamic, data-dependent behavior.
-We also discussed a semantics gap between the \acfp{KMQ} blocking-reads semantics and \ac{KPN}, which can be exploited in applications with data-parallelism.
+We also discussed a semantics gap between the \acf{KMQ} blocking-reads semantics and \ac{KPN}, which can be exploited in applications with data-parallelism.
 
 When lowering \acp{KPN} down to be executed in \acp{MPSoC}, the mapping problem plays a crucial role, especially for heterogeneous systems.
 In this thesis we have discussed this intractable problem at length.
@@ -61,10 +62,10 @@ We believe the single most important aspect to drive \ac{MoC}-based design forwa
 We need tools and environments that make it easier for programmers to design applications with a well specified \ac{MoC}.
 
 The Lingua Franca project, which implements Reactors, is a great avenue for fostering adoption.
-Its polyglot design allows programmers to use known languages to write reactors, while still being a coordination language that can enforce the \ac{MoC} semantics.
-The use of known language has two distinct advantages, as it reduces the learning curve and allows to use legacy code. 
-Currently, the compiler does not understand nor type-check the target language, leaving that task to the compiler.
-In future work we could add a type system to Lingua Franca, reinfoncing the ``freedom from choice'' it provides.
+Its polyglot design allows programmers to use known languages to write reactors\footnote{This refers to the unit of computation, reactors, as part of the model, Reactors.}, while still being a coordination language that can enforce the \ac{MoC} semantics.
+The use of known language has two distinct advantages, as it reduces the learning curve and allows using legacy code. 
+Currently, the compiler does not understand nor does it type-check the target language, leaving that task to the compiler.
+In future work we could add a type system to Lingua Franca, reinforcing the ``freedom from choice'' it provides.
 
 A potential disadvantage from the Lingua Franca project, on the other hand, could be its coordination language. 
 Explicitly writing the networks can be confusing for developers.
@@ -72,15 +73,15 @@ This is exacerbated by the fact that Reactors is a complex model, difficult to g
 We believe the approach by Ohua of making the network implicit is a great avenue for future work.
 Another example to follow is the Elm language, a functional language for the web.
 Elm started as a language with an explicit \ac{FRP} paradigm, which was confusing for users.
-They made this paradigm implicit~\footnote{\url{https://elm-lang.org/news/farewell-to-frp}}, which translated into a success for the learning curve and the language's adoption.
+They made this paradigm implicit\footnote{\url{https://elm-lang.org/news/farewell-to-frp}}, which translated into a success for the learning curve and the language's adoption.
 This is part of a general vision, where compilers and languages are thought of as assistants that make development easier for programmers, instead of only focussing on correctness and performance.
 We believe we should follow similar paths for the design of software using \acp{MoC} like Reactors or \ac{KPN}.
 
 On the side of mapping there are also many open avenues for improving our work.
-In particular, partial symmetries expose a great deal of the problem's structure which we are not exposing yet.
+In particular, partial symmetries expose a great deal of the problem's structure which we are not exploiting yet.
 Designing efficient methods to detect and exploit them would help navigate the design space of mappings much better.
 This would also open up opportunities for using inverse semigroups of non-symmetries, like reducing the number of hops in a communication link.
-Our methods would also greatly benefit from incorporating application symmetries when exploting data-level parallelism.  
+Our methods would also greatly benefit from incorporating application symmetries when exploiting data-level parallelism.  
 
 The geometry of the mapping space also has many open questions that should improve its usefulness.
 While we discussed the trade-off between the distortion and dimensionality of embeddings, we did not exploit it in this thesis.
@@ -90,7 +91,7 @@ Finding better metrics could greatly improve mapping meta-heuristics, especially
 In this thesis we have discussed and shown how provable properties of \acp{MoC} can and do improve the design process.
 While traditional pen and paper proofs are a great way of finding and proving these properties, the advent of powerful theorem proving assistants provides an opportunity to improve upon this.
 Formally verified proofs of properties of the system give us more certainty on their correctness, and some degree of automation.
-Combining \ac{MoC}-based design with developments in formal verification methods can help us to write correct software more frequently and with less time.
+Combining \ac{MoC}-based design with developments in formal verification methods can help us to write correct software more frequently in less time.
 
 While formal methods can verify properties of our software, they might never completely replace testing.
 Even if they one day do so, that will not be in the near future.

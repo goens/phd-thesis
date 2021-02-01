@@ -96,33 +96,46 @@ We will introduce it here as background material.
 Ohua itself is a general paradigm that works on multiple languages, and the framework has evolved over the years of its development.
 The version of Ohua we will discuss here is based on Clojure and Java, but the Ohua compiler and its principles work with many languages.
 Rutimes also exist for Rust, Javascript or Go, at different levels of maturity.
-Ohua is best understood by diving directly into examples. Consider the code in Listing~\ref{listing:ohua_audio_filter}.
+Ohua is best understood by diving directly into examples. 
 
 \begin{listing}
 \begin{minted}[linenos]{Clojure}
- ;; TODO: add the audio filter solution code.
- (ns wav-transform.core
-  (:gen-class)
-  (:import WavTransform))
-
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Audio filter example"
   [& args]
-  (WavTransform/fromFile "oxp.wav" "oxp-transformed.wav")) 
+  (ohua
+   (smap
+    (algo [s]
+          (let [[x y] (split s)]
+            (let [[leftout rightout]
+                  [(ifft (filterfn (fft x)))
+                   (ifft (filterfn (fft y)))]]
+              (sink leftout rightout)
+              )
+            )
+          )
+    (src)
+    )
+   )
+  )
 \end{minted}
 \caption{The Audio Filter Example written in Ohua}
 \label{listing:ohua_audio_filter}
 \end{listing}
 
-Listing~\ref{listig:ohua_audio_filter} is based on Clojure, a dialect of Lisp.
+Consider the code in Listing~\ref{listing:ohua_audio_filter}. The code in the example is written in an embedded \ac{DSL} based on Clojure, a dialect of Lisp.
 It implements the same example from Chapter~\ref{chap:mapping} (cf. Listing~\ref{listing:audio_filter} or Figure~\ref{fig:audio_filter_graph}), a two-channel audio filter.
 Internally, the compiler transforms this code into a dataflow graph for execution.
-As a \ac{MoC}, this can be embeded in the Dennis dataflow models discussed in Chapter~\ref{chap:mocs}.
-We will discuss the semantics of these dataflow graphs in Section~\ref{sec:ohua_dataflow}.
-\todo{discuss example}.
+A special function, \texttt{ohua}, annotates the \ac{AST} it receives as argument to be executed as implicit dataflow.
+The \texttt{smap} function is a special variant of \texttt{map} that considers state in the functions.
+We will discuss the semantics of \texttt{smap} in Section~\ref{sec:smap}.
+Finally, the \texttt{algo} definition in Ohua is akin to the anonymous function definition \texttt{fn} in Clojure.
+It defines Ohua ``algorithms'', which are transformed to dataflow actors.
+As a \ac{MoC}, this can be embedded in the Dennis dataflow models discussed in Chapter~\ref{chap:mocs}.
+%We will discuss the semantics of these dataflow graphs in Section~\ref{sec:ohua_dataflow}.
 
-The example in Figure~\ref{fig:ohua_example} can be transformed into a dataflow graph for execution. We will discuss this further in Section~\ref{sec:ohua_dataflow}.
-The main advantage of this transformation is that a dataflow graph exposes concurrency, which can be exploited e.g. in a parallel execution or for optimizing \ac{I/O}(cf. Section~\ref{sec:yauhau}).
+The example in Listing~\ref{listing:ohua_audio_filter} can be transformed into a dataflow graph for execution.% We will discuss this further in Section~\ref{sec:ohua_dataflow}.
+The main advantage of this transformation is that a dataflow graph exposes concurrency, which can be exploited e.g. in a parallel execution or for optimizing \ac{I/O} (cf. Section~\ref{sec:yauhau}).
 This duality between code and dataflow graphs is a core concept behind Ohua.
 The other central pilar of the Ohua design concept are stateful functions, an abstraction that encapsulates functions with state and side-effects in the context of their dataflow execution.
 \index{Ohua ! stateful functions}
@@ -135,53 +148,33 @@ The main point is that the entirety of the usage of a function is that it return
 
 In most imperative languages, like C or Java, functions usually also have side-effects. Writing the output to the terminal, storing data in a global data structure or even reading data from a sensor in a \ac{CPS}, these are all examples of side effects.
 A language that only allows pure functions is basically useless, since even printing the result of a computation is impure.
-Time is also fundamentally part of a computation, as we have discussed in Chapter~\ref{chap:mocs}, as can be an interaction with the outside world in the form of sensing and actuation in \acp{CPS}.
 
 Stateful functions are a special abstraction, where the concept of pure functions is extended to consider the state of the computation. 
 While this excludes aspects like the time of the computation and side-effects like actuation, it is general enough to cover large classes of functions used in most software.
-A stateful function is a function $f : a \rightarrow b$ and an abstract state $S$, where the execution of the function can be seen as dependent of the state, which it also modifyies.
+A stateful function is a function $f : a \rightarrow b$ and an abstract state $S$, where the execution of the function can be seen as dependent of the state, which it also modifies.
 In other words, we consider $f$ as a function:
 \begin{align}
   f : a \times S \rightarrow b \times S \label{eqn:state_thread}
 \end{align}
 
 Pure functions can be seen as a special case of stateful functions, with a trivial state $S = \{*\}$.
+Listing~\ref{listing:stateful_function} shows an example of a stateful function, written in Java, which is identified as such by the \texttt{@defsfn} annotation~\cite{ertel_pmam18}.
+It models a parser, which writes the parsed symbols to a symbol table.
+The table, a private object of the class, is the state of this stateful function.
+It is implicitly managed as the state by the Ohua runtime.
 
 \begin{listing}
 \begin{minted}[]{Java}
 public class ParseVariable{
-  @defsfn
-  public ParseVariable (ExpressionObject expr, SymbolTable table){
-    symbols = expr.parse();
-    table.write(symbols);
-    return(object);
-  }
+    @defsfn
+    private SymbolTable table;
+    public ParseVariable (ExpressionObject expr){
+        symbols = expr.parse();
+        this.table.write(symbols);
+        return(this.table.getSymbols());
+    }
 }
 \end{minted}
 \caption{An example of a stateful function.}
 \label{listing:stateful_function}
 \end{listing}
-
-
-Listing~\ref{listing:stateful_function} shows an example of a stateful function, written in Java, which is identified as such by the \texttt{@defsfn} annotation.
-TODO: Discuss (or improve) the example. Admittedly, I'm a bit confused by this, does the state have to be explicit as an input?
-By anotating a function as stateful and being able to reason about its state, we can ensure its semantics are preserved when transforming to a dataflow execution.
-Traditionally, stateful functions in Ohua are explicitly annotated as such~\cite{ertel_pmam18}.
-
-\subsection{Dataflow Execution}
-\label{sec:ohua_dataflow}
-
-
-Figure~\ref{fig:ohua_example_df} depicts this example as a dataflow graph.
-\todo{discuss dataflow graph}.
-
-
-Ohua
-
-The Ohua framework is based on these two design principles, yet the implementation has constantly evolved since its original inception~\cite{ertel2014framework}.
-The work we will present in this chapter played a role in Ohua's evolution.
-For this reason, we will discuss the concrete language and transformations in the context they were developed, instead of the latest instantiation of Ohua.
-
-The concepts of Ohua itself and the implementation of the compiler are beyond the scope of this thesis. 
-The rest of this chapter will focus mostly on formalizing the semantics and defining semantics-preserving transformations. 
-Note that is the joint contribution of a collaborative work with multiple co-authors in~\cite{goens_multiprog18,ertel_cc18,ertel_haskell19,ertel_haskellsup19}.

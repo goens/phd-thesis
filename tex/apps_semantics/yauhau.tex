@@ -1,5 +1,5 @@
 Dataflow models expose concurrency. While concurrency enables parallelism, it can also be leveraged in other ways. 
-This section discusses \"{Y}auhau, a framework for optimizing \ac{I/O} in microservice-based systems~\cite{ertel_cc18}.\index{\"{Y}auhau}
+This section discusses \"{Y}auhau~\cite{ertel_cc18}, a framework for optimizing \ac{I/O} in microservice-based systems.\index{\"{Y}auhau}
 This Ohua-based framework uses the concurrency exposed by the \ac{MoC} to do so.
 
 \begin{figure}[t]
@@ -19,7 +19,7 @@ Figure~\ref{fig:amazon_death_star} shows the microservice infrastructure of Amaz
 It shows microservices as nodes, and how they depend on each other as edges.
 The figure serves to illustrate the complexity of microservice-based architectures.
 
-In microservice-based systems, \ac{I/O} plays a crucial role in the performance.
+In microservices, \ac{I/O} plays a crucial role in the performance.
 A microservice will commonly send multiple requests to a different microservice, as part of its operation.
 Each request comes with a significant overhead from establishing the connection and sending the data.
 If the requests do not depend on each other, however, they can instead be sent as a single, batched request for mitigating the overhead.
@@ -53,7 +53,7 @@ The listing shows a code example where, for spam fighting, the number of common 
 This is done by calling the function \texttt{friendsOf} for both \texttt{x} and \texttt{y}.
 Code like Listing~\ref{listing:haxl_friends_of} is easy to read, but unoptimized, it will send to requests to the microservice that handles the \texttt{friendsOf} function.
 The solution of Haxl is to use applicative functors to compose \ac{I/O} calls, such as \texttt{friendsOf}, and automatically batch independent requests this way.
-Listing~\ref{listing:haxl_appliactive_do} shows how this is achieved in Haxl using applicative-do notation.
+Listing~\ref{listing:haxl_applicative_do} shows how this is achieved in Haxl using applicative-do notation.
 
 \begin{listing}
 \begin{minted}[]{Haskell}
@@ -92,7 +92,7 @@ We map the Clojure-based Ohua to an internal expression \acsu{IR}, as is shown i
 	\end{tabular}
 	
 	\caption{Mapping the terms of the Clojure-based language to an expression \acs{IR}. Adapted from Figure~9 in~\cite{ertel_cc18}.}
-	\label{fig:clojure_to_yauau}
+	\label{fig:clojure_to_yauhau}
 \end{figure}
 
 The expression \ac{IR} defined in Figure~\ref{fig:clojure_to_yauau} is based on $\lambda$ calculus with a \texttt{let} construction for lexical scoping and explicit conditionals (\texttt{if}).
@@ -135,14 +135,15 @@ We discuss how we evaluate the effectiveness of the transformation using the Lev
 
 Figure~\ref{fig:yauhau_baseline} shows a comparison of our framework, \"{Y}auhau, with the two other main alternatives in the public domain, Facebook's Haxl~\cite{marlow2014haxl} and Muse~\cite{muse}.
 We cannot compare with Twitter's Scala-based variant, Stitch\cite{stitch}, which is neither described in a peer-reviewed publication nor open-sourced.
-Since we do not have a real test workload like Facebook does to reproduce the evaluation of~\cite{marlow2014haxl}, we used synthetic graphs with a similar structure to compare the approach.s
+We do not have a real test workload, like Facebook does, to reproduce the evaluation of~\cite{marlow2014haxl}.
+For this reason, we used synthetic graphs with a similar structure to compare the approach.
 We produced random Level Graphs with code annotations as described in Section~\ref{sec:level_graphs}. 
 We varied the number of levels between $1$ and $20$ in the generated graph.
 An increasing number of levels results in increasingly complex applications and interactions.
 For this baseline comparison we disabled sub-functions by letting the probability of labeling a node as a sub-function be $0$.
-For each number of levels we generated $20$ graphs and produced code for each of the frameworks with the structure of each of these twenty graphs.
-This way the same workload is evaluated for each framework, as equivalent versions are produced from a single graph.
-The number of \ac{I/O} accesses in each individual graph is random nevertheless, which is why we used $20$ graphs per considered number of levels to obtain a statistical assessment of the batching effect of each framework.
+For each number of levels, we generated $20$ graphs and produced code for each of the frameworks with the structure of each of these twenty graphs.
+This way, the same workload is evaluated for each framework, as equivalent versions are produced from a single graph.
+The number of \ac{I/O} accesses in each individual graph is random nevertheless, which is why we used $20$ graphs for each number of levels considered, to obtain a statistical assessment of the batching effect of each framework.
 
 The results of Figure~\ref{fig:yauhau_baseline} show that both Haxl and Muse consistently batch \ac{I/O} calls, improving over a sequential execution in a statistically significant fashion.
 The ratio of \ac{I/O} calls compared to a sequential execution improves with increasing code complexity, as measured by the number of levels. 
@@ -170,7 +171,7 @@ We see how the concurrency of the dataflow \ac{MoC} improves the latency of the 
 Finally, an important advantage of the dataflow \ac{MoC} we have not evaluated is how it also allows us to transcend the function boundaries.
 To test this we can again leverage the full control we get from our Level Graph benchmarking method.
 We fix the number of levels, controlling the code complexity, and consequently the average number of \ac{I/O} requests.
-Instead of varying the number of levels, we allow sub-function and vary the probability of generating such a sub-function.
+Instead of varying the number of levels, we allow sub-functions and vary the probability of generating such a sub-function.
 The higher the probability, the more nested functions appear in the code.
 In other words, we can make code with similar levels of complexity be more or less modular.
 This allows us to test directly how modularity affects batching.

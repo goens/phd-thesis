@@ -1,25 +1,30 @@
 The nature of this thesis is not focused enough for us to discuss related work from a general point of view.
-Perhaps the closest in spirit to the work presented in this thesis is the Ptolemy project~\cite{Ptolemaeus:14:SystemDesign}.
+Perhaps the closest in spirit to the work presented in this thesis is the Ptolemy~II project~\cite{Ptolemaeus:14:SystemDesign}.
 It is a tool for exploring model-based design and has a strong focus on \acp{CPS}.
-The Ptolemy project is very comprehensive and studies and implements several \acp{MoC} discussed in this thesis (cf. Section~\ref{sec:mocs_overview}).
-The scope of the Ptolemy project is far larger and more detailed than this thesis.
+Ptolemy~II is very comprehensive and studies and implements several \acp{MoC} discussed in this thesis (cf. Section~\ref{sec:mocs_overview}).
+The scope of Ptolemy~II is far larger and more detailed than this thesis.
 It is, however, aimed at application developers.
 In contrast, the methods in this thesis are aimed at tool developers, for improving the methods of model-based design.
 
 Instead of discussing related work generally, we will go over on the different methods proposed here to improve model-based design, and discuss related work by broader categories.
 In most chapters and sections we discuss related work directly.
-While we will systematically go over related work here, we will refer to the according sections for discussion.
+While we will systematically go over related work here, we refer to the according chapters and sections for discussion.
 
 \paragraph{Dataflow-based Software Synthesis}
-We used and discussed the \ac{MAPS} framework~\cite{maps} and its spinoff in Silexica, as well as the \mocasin tool where we implemented many contributions of this thesis.
+
+There are many software synthesis tools and methods~\cite{lin1998softwaresynthesis,ritz1992softwaresynthesis,bhartacharyya2000softwaresynthesis,pino1995softwaresynthesis,bhattacharyya2012softwaresynthesis}.
+For discussing \ac{KPN}-based software synthesis, we focused on the \ac{MAPS}~\cite{maps} framework and its spinoff in Silexica, as well as the \mocasin tool where we implemented many contributions of this thesis.
 These tools are both closely related, \ac{MAPS} focusing more on application developers and \mocasin on tool developers (for developing tools like \ac{MAPS}).
-There are many closely related tools, like Sesame~\cite{pimentel2006systematic}, DOL~\cite{thiele2007DOL}, SystemCoDesigner~\cite{haubelt2008systemcodesigner}, DAARM~\cite{weichslgartner2014daarm}, PREESM~\cite{pelcat2014preesm}, Spider~\cite{heulot2014spider}, CAPH~\cite{serot2013caph} and Turnus~\cite{casale2013turnus}, among others.
+There are many closely related tools, like the Sesame framework~\cite{pimentel2006systematic}, \ac{DOL}~\cite{thiele2007DOL}, SystemCoDesigner~\cite{haubelt2008systemcodesigner}, DAARM~\cite{weichslgartner2014daarm}, PREESM~\cite{pelcat2014preesm}, Spider~\cite{heulot2014spider}, CAPH~\cite{serot2013caph} and Turnus~\cite{casale2013turnus}, among others.
 Section~\ref{sec:software_synthesis_flows} discusses these tools more in-depth.
+
+
 
 \paragraph{Other software synthesis tools}
 The tools above focus on software synthesis in a flow similar to the one described in this thesis, using \ac{KPN} or dataflow models and \ac{DSE} to find profitable mappings for executing applications in modern hardware.
-There are other tools which are focused more in the model's semantics, like Ptolemy~\cite{Ptolemaeus:14:SystemDesign} or CAL~\cite{eker2003cal} or synchronous languages like LUSTRE~\cite{lustre} or ESTEREL~\cite{esterel} which have discrete-event semantics, perhaps more closely related to Reactors than to dataflow.
-Even hardware description languages like VHDL or Verilog, and even SystemC~\cite{semantics_systemc} can be seen as related, in this case it being \ac{HLS}, which is in fact the inspiration for the term software synthesis.
+There are other tools and languages which are focused more in the model's semantics. Besides Ptolemy~II~\cite{Ptolemaeus:14:SystemDesign}, these include the CAL~\cite{eker2003cal} language and the related \ac{RVC}-CAL compiler.
+Synchronous languages like LUSTRE~\cite{lustre} or ESTEREL~\cite{esterel}, which have discrete-event semantics, are also relevant. These are more closely related to Reactors than to dataflow.
+Even hardware description languages like VHDL or Verilog, and even SystemC~\cite{semantics_systemc} can be seen as related, in this case it being \ac{HLS}, which is in fact an inspiration for the term software synthesis.
 Also on the commercial side, Signal Processing Work System and Synopsys System Studio both from Synopsis join the LabVIEW Communications System Design Suite or Matlab Simulink~\cite{klikpo2016modeling} as model-based design tools with well-defined \acp{MoC}.
 In Section~\ref{sec:general_dataflow_tools} we review and discuss many of these tools and programming languages based on \acp{MoC}.
 
@@ -40,8 +45,8 @@ They also aim to improve \ac{DSE} methods from an algorithm-agnostic fashion, al
 
 \paragraph{Language-based optimizations} 
 The MacQueen gap is generally ignored in literature, where \ac{KPN} are equated with Kahn MacQueen blocking reads semantics. 
-To the best of our knowledge, the only other reference that makes this distinction explicit is~\cite{lee_matsikoudis_semantics}.
-In fact, we were made aware of this gap by that paper.
+We were not the first to recognize the gap, however.
+The two models are also treated as separate in~\cite{lee_matsikoudis_semantics}.
 Run-time transformations have been explored generally, where the most prominent and closely related example is the work of~\cite{schor2014adapnet}.
 
 In terms of language-based transformations for \ac{I/O} optimization, we discussed the main related work in Section~\ref{sec:yauhau}, namely Haxl~\cite{marlow2014haxl} and Muse~\cite{muse},
@@ -54,7 +59,7 @@ In this thesis we discussed random benchmarking for evaluating optimizations, mo
 The tools \ac{TGFF}~\cite{dick1998tgff} and \ac{\SDFFF}\cite{sdf3}, also discussed in Section~\ref{sec:representative_benchmarks} are more closely related to benchmarking as we investigated it.
 
 The direct connection between benchmarking and machine learning comes from CLGen~\cite{cummins_cgo2017}.
-Machine learning for code is a much broader subject and only a minor part of this thesis.
+Machine learning for code is a broad subject and only a minor part of this thesis.
 A broader overview can be found in~\cite{allamanis2018survey}, although we will solely discuss work closely related to the contributions presented in this thesis. 
 We based our graph-based methods and the evaluation on the ideas presented in~\cite{cummins_pact17,inst2vec}.
 Consequently, based in part on our graph-based methods, the work in~\cite{cummins_programl,ye2020deep} recently proposed some potential improvements on top of our compiler-based representations.
