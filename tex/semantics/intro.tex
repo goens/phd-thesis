@@ -8,11 +8,11 @@ To an extent, these models were not concerned with \emph{how} to (efficiently) c
 Since then, with the revolution of digital computers, the interest increasingly shifted to care about \emph{how} we can compute.
 This spawned a much larger amount of models of computation at different levels of abstraction.
 
-In 1972 Karp\cite{karp1972reducibility} kickstarted the field of computational complexity by identifying many problems that were equivalently difficult to compute, the class of NP-complete problems.
+In 1972 Karp\cite{karp1972reducibility} kick-started the field of computational complexity by identifying many problems that were equivalently difficult to compute, the class of NP-complete problems.
 Computational complexity relies on the fact that the asymptotic behavior of the number of steps of an algorithm, as a function of the input (size), is invariant when changing between these models of computation.
 Around the same time, in 1970, Dana Scott proposed a mathematical theory of computation~\cite{scott1970} based on what are now called (Scott) domains\footnote{Also called $\omega$-complete partial orders~\cite{gunter}, and closely related to algebraic lattices.} and the Scott-topology. 
 Two ideas are central in Scott's formalization. The first is a method for capturing \emph{partial} computations, i.e. computations that have advanced but not finished yet.
-The second idea is that of modeling a computation as a continuous function between such domains, where a properly notion of continuity (in the Scott topology) models causality in the computation.
+The second idea is that of modeling a computation as a continuous function between such domains, where a proper notion of continuity (in the Scott topology) models causality in the computation.
 Scott's semantics allowed to capture the process of a computation, but not the internals, which are abstracted away by the function. 
 
 The question of \emph{how} we compute can be modeled in different ways by complexity asymptotics or partial computations in the Scott formalism, but some aspects are still left unmodeled.

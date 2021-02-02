@@ -26,14 +26,14 @@ If the requests do not depend on each other, however, they can instead be sent a
 
 Batching requests is not a novel idea, it is well-established as a technique to optimize \ac{I/O}.
 The trade-off comes from the code required to write batched requests.
-A developer writing code for such a microservice-based architecture needs to take both the funcionality and the \ac{I/O} optimizations into account.
-This makes the code harder to write, read and mantain, as the optimizations clutter the readability of the functionality.
-This is unacceptable in a context where development time is a highly valuable resource, be it for human-resource costs or because it is important to have working solution as quick as possible. 
+A developer writing code for such a microservice-based architecture needs to take both the functionality and the \ac{I/O} optimizations into account.
+This makes the code harder to write, read and maintain, as the optimizations clutter the readability of the functionality.
+This is unacceptable in a context where development time is a highly valuable resource, be it for human-resource costs or because it is important to have a working solution as quick as possible. 
 
-The suituation described is the case for Facebook's spam-fighting services~\cite{marlow2014haxl}.
+The situation described is the case for Facebook's spam-fighting services~\cite{marlow2014haxl}.
 When fighting spam, a novel filter must not only be effective and perform efficiently, it also should be implemented as fast as possible without compromising the functionality.
 An ideal spam-fighting system thus allows the developers to focus on the functionality, and optimizes the implementation without cluttering the code.
-This is precisely what the Haxl\index{Haxl} sytem attempts, using the Haskell abstraction of \emph{applicative functors}\index{applicative functor}.
+This is precisely what the Haxl\index{Haxl} system attempts, using the Haskell abstraction of \emph{applicative functors}\index{applicative functor}.
 Consider the Haskell code snippet (taken from \cite{marlow2014haxl}) in Listing~\ref{listing:haxl_friends_of}:
 
 \begin{listing}[h]
@@ -136,7 +136,7 @@ We discuss how we evaluate the effectiveness of the transformation using the Lev
 Figure~\ref{fig:yauhau_baseline} shows a comparison of our framework, \"{Y}auhau, with the two other main alternatives in the public domain, Facebook's Haxl~\cite{marlow2014haxl} and Muse~\cite{muse}.
 We cannot compare with Twitter's Scala-based variant, Stitch\cite{stitch}, which is neither described in a peer-reviewed publication nor open-sourced.
 We do not have a real test workload, like Facebook does, to reproduce the evaluation of~\cite{marlow2014haxl}.
-For this reason, we used synthetic graphs with a similar structure to compare the approach.
+For this reason, we used synthetic graphs with a similar structure to compare the approaches.
 We produced random Level Graphs with code annotations as described in Section~\ref{sec:level_graphs}. 
 We varied the number of levels between $1$ and $20$ in the generated graph.
 An increasing number of levels results in increasingly complex applications and interactions.
@@ -193,5 +193,5 @@ In particular, this means again that the premise of making developers not worry 
 
 We have seen how \ac{MoC}-based design can be useful in context different from the \ac{CPS} applications we focused on in the previous chapters.
 In particular, the Ohua approach can be used to make the model more implicit in the computation, which is crucial for developer adoption in many contexts.
-Finally, we have seen in this section as well some of the concrete advantages of random benchmarks with a clearly-defined structure, in the concrete example of the Level Graphs from Section~\ref{sec:level_graphs}.
-They allowed us to tailor experiments to isolate specific features of our dataflow \ac{MoC}-based approach and compare them to the other state-of-the-art approaches.
+Finally, we have seen in this section as well some concrete advantages of random benchmarks with a clearly-defined structure, in the concrete example of the Level Graphs from Section~\ref{sec:level_graphs}.
+They allowed us to tailor experiments to isolate specific features of our dataflow \ac{MoC}-based approach and compare them to the other state-of-the-art approaches, which would not have been possible otherwise.

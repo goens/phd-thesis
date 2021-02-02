@@ -1,37 +1,27 @@
+\tikzstyle{block} = [rectangle, draw, fill=gray!10,minimum height=5em, minimum width=5em]
 
-\begin{scope}[xshift=0,yshift=0,scale=0.25]
-\draw (15,1.25) node[rectangle, minimum height=300,minimum width=400,draw] (cluster1) {};
+\begin{scope}[xshift=440,yshift=60,scale=0.25]
+\draw (15,1.25) node[block, minimum height=300,minimum width=400] (cluster) {};
 \input{figures/coolidge_cluster}
 \end{scope}
 
-\begin{scope}[xshift=450,yshift=-350,scale=0.25]
-\draw (15,1.25) node[rectangle, minimum height=300,minimum width=400,draw] (cluster2) {};
-\input{figures/coolidge_cluster}
+\begin{scope}[xshift=0,yshift=0,scale=2,every node/.append style={scale=2}]
+\node [block] (cluster1) at (-1.2,2.5) {Cluster$_1$};
+\node [block] (cluster2) at (1.2,2.5) {Cluster$_2$};
+\node [block] (cluster3) at (-2.2,0.2) {Cluster$_3$};
+\node [block] (cluster4) at (2.2,0.2) {Cluster$_4$};
+\node [block] (cluster5) at (0,-1.8) {Cluster$_5$};
+\draw [latex-latex,line width=0.8mm] (cluster1) -- (cluster2); 
+\draw [latex-latex,line width=0.8mm] (cluster1) -- (cluster3); 
+\draw [latex-latex,line width=0.8mm] (cluster1) -- (cluster4); 
+\draw [latex-latex,line width=0.8mm] (cluster1) -- (cluster5); 
+\draw [latex-latex,line width=0.8mm] (cluster2) -- (cluster3); 
+\draw [latex-latex,line width=0.8mm] (cluster2) -- (cluster4); 
+\draw [latex-latex,line width=0.8mm] (cluster2) -- (cluster5); 
+\draw [latex-latex,line width=0.8mm] (cluster3) -- (cluster4); 
+\draw [latex-latex,line width=0.8mm] (cluster3) -- (cluster5); 
+\draw [latex-latex,line width=0.8mm] (cluster4) -- (cluster5); 
 \end{scope}
 
-\begin{scope}[xshift=900,scale=0.25]
-\draw (15,1.25) node[rectangle, minimum height=300,minimum width=400,draw] (cluster3) {};
-\input{figures/coolidge_cluster}
-\end{scope}
-
-\begin{scope}[xshift=200,yshift=400,scale=0.25]
-\draw (15,1.25) node[rectangle, minimum height=300,minimum width=400,draw] (cluster4) {};
-\input{figures/coolidge_cluster}
-\end{scope}
-
-\begin{scope}[xshift=700,yshift=400,scale=0.25]
-\draw (15,1.25) node[rectangle, minimum height=300,minimum width=400,draw] (cluster5) {};
-\input{figures/coolidge_cluster}
-\end{scope}
-
-
-\draw [latex-latex,line width=1.1mm] (cluster1) -- (cluster2); 
-\draw [latex-latex,line width=1.1mm] (cluster1) -- (cluster3); 
-\draw [latex-latex,line width=1.1mm] (cluster1) -- (cluster4); 
-\draw [latex-latex,line width=1.1mm] (cluster1) -- (cluster5); 
-\draw [latex-latex,line width=1.1mm] (cluster2) -- (cluster3); 
-\draw [latex-latex,line width=1.1mm] (cluster2) -- (cluster4); 
-\draw [latex-latex,line width=1.1mm] (cluster2) -- (cluster5); 
-\draw [latex-latex,line width=1.1mm] (cluster3) -- (cluster4); 
-\draw [latex-latex,line width=1.1mm] (cluster3) -- (cluster5); 
-\draw [latex-latex,line width=1.1mm] (cluster4) -- (cluster5); 
+\draw [-,style=dashed] (cluster4.north east) -- (cluster.north west);
+\draw [-,style=dashed] (cluster4.south east) -- (cluster.south west);

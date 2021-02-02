@@ -37,7 +37,7 @@ The length of the values in the radar plot shows the relative amount of kernels 
 \end{figure}
         
 %The adaptability of a system does not come for free.
-Even for fixed parameters, designing modems for 5G is already an extremely complex endeavour on its own. 
+Even for fixed parameters, designing modems for 5G is already an extremely complex endeavor on its own. 
 In order to make a system adaptable, developers need to ensure that the behavior remains correct when adapting.
 A model that ensures deterministic execution for easy debugging and time semantics for real-time reasoning is thus sought for this type of applications. 
 %Determinism in the execution is an invaluable tool for this.
@@ -84,7 +84,8 @@ We classify them as ``Impossible'' (red points).
 Overall, this means that over $99.997\%$ of the subframes observed could be implemented by a dynamic system, where a static one using roughly the same resources covers less than $56\%$.
 
 This statistical analysis of LTE traces shows very clearly how much a baseband system could benefit from dynamically adapting to the workload.
-We can cover significantly more design points with constrained resources. Equivalently, we can use less resources to cover all of the observed cases.
+We can cover significantly more design points with constrained resources.
+Equivalently, we can use less resources to cover all the observed cases.
 However, such dynamic systems come with several drawbacks.
 Programming base station decoders is already a complex endeavor for static systems, much more so with dynamic ones.
 With real-time requirements, we must ensure that the changing system not only respects the deterministic semantics of the decoder, but also the timing requirements.

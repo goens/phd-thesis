@@ -31,19 +31,13 @@
 
 (defn -main
   "Audio filter example"
-  [& args]
+  [args]
   (ohua
-   (smap
-    (algo [s]
-          (let [[x y] (split s)]
-            (let [[xout yout]
-                  [(ifft (filter (fft x)))
-                   (ifft (filter (fft y)))]]
-              (sink xout yout)
-              )
-            )
-          )
-    (src)
-    )
-   )
-  )
+    (smap
+      (algo [s]
+            (let [[x y] (split s)]
+              (let [[xout yout]
+                    [(ifft (filter (fft x)))
+                     (ifft (filter (fft y)))]]
+                (sink xout yout))))
+      (src))))

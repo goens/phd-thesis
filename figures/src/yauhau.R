@@ -43,10 +43,10 @@ f02 <- parse_raw(fromJSON(file="data/yauhau/concurrency-rewrite.json"))
 f08 <- parse_raw(fromJSON(file="data/yauhau/haskell-timed.json"))
 
 yauhau_concurrency <-
-    mutate(f01,Framework = 'Yauhau\n(conc. I/O)') %>%
+    mutate(f01,Framework = 'Yauhau') %>%
     select(time,levels,Framework) %>%
     full_join(
-        mutate(f02,Framework = 'Yauhau') %>%
+        mutate(f02,Framework = 'Yauhau\n(conc. I/O)') %>%
     select(time,levels,Framework) 
     ) %>%
     full_join(

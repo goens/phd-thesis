@@ -100,32 +100,26 @@ Ohua is best understood by diving directly into examples.
 
 \begin{listing}
 \begin{minted}[linenos]{Clojure}
-(defn -main
+  (defn -main
   "Audio filter example"
-  [& args]
+  [args]
   (ohua
-   (smap
-    (algo [s]
-          (let [[x y] (split s)]
-            (let [[leftout rightout]
-                  [(ifft (filterfn (fft x)))
-                   (ifft (filterfn (fft y)))]]
-              (sink leftout rightout)
-              )
-            )
-          )
-    (src)
-    )
-   )
-  )
+    (smap
+      (algo [s]
+            (let [[x y] (split s)]
+              (let [[xout yout]
+                    [(ifft (filter (fft x)))
+                     (ifft (filter (fft y)))]]
+                (sink xout yout))))
+      (src))))
 \end{minted}
 \caption{The Audio Filter Example written in Ohua}
 \label{listing:ohua_audio_filter}
 \end{listing}
 
-Consider the code in Listing~\ref{listing:ohua_audio_filter}. The code in the example is written in an embedded \ac{DSL} based on Clojure, a dialect of Lisp.
+Consider the code in Listing~\ref{listing:ohua_audio_filter}. The code in the example is written in a \ac{DSL} embedded in Clojure, a dialect of Lisp.
 It implements the same example from Chapter~\ref{chap:mapping} (cf. Listing~\ref{listing:audio_filter} or Figure~\ref{fig:audio_filter_graph}), a two-channel audio filter.
-Internally, the compiler transforms this code into a dataflow graph for execution.
+Internally, the compiler transforms this code into a dataflow graph (similar to that depicted in Figure~\ref{fig:audio_filter_graph}) for execution.
 A special function, \texttt{ohua}, annotates the \ac{AST} it receives as argument to be executed as implicit dataflow.
 The \texttt{smap} function is a special variant of \texttt{map} that considers state in the functions.
 We will discuss the semantics of \texttt{smap} in Section~\ref{sec:smap}.
@@ -151,7 +145,7 @@ A language that only allows pure functions is basically useless, since even prin
 
 Stateful functions are a special abstraction, where the concept of pure functions is extended to consider the state of the computation. 
 While this excludes aspects like the time of the computation and side-effects like actuation, it is general enough to cover large classes of functions used in most software.
-A stateful function is a function $f : a \rightarrow b$ and an abstract state $S$, where the execution of the function can be seen as dependent of the state, which it also modifies.
+A stateful function is a function $f : a \rightarrow b$ and an abstract state $S$, where the execution of the function can be seen as dependent on the state, which it also modifies.
 In other words, we consider $f$ as a function:
 \begin{align}
   f : a \times S \rightarrow b \times S \label{eqn:state_thread}
@@ -165,15 +159,17 @@ It is implicitly managed as the state by the Ohua runtime.
 
 \begin{listing}
 \begin{minted}[]{Java}
-public class ParseVariable{
-    @defsfn
+  public class ParseVariable {
+    // state
     private SymbolTable table;
-    public ParseVariable (ExpressionObject expr){
-        symbols = expr.parse();
-        this.table.write(symbols);
-        return(this.table.getSymbols());
+  
+    @defsfn
+    public SymbolObject parse(ExpressionObject expr) {
+      var symbols = expr.parse();
+      this.table.write(symbols);
+      return this.table.getLastSymbol();
     }
-}
+  }
 \end{minted}
 \caption{An example of a stateful function.}
 \label{listing:stateful_function}

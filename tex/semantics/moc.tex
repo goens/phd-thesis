@@ -27,7 +27,7 @@ We call $\Sigma^*$ the set of words (Kleene star) over $\Sigma$, and $\Sigma^\om
 We then define $S = \Sigma^* \cup \Sigma^\omega$ as the set of (finite or infinite) sequences over the alphabet $\Sigma$.\index{sequences}
 The set of sequences $S$ is obviously a \ac{poset} with the prefix relation $\sqsubseteq$, where $s \sqsubseteq s'$ iff there exists a $t \in S$ with $s.t = s'$.
 Here, $(.) : S \rightarrow S$ denotes the concatenation operator (which coincidentally makes $S$ a monoid with neutral element $\epsilon$, the empty string).
-In fact, $S$ is a complete semilattice with regards to $\sqsubseteq$ (cf.~\cite{lee_matsikoudis_semantics}).
+In fact, $S$ is a complete semilattice with regard to $\sqsubseteq$ (cf.~\cite{lee_matsikoudis_semantics}).
 In Scott's model, these sequences describe the partial steps of a computation process, generating data in discrete steps (not necessarily all at once). 
 
 A function $f : S \rightarrow S$ is called monotone if for $s \sqsubseteq s'$ it holds that $f(s) \sqsubseteq f(s')$.\index{Scott ! monotone function}
@@ -60,7 +60,7 @@ In particular, this means that \ac{KPN} are deterministic (as per their fixed-po
 There are other related models that span from the same time period, like the Hewitt-Agha actor model\index{actor model}~\cite{DBLP:conf/ijcai/HewittBS73,Agha:86:Actors}.
 This was also a model of parallell computation. In it, actors communicate with other actors via messages in a non-deterministic fashion. 
 Actors can also be dynamically created and the connections between them are also dynamic.
-While this yields much more flexibility, it comes with a high price: deteriminism. 
+While this yields much more flexibility, it comes with a high price: determinism. 
 
 Other models of parallel computation include Petri Nets\index{Petri nets}~\cite{petri1962nets}, in which a bipartite graph of places and transitions models the distributed execution of a system.
 Transitions in petri nets are very flexible as well, but they are also non-deterministic, the order in which multiple activated transitions fire is non-deterministic in general.
@@ -102,7 +102,7 @@ Here, $\bot$ represents an \emph{abscent} value\index{absent value}, which means
 %In the literature\footnote{}, the formulation it is not clear about whether $\mathcal{R}$ has to be finite, but we will demand it is for simplicity, since we don't see any practical value in the case where it is truly infinite.
 The patterns are sometimes also interpreted to be words in an extended alphabet with wildcards, e.g. $\Sigma \cup \{\bot,*\}$, where $*$ stands for any value in $\Sigma$.
 Note that, mathematically speaking, both $\bot$ and $*$ are unnecessary, as the empty string $\epsilon$ has the same effect as $\bot$ and $*$ can be replaced by a series of rules, one for each value in $\Sigma$.
-In most pratical instances of dataflow, on the other hand, rules only consist of values in $\{\bot,*\}$, which is why they are very useful for descriptions.
+In most practical instances of dataflow, on the other hand, rules only consist of values in $\{\bot,*\}$, which is why they are very useful for descriptions.
 
 An actor fires whenever there is enough tokens in the input channels to satisfy a rule.
 Here, satisfying a rule specifically means the rule $R$ is a prefix of the channel values $C$, i.e. $R \sqsubseteq C$.
@@ -117,7 +117,7 @@ We denote this very general, dynamic variant as \ac{DDF} (alternatively, Dennis 
 If we add an additional condition, requiring that for two rules $R,R'$ there is no upper bound $S$ (i.e. with $R \sqsubseteq S, R' \sqsubseteq S$), then we can show that the model is deterministic.
 We can even relax this condition somewhat and keep determinism. In~\cite{lee_matsikoudis_semantics}, the authors show this by explicitly constructing a Scott-continuous function from actor firings and embedding the model into \ac{KPN}.
 They also discuss possible relaxations.
-This deterministic variant of (Dennis) Dataflow is sometimes referred to as \ac{DPN}.\index{\ac{DPN}}
+This deterministic variant of (Dennis) dataflow is sometimes referred to as \ac{DPN}.\index{\ac{DPN}}
 
 All these models are very expressive, so much so that they do not permit very strong analysis of their behavior.
 In contrast, the \ac{SDF} model\index{Dataflow ! SDF}~\cite{lee1987sdf} has a very well-defined behavior and allows more analysis to be done statically, like scheduling or bounding the sizes of the channels~\cite{Parks:M95:105}
@@ -129,14 +129,14 @@ The semantics of \ac{HSDF} are basically equivalent with the widespread model of
 
 We discuss two additional variants of dataflow which sit semantically between \ac{SDF} and \ac{DDF}. 
 The first is \ac{CSDF}\index{\ac{CSDF}}~\cite{bilsen1996cycle}, in which the static values of \ac{SDF} are replaced with cycles that repeat, allowing for some controlled dynamism while retaining the analysability.
-Finally, \ac{SADF}\index{\ac{SADF}}~\cite{theelen2006scenario} is a more general model which allows to enable and disable certain paths in the graph, which are otherwise static.
+Finally, \ac{SADF}\index{\ac{SADF}}~\cite{theelen2006scenario} is a more general model which allows enabling and disabling certain paths in the graph, which are otherwise static.
 
 Figure~\ref{fig:dataflow_mocs} shows a Venn diagram of the dataflow models discussed here and their relationship.
 Here we draw the distinctions as strict as possible.
 For example, we draw \ac{HSDF} as a subset of \ac{SDF} since, definitionally, it is, even though they have the same semantic expressive power.
 In other words, every \ac{HSDF} is an \ac{SDF}, and conversely, not every \ac{SDF} is an \ac{HSDF}, even though there exists an equivalent (unrolled) \ac{HSDF}, it is just equivalent, not identical.
 We also include \ac{KPN} and the \ac{KMQ} blocking-reads semantics since they are commonly discussed as dataflow models as well.
-Since the models are fundamentally different, we have depict them in the Venn diagram as what is embeddable semantically.
+Since the models are fundamentally different, we depict them in the Venn diagram as what is embeddable semantically.
 Note that we depict \ac{DPN} as being included in \ac{KMQ} (which is proven in~\cite{lee_matsikoudis_semantics}), but we do not know if this inclusion is strict, in other words, if there are \ac{KMQ} models which are not expressable as \ac{DPN}.
 We will discuss the difference between \ac{KMQ} and \ac{KPN} in Section~\ref{sec:macqueen}, where we also show that this inclusion is strict.
 

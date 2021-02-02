@@ -1,6 +1,6 @@
 Software synthesis for multicores is effective because we use \acp{MoC} that expose concurrency.
 The most natural way of leveraging the exposed concurrency is parallelism. 
-When writing code using explict models in the dataflow family, like \ac{KPN} or \ac{SDF}, the concurrency also becomes explicit.
+When writing code using explicit models in the dataflow family, like \ac{KPN} or \ac{SDF}, the concurrency also becomes explicit.
 However, in an implicit language like Ohua, we need to be careful to consider stateful computation when extracting concurrency.
 
 Ohua uses a special operator, \texttt{smap}, to derive concurrency from stateful computation.
@@ -9,7 +9,7 @@ This adds a dependency between multiple executions of the same (stateful) functi
 For a single function mapped over a collection, this principle exposes no concurrency. There is none, in general.
 However, when we compose multiple functions in a \texttt{map}, we get a different picture.
 
-Consider three (stateful) functions, $f: a \rightarrow b$ and $g : b \rightarrow c$, $g : c \rightarrow d$ with respective states $S_a, S_b$ and $S_c$, which we thus model as functions: 
+Consider three (stateful) functions, $f: a \rightarrow b$ and $g : b \rightarrow c$, $h : c \rightarrow d$ with respective states $S_a, S_b$ and $S_c$, which we thus model as functions: 
 \begin{align*}
 sf : a \times S_f \rightarrow b \times S_f, sg : b \times S_g \rightarrow c \times S_g, sh : c \times S_h \rightarrow d \times S_h
 \end{align*}
@@ -39,16 +39,16 @@ The \texttt{>=>} operator is the monadic equivalent of function composition, wit
 Similarly, these state threads and their composition can be formalized using category theory~\cite{ertel_haskellsup19}.
 This formalization is rather technical. We will only sketch it here.
 
-Let $\mathcal{C}$ be a cartesian closed category, which is a technical condition that in a model-theoretic interpretation of categories corresponds to the typed $\lambda$ calculus~\cite{huet1985cartesian}.
+Let $\mathcal{C}$ be a Cartesian closed category, which is a technical condition that in a model-theoretic interpretation of categories corresponds to the typed $\lambda$ calculus~\cite{huet1985cartesian}.
 We can think of $\mathcal{C}$ as the values and functions of the language, like the category of Haskell types $\operatorname{Hask}$\footnote{Note that this might not, strictly speaking, be a category. See \url{http://math.andrej.com/2016/08/06/hask-is-not-a-category/}}.
-A cartesion closed category has a terminal object $\bot \in \operatorname{Obj}(\mathcal{C})$, and any two objects $B,C \in \operatorname{Obj}(\mathcal{C})$ have a product $B \times C$ and an exponential $B^Y$.
+A Cartesian closed category has a terminal object $\bot \in \operatorname{Obj}(\mathcal{C})$, and any two objects $B,C \in \operatorname{Obj}(\mathcal{C})$ have a product $B \times C$ and an exponential $B^Y$.
 These constructions are defined via universal properties in commutative diagrams and are rather technical.
 We will omit the precise definitions here for space reasons.
 It suffices to say they correspond with the known constructions, e.g. the product is the Cartesian product in the category $\operatorname{Set}$ of sets. 
 
 The main idea of formalizing and dealing with state threads is to index them.
 We do this through a (countable) index set $N \subseteq \mathbb{N}$, which for practical purposes we can also think of as being finite.
-We ``split'' the state into local states which correspond to the indices in $N$. Formally, let $S_i \in \operatorname{Obj}(\mathcal{C}), i \in N$ be paarwise distinct (i.e. $i \neq j \Rightarrow S_i \neq S_j$).
+We ``split'' the state into local states which correspond to the indices in $N$. Formally, let $S_i \in \operatorname{Obj}(\mathcal{C}), i \in N$ be pairwise distinct (i.e. $i \neq j \Rightarrow S_i \neq S_j$).
 We define for $I \subseteq N$ the \emph{state object} $S_I = \times_{i \in I} S_i$ as the product of the $S_i$ for all $i \in I$. If $I = N$, we call the state object $S_N$ the \emph{global state}.
 The individual states $S_i := S_{\{i\}}$ for $i \in N$ we call fundamental states. We thus formally define a \emph{state thread}\index{state thread} as a morphism:
 \begin{align*}
@@ -88,9 +88,9 @@ The definition of a general composition of state threads is, again, somewhat tec
 the idea is to define an extension $f* : (a \times S_N) \rightarrow (b \times S_N)$ which acts as an identity on $a \times S_{N \setminus I}$. 
 By using a technical construction, this extension can be made such that the information of the $I$ is kept, while allowing a well-defined composition of state threads.
 In this way, the resulting category allows us to elevate arbitrary computations in $\mathcal{C}$ to state threads in a fashion that allows us to reason about their composition by looking at the state objects $S_I$,
-as described adove.
+as described above.
 
-The formalizm outlined here defines the semantics of \texttt{smap}, allowing us to express implicit concurrency even when dealing with stateful functions.
+The formalism outlined here defines the semantics of \texttt{smap}, allowing us to express implicit concurrency even when dealing with stateful functions.
 With the Haskell implementation from~\cite{ertel_haskell19}, this allows us to extract implicit parallelism.
 These \texttt{smap} semantics of Haskell are the same as the Clojure-based \texttt{smap} in Ohua.
 The implicit concurrency extracted with Ohua, however, enables more than a parallel execution.

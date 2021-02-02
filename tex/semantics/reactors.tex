@@ -22,11 +22,11 @@ Making the separation explicit allows us to control the synchronization of both 
 
 Just as in the dataflow models discussed in Section~\ref{sec:mocs_overview}, the actor model divides computation into isolated \emph{actors} that communicate solely over explicit messages.
 The main difference to models like \ac{SDF} or \ac{KPN} is that actors and channels are not fixed.
-Instead,they can be dynamically created and destroyed.
-In Reactors we aim to combine good ideas from multiple established \acp{MoC}.
+Instead, they can be dynamically created and destroyed.
+In Reactors, we aim to combine good ideas from multiple established \acp{MoC}.
 We permit dynamic re-configuration of the network through \emph{mutations} which are well-defined (not arbitrary) transformations of the network's topology~\cite{lohstroh_cyphy19}.
 This permits us to reason about determinism more explicitly. \index{Reactors ! mutation}
-At the time of this writing, mutations are only defined astractly.
+At the time of this writing, mutations are only defined abstractly.
 Specifying a set of well-defined mutations that allow us to reason about determinism and time, while still providing enough flexibility as need by the applications, is ongoing work.
 We will discuss this in an example use case for 5G in Section~\ref{sec:5g}.
 
@@ -41,7 +41,7 @@ In~\cite{lohstroh_cyphy19} we laid the groundwork for an operational formalizati
 As part of an ongoing project, the reactor model is a moving target and has been refined since.
 At the time of this writing, the most thorough and up-to-date account is in~\cite{lohstroh_phdthesis}.
 Here we will deviate from the formalization both in~\cite{lohstroh_cyphy19} and \cite{lohstroh_phdthesis}, however, and attempt a denotational approach to semantics.
-In ongoing unpublished work with Marcus Rossel, we are using the Lean theorem prover~\cite{lean} to formaly verify reactors, proving properties like determinism under certain conditions.
+In ongoing unpublished work with Marcus Rossel, we are using the Lean theorem prover~\cite{lean} to formally verify reactors, proving properties like determinism under certain conditions.
 A reason for this denotational approach is that the original formalization has some mathematical inaccuracies and unspecified behavior.
 Clarifying or correcting these inaccuracies is necessary for having a well-defined model.
 The second reason for the deviation is the level of detail.
@@ -153,8 +153,8 @@ Equations~\ref{eqn:nleqns} and~\ref{eqn:nsleqn} formalize the reaction priority 
 If a reaction returns an absent value $\bot$, then the value of the other reaction is written on the output sequence.
 Note when $n \leq n'$ or $n' \leq n$ (which trivially includes the case $n = n'$), all functions in $\bigsqcup_{D,D^\vee} \{n,n'\}$ are equivalent up to padding with $\bot$. 
 
-This definition can be trivially generalized to more than one (shared) input or output sequence (componentwise), and to non-shared input or output sequences by requiring equations~\ref{eqn:nleqns}-\ref{eqn:nondet} to hold quantified over all non-shared sequences.
-Finally, for a \ac{poset} $N$ of reactions, we define $\bigsqcup_{D,D^\vee} N$ analogously (componentwise), requiring equations~\ref{eqn:nleqns}-\ref{eqn:nondet} to hold paairwise for any two $n, n' \in N$.
+This definition can be trivially generalized to more than one (shared) input or output sequence (component-wise), and to non-shared input or output sequences by requiring equations~\ref{eqn:nleqns}-\ref{eqn:nondet} to hold quantified over all non-shared sequences.
+Finally, for a \ac{poset} $N$ of reactions, we define $\bigsqcup_{D,D^\vee} N$ analogously (component-wise), requiring equations~\ref{eqn:nleqns}-\ref{eqn:nondet} to hold pairwise for any two $n, n' \in N$.
 
 %\begin{lem}
 %    Let $r = (N,D,D')$ be a reactor and let $N$ be totally ordered.
@@ -188,7 +188,7 @@ and a timed one, which is the general case and is built on top of the former.\in
     \label{defn:timeless_network}
 A timeless reactor network is a multigraph $\mathcal{R} = (V,E,\xi)$ with a set of reactors as nodes $V$,
 a set of edges $E$, which we require to be pairs of indices, $E \subseteq I \times I$ and $\xi : E \rightarrow \{ \{r_1, r_2\} \mid r_1, r_2 \in V \}$.
-For this multigraph we require that for any two distinct reactors $r_1 \neq r_2 \in V$ the input and output ports are paairwise disjoint,
+For this multigraph we require that for any two distinct reactors $r_1 \neq r_2 \in V$ the input and output ports are pairwise disjoint,
 i.e. $\operatorname{Input}(r_i) \cap \operatorname{Output}(r_j) = \emptyset$ for all $i,j \in \{ 1, 2 \}$ and every edge is a tuple consisting of an output port and an input port,
 i.e. for all $(i,j) = e \in E \subseteq I \times I$ there exist $r_1,r_2 \in V$ such that $i \in \operatorname{Output}(r_1)$ and $j = \operatorname{Input}(r_2)$.
 We additionally require that the multigraph has no self-edges, i.e. $|\xi(e)| > 1$ for all $e \in E$.
@@ -314,7 +314,7 @@ Physical time could go far beyond logical time.
 In an implementation, and indeed in the formalization of~\cite{lohstroh_phdthesis}, a deadline in the reactions controls how far away logical time can lag behind physical time. 
 
 Note that the definition of reactor networks does not exclude any loops.
-The fixpoint-based definition allow us to have well-defined semantics with such loops (cf. ~\cite{kahn74,lee_matsikoudis_semantics}),
+The fix-point-based definition allow us to have well-defined semantics with such loops (cf. ~\cite{kahn74,lee_matsikoudis_semantics}),
 as ensured by Condition~\ref{cond:fixpoint} in Definition~\ref{defn:execution_reactors}.
 In some cases, however, the least fix-point of the network might result in an empty sequence.
 This can be the case when the ordering in reaction causes a so-called causality loop.
@@ -341,7 +341,7 @@ Note that in this case, Definition~\ref{defn:action} implies that $T \cong T'$ a
 There are certainly relaxations of this that allow us to define reasonable conditions for time-determinism.
 
 We can even go further and distinguish between logical and physical actions for determinism. 
-For example, we can define a reactor network to be time-deterministic if it only dependends on the image sequences of \emph{physical} actions $A$.
+For example, we can define a reactor network to be time-deterministic if it only depends on the image sequences of \emph{physical} actions $A$.
 The non-determinism from the physical world is outside our control, but with this definition we are also ensuring logical actions to behave deterministically as a function of the physical ones. 
 
 A final word on distributed execution, which we have ignored so far, is due here. 
