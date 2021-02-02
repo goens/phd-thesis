@@ -4,7 +4,7 @@ It is a tool for exploring model-based design and has a strong focus on \acp{CPS
 Ptolemy~II is very comprehensive and studies and implements several \acp{MoC} discussed in this thesis (cf. Section~\ref{sec:mocs_overview}).
 The scope of Ptolemy~II is far larger and more detailed than this thesis.
 It is, however, aimed at application developers.
-In contrast, the methods in this thesis are aimed at tool developers, for improving the methods of model-based design.
+In contrast, many methods in this thesis (chapters~\ref{chap:mapping_structures}-\ref{chap:mapping_applications}) are more focused on tool developers, for improving the methods enabling model-based design.
 
 Instead of discussing related work generally, we will go over on the different methods proposed here to improve model-based design, and discuss related work by broader categories.
 In most chapters and sections we discuss related work directly.
@@ -12,51 +12,110 @@ While we will systematically go over related work here, we refer to the accordin
 
 \subsection{Dataflow-based Software Synthesis}
 
-There are many software synthesis tools and methods~\cite{lin1998softwaresynthesis,ritz1992softwaresynthesis,bhartacharyya2000softwaresynthesis,pino1995softwaresynthesis,bhattacharyya2012softwaresynthesis}.
-For discussing \ac{KPN}-based software synthesis, we focused on the \ac{MAPS}~\cite{maps} framework and its spinoff in Silexica, as well as the \mocasin tool where we implemented many contributions of this thesis.
-These tools are both closely related, \ac{MAPS} focusing more on application developers and \mocasin on tool developers (for developing tools like \ac{MAPS}).
-There are many closely related tools, like the Sesame framework~\cite{pimentel2006systematic}, \ac{DOL}~\cite{thiele2007DOL}, SystemCoDesigner~\cite{haubelt2008systemcodesigner}, DAARM~\cite{weichslgartner2014daarm}, PREESM~\cite{pelcat2014preesm}, Spider~\cite{heulot2014spider}, CAPH~\cite{serot2013caph} and Turnus~\cite{casale2013turnus}, among others.
-Section~\ref{sec:software_synthesis_flows} discusses these tools more in-depth.
+There are many tools for software synthesis, as we discuss in Section~\ref{sec:software_synthesis_flows}.
+We have mentioned~\cite{lin1998softwaresynthesis} which uses Petri Nets, or~\cite{ritz1992softwaresynthesis} based on \acp{SDF}.
+The flows in~\cite{bhartacharyya2000softwaresynthesis,pino1995softwaresynthesis,bhattacharyya2012softwaresynthesis} are generally based on dataflow.
+
+More recently, there is SystemCoDesigner~\cite{haubelt2008systemcodesigner}, which is based on SystemC and targets \acp{FPGA}.
+The same is the case for the dataflow-based CAPH~\cite{serot2013caph}  framework.
+On the software side, there is the Turnus~\cite{casale2013turnus} flow, which is based on \ac{RVC}-CAL.
+Also relevant is the PREESM~\cite{pelcat2014preesm} flow, which is based on parametrized extensions of \ac{SDF} models.
+These flows are all related to \ac{MAPS}~\cite{maps}, and its spinoff in Silexica,
+which is the \ac{KPN}-based software synthesis flow that we focus on in this thesis, and describe in Chapter~\ref{chap:mapping}.
+As such, the more closely related tools are \ac{KPN}-based flows, like Sesame ~\cite{sesame}, with the related ESPAM~\cite{stefanov2006multi} and Daedalus~\cite{nikolov2008daedalus}. 
+Similarly, the \ac{DOL}~\cite{thiele2007DOL} is a closely related \ac{KPN}-based flow.
+
+While we did not propose a new software synthesis flow, the methods in this thesis and in \mocasin are related to methods implemented in these diverse flows.
+To the best of our knowledge, there are no systematic comparisons of approaches and heuristics in terms of their performance, as we argue in\cite{goens_mcsoc16}.
+The survey in~\cite{singh2013mapping} is a systematic comparison of mapping approaches at an abstract level, but it does not execute and compare the different heuristics in benchmarks.
+The work in~\cite{braun2001comparison}, does execute and compare heuristics, on the other hand, but these are from before the multicore era and not as directly related.
+
+\subsection{Mapping Space Structures}
+
+In~\cite{thompson2013exploiting}, Thompson and Pimentel exploit the mapping space structure explicitly, exploiting both symmetries of the problem and a kind of metric for the mapping space in the form of operators for genetic algorithms.
+These can both be seen as special cases of the structures in Chapter~\ref{chap:mapping_structures}, albeit for a simpler case with homogeneous architectures.
+The work from Richthammer and others~\cite{richthammer2018search,richthammer_todaes20} is very similar in nature to the applications discussed in Chapter~\ref{chap:mapping_applications}.
+They also aim to improve \ac{DSE} methods from an algorithm-agnostic fashion, although the concrete structure they exploit is different.
+Their methods are orthogonal to ours (and could be combined).
+Less directly related are approaches for pruning the design space in general settings, outside the mapping problem~\cite{wang2004design}
 
 
+\subsubsection{Symmetries}
 
-\subsection{Other software synthesis tools}
-The tools above focus on software synthesis in a flow similar to the one described in this thesis, using \ac{KPN} or dataflow models and \ac{DSE} to find profitable mappings for executing applications in modern hardware.
-There are other tools and languages which are focused more in the model's semantics. Besides Ptolemy~II~\cite{Ptolemaeus:14:SystemDesign}, these include the CAL~\cite{eker2003cal} language and the related \ac{RVC}-CAL compiler.
-Synchronous languages like LUSTRE~\cite{lustre} or ESTEREL~\cite{esterel}, which have discrete-event semantics, are also relevant. These are more closely related to Reactors than to dataflow.
-Even hardware description languages like VHDL or Verilog, and even SystemC~\cite{semantics_systemc} can be seen as related, in this case it being \ac{HLS}, which is in fact an inspiration for the term software synthesis.
-Also on the commercial side, Signal Processing Work System and Synopsys System Studio both from Synopsis join the LabVIEW Communications System Design Suite or Matlab Simulink~\cite{klikpo2016modeling} as model-based design tools with well-defined \acp{MoC}.
-In Section~\ref{sec:general_dataflow_tools} we review and discuss many of these tools and programming languages based on \acp{MoC}.
-
-\subsection{Mapping Representations}
-Symmetries have been explored in software synthesis implicitly in many cases, e.g. in~\cite{singh2010communication,thompson2013exploiting}. 
+Symmetries have been explored in software synthesis implicitly in many cases, e.g. in~\cite{hannig2001design,kreutz2005design,singh2010communication,roloff2015execution}.
 In fact, when researchers or developers just distinguish between core types in architectures with simple memory subsystems they are implicitly considering the symmetries of the problem.
 The problem becomes more difficult when the architecture topologies are more complex.
 The authors of~\cite{schwarzer2017symmetry} also consider symmetries in \ac{DSE}, albeit in a more ad-hoc fashion (without the mathematical theory of groups or semigroups).
-In a related idea, in~\cite{shapes} they also introduce the concept of ``shapes'', which are a special case of the symmetries exploited in the \ac{TETRiS} method.
+In a related idea, in~\cite{shapes} they also introduce the concept of ``shapes'', which are a special case of the symmetries exploited in the \ac{TETRiS} method, but is limited to meshes in \acp{NoC}.
+For some applications, the symmetries have also been considered explicitly~\cite{cohen1988symmetry}, but not systematically like we do in this thesis.
 
 Methods from group theory have also been used to exploit symmetries for problems in computer science and engineering before, in ways that are very similar to the methods discussed in this thesis~\cite{crawford1996symmetry,clarke1998symmetry}.
 In particular, some of our methods are inspired by the usage of wreath products in model checking~\cite{donaldson2009constructive}.
 
-Distances between mappings have been used for \ac{NoC} based systems, e.g. in~\cite{singh2010communication,weichslgartner2014daarm}, usually in an ad-hoc fashion.
-The work by Thompson and Pimentel~\cite{thompson2013exploiting} is more explicit and defines a kind of metric for the mapping space, similar to the ones we discussed in Chapter~\ref{chap:mapping_structures}, albeit for a simpler case with homogeneous architectures.
-The work from Richthammer and others~\cite{richthammer2018search,richthammer_todaes20} is very similar in nature to the applications discussed in Chapter~\ref{chap:mapping_applications}.
-They also aim to improve \ac{DSE} methods from an algorithm-agnostic fashion, although the concrete structure they exploit is different.
+\subsubsection{Distances}
 
-\subsection{Language-based optimizations} 
-The MacQueen gap is generally ignored in literature, where \ac{KPN} are equated with Kahn MacQueen blocking reads semantics. 
+Distances between mappings are commonly described in \ac{NoC}-based systems.
+For example, the heuristic described in~\cite{singh2010communication} considers mappings in \ac{NoC} systems and uses the number of hops in the topology to find them.
+This strategy is common in many approaches.
+In \cite{weichslgartner2014daarm}, for example, the authors encode a related notion of distance in the constraints of their operating points.
+To the best of our knowledge, explicit low-distortion embeddings have not been used in this context before.
+
+Robustness in computation is a broad subject and much work has been done in different aspects of it, albeit most of it does not consider robust mappings explicitly. 
+The work of~\cite{zhang2011dependability,zhao2019health} defines mapping migration strategies, without focusing on a \ac{DSE} for robust mappings.
+A strategy for finding robust mappings explicitly was proposed in~\cite{chen2016task}, using redundancy instead of the geometry of the mapping space.
+This allows for more robustness but requires more resources.  
+Design centering methods, like the ones we used to find robust mappings, have also been used in many other disciplines in engineering, e.g. integrated-circuit design~\cite{chen2015analysis}.
+
+To the best of our knowledge, the only other work defining compactness of mappings explicitly is~\cite{yang2010multi}.
+However, the quality of this work, including the heuristic and its evaluation, is dubious. 
+The idea behind compactness of mappings is composability of applications, on the other hand, which has been seriously researched with other methods.
+CoMPSoC~\cite{hansson2009compsoc} or the work in~\cite{kumar2008analyzing} deal with composability of applications.
+They do not do so using the geometry of the mappings\footnote{Which is not a good strategy, as we saw in Section~\ref{sec:compact}}, however, but using sophisticated hardware support instead.
+
+\subsection{Run-time and hybrid approaches}
+There are many run-time and hybrid flows related to our \ac{TETRiS} approach.
+The flows proposed in~\cite{castrillon2010trace,kang2014static,zhu2016providing}, for example, also propose methods for multi-application mappings.
+These methods all rely on statically knowing all applications at compile time and calculating joint mappings, which does not scale nor works in more dynamic systems.
+
+The approaches from DAARM~\cite{weichslgartner2014daarm} or Spider~\cite{heulot2014spider},
+or the methods proposed in~\cite{moreira2007online,quan2015hybrid} are all hybrid approaches. 
+As such, they all solve the problem with static approaches discussed above, like \ac{TETRiS} does.
+These rely on different methods for finding the final mappings at run-time and have different advantages.
+Most works have the architecture model implicit in the flow (cf. Section~\ref{sec:arch_models}),  e.g.~\cite{weichslgartner2014daarm} which assumes regular \ac{NoC} meshes from its problem formulation or~\cite{moreira2007online}.
+A distinct advantage of our symmetries-based approach to hybrid mapping is that it uses a general architecture model, which works for arbitrarily complex architectures.
+
+On the side of run-time adaptivity, the MacQueen gap is generally ignored in literature, where \ac{KPN} are equated with the \ac{KMQ} blocking-read semantics. 
 We were not the first to recognize the gap, however.
 The two models are also treated as separate in~\cite{lee_matsikoudis_semantics}.
-Run-time transformations have been explored generally, where the most prominent and closely related example is the work of~\cite{schor2014adapnet}.
+There are many other related ways of adapting \acp{MoC} at run-time.
+Models like \ac{SADF}~\cite{theelen2006scenario} or Multi-Alternative Process Networks~\cite{bouraoui_parma21} do this by modeling the adaptivity explicitly in the graph.
+The AdaPNet model~\cite{schor2014adapnet} defines more comprehensive transformations and is very general and flexible.
 
-In terms of language-based transformations for \ac{I/O} optimization, we discussed the main related work in Section~\ref{sec:yauhau}, namely Haxl~\cite{marlow2014haxl} and Muse~\cite{muse},
-as well as the unpublished Stitch~\cite{stitch} from Twitter.
+On the side of applications to 5G, mostly the complete field of research in telecommunications investigates methods for adapting to the dynamic demands of upcoming applications.
+Models are common for different areas of the field, but their use is generally not proposed at a system-level as we do.
+Since this is work-in-progress, it is not possible to provide a detailed examination of advantages and disadvantages of our proposed approach using Reactors, compared to established methods, as we have yet to fully examine and understand these.
+A good overview of model-based approaches in modem design can be found work in~\cite{gatherer2020towards}.
+
+\subsection{Other model-based design tools}
+
+The tools above focus on software synthesis in a flow similar to the one described in this thesis, using \ac{KPN} or dataflow models and \ac{DSE} to find profitable mappings for executing applications in modern hardware.
+There are other tools and languages which are focused more in the model's semantics. Besides Ptolemy~II~\cite{Ptolemaeus:14:SystemDesign}, these include the CAL~\cite{eker2003cal} language and the related \ac{RVC}-CAL compiler.
+Synchronous languages like LUSTRE~\cite{lustre} or ESTEREL~\cite{esterel}, which have discrete-event semantics, are also relevant. These are languages are related to the Reactors model.
+
+Even hardware description languages like VHDL or Verilog, and even SystemC~\cite{semantics_systemc} can be seen as related, in this case it being \ac{HLS}, which is in fact an inspiration for the term software synthesis.
+Also on the commercial side, Signal Processing Work System and Synopsys System Studio both from Synopsis join the LabVIEW Communications System Design Suite or Matlab Simulink~\cite{klikpo2016modeling} as model-based design tools with well-defined \acp{MoC}.
+In Section~\ref{sec:general_dataflow_tools} we review and discuss many of these tools and programming languages based on \acp{MoC}.
+
 
 \subsection{Random Benchmark Generation and Machine Learning}
+
 A prominent example of random code generation is CSmith~\cite{csmith}, used to stress-test compilers.
 A related approach is the grammar-based method presented in~\cite{mckenzie1997generating}.
 In this thesis we discussed random benchmarking for evaluating optimizations, more so than for testing corner cases.
 The tools \ac{TGFF}~\cite{dick1998tgff} and \ac{\SDFFF}\cite{sdf3}, also discussed in Section~\ref{sec:representative_benchmarks} are more closely related to benchmarking as we investigated it.
+
+We used the proposed Level graphs to evaluate language-based transformations for \ac{I/O} optimization.
+We discussed the main related work for this in Section~\ref{sec:yauhau}, namely Haxl~\cite{marlow2014haxl} and Muse~\cite{muse}, as well as the unpublished Stitch~\cite{stitch} from Twitter.
 
 The direct connection between benchmarking and machine learning comes from CLGen~\cite{cummins_cgo2017}.
 Machine learning for code is a broad subject and only a minor part of this thesis.
