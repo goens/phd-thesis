@@ -1,0 +1,20 @@
+#+startup: beamer
+#+latex_class: beamer
+#+latex_class_options:
+#+latex_header:
+#+latex_header_extra:
+#+description:
+#+keywords:
+#+subtitle:
+#+latex_compiler: pdflatex
+#+date: \today
+
+* Introduction
+
+** Some contents
+#+ATTR_LATEX: :width 0.4\textwidth
+[[file:../figures/coolidge-af-space-sim-vec.png]]
+* Slide
+
+** More contents
+
